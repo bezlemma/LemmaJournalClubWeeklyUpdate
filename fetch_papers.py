@@ -6,6 +6,62 @@ import requests
 import time
 import feedparser
 from dateutil import parser as date_parser
+from bs4 import BeautifulSoup
+
+def scrape_metadata(url):
+    """Scrapes citation metadata from the article page."""
+    try:
+        # User-Agent is critical
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Referer': 'https://www.google.com/',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'cross-site',
+        }
+        r = requests.get(url, headers=headers, timeout=10)
+        if r.status_code != 200:
+            # print(f"    - Scrape failed (Status {r.status_code}) for {url}")
+            return None, None
+            
+        soup = BeautifulSoup(r.content, 'html.parser')
+        
+        # Extract Authors
+        authors = []
+        # Standard citation_author metatags
+        for meta in soup.find_all('meta', attrs={'name': 'citation_author'}):
+            if meta.get('content'):
+                authors.append(meta['content'])
+        if not authors:
+             # Try DC.creator
+             for meta in soup.find_all('meta', attrs={'name': 'DC.creator'}):
+                if meta.get('content'):
+                    authors.append(meta['content'].strip())
+                    
+        # Extract Abstract
+        abstract = ""
+        # citation_abstract
+        meta_abs = soup.find('meta', attrs={'name': 'citation_abstract'})
+        if meta_abs and meta_abs.get('content'):
+             abstract = meta_abs['content'].strip()
+        else:
+             # DC.description
+             meta_desc = soup.find('meta', attrs={'name': 'DC.description'})
+             if meta_desc and meta_desc.get('content'):
+                 abstract = meta_desc['content'].strip()
+             else:
+                 # og:description (Nature uses this often)
+                 meta_og = soup.find('meta', attrs={'property': 'og:description'})
+                 if meta_og and meta_og.get('content'):
+                     abstract = meta_og['content'].strip()
+                 
+        return authors, abstract
+    except Exception as e:
+        print(f"  Warning: Metadata scraping failed for {url}: {e}")
+        return None, None
 
 # --- Configuration ---
 DAYS_BACK = 7
@@ -133,12 +189,43 @@ def fetch_rss(url, source_name, group_type, section_filter=None):
             elif 'author' in entry:
                 authors = [entry.author]
             
+            abstract = entry.get('summary', '').replace('\n', ' ')
+            
+            # --- Data Quality Checks & Fallback ---
+            needs_scrape = False
+            
+            # Check 1: Missing Authors (Nature, PNAS Nexus)
+            if not authors:
+                needs_scrape = True
+                
+            # Check 2: PNAS "Mashed" Authors (Long string, no commas)
+            elif source_name == "PNAS" and len(authors) == 1 and "," not in authors[0] and len(authors[0]) > 20:
+                needs_scrape = True
+                
+            # Check 3: Missing Abstract (Nature)
+            if not abstract or len(abstract) < 20:
+                needs_scrape = True
+
+            # Check 4: Soft Matter / RSC Feeds (Abstract is HTML soup)
+            # The feed returns <div><i><b>Soft Matter</b></i>... instead of abstract
+            if source_name == "Soft Matter" or abstract.strip().startswith("<div"):
+                needs_scrape = True
+                
+            if needs_scrape:
+                print(f"    - Scraping metadata for: {entry.title[:30]}...")
+                scraped_authors, scraped_abstract = scrape_metadata(entry.link)
+                
+                if scraped_authors:
+                    authors = scraped_authors
+                if scraped_abstract:
+                    abstract = scraped_abstract
+
             paper = {
                 'source': source_name,
                 'title': entry.title.replace('\n', ' '),
                 'authors': ", ".join(authors),
                 'link': entry.link,
-                'abstract': entry.get('summary', '').replace('\n', ' '),
+                'abstract': abstract,
                 'date': published
             }
             papers.append(paper)
@@ -263,12 +350,154 @@ def fetch_biorxiv_papers():
     print(f"  Found {len(final)} bioRxiv papers (biophysics).")
     return final
 
+def fetch_openalex_papers():
+    print(f"Fetching OpenAlex papers for Green Authors...")
+    # Just to be safe, reload green authors here or pass it in
+    # Use global GREEN_AUTHORS list loaded at top
+    
+    if not GREEN_AUTHORS:
+        print("  No Green Authors found to search.")
+        return []
+        
+    papers = []
+    
+    # Calculate date range
+    from_date = OLDEST_DATE_TO_INCLUDE.strftime("%Y-%m-%d")
+    
+    # OpenAlex filter format: from_publication_date:2023-10-01
+    
+    # We will search for each author. 
+    # Note: Search by distinct name can be noisy if common name, but Green Authors list is usually specific.
+    # OpenAlex 'works' endpoint.
+    
+    base_works_url = "https://api.openalex.org/works"
+    
+    # To be polite and avoid rate limits, we'll do sequential requests.
+    for author_name in GREEN_AUTHORS:
+        # Step 1: Find Author ID
+        try:
+            # Search for author
+            auth_r = requests.get("https://api.openalex.org/authors", params={'search': author_name}, timeout=10)
+            if auth_r.status_code != 200:
+                print(f"  Failed to search author '{author_name}': {auth_r.status_code}")
+                continue
+                
+            auth_data = auth_r.json()
+            if not auth_data.get('results'):
+                print(f"  No author found for '{author_name}'")
+                continue
+                
+            # Take top result
+            author_id = auth_data['results'][0]['id'] # formatted as https://openalex.org/A...
+            # OpenAlex API expects just the ID part or the full URI usually works. 
+            # Let's extract just the ID part A... if needed, but the filter author.id accepts the full URI too.
+            
+            # Step 2: Fetch Works
+            params = {
+                'filter': f'author.id:{author_id},from_publication_date:{from_date}',
+                'per-page': 10,
+                'sort': 'publication_date:desc'
+            }
+            
+            r = requests.get(base_works_url, params=params, timeout=10)
+            if r.status_code == 200:
+                data = r.json()
+                results = data.get('results', [])
+                if results:
+                    # print(f"  Found {len(results)} matches for '{author_name}'")
+                    for work in results:
+                        # Extract fields
+                        title = work.get('title', 'No Title')
+                        
+                        # Authors string
+                        try:
+                            authors_list = [a['author']['display_name'] for a in work.get('authorships', [])]
+                            authors_str = ", ".join(authors_list)
+                        except:
+                            authors_str = "Unknown"
+                            
+                        # Link and DOI
+                        # OpenAlex provides 'doi' field and 'id' (openalex id)
+                        link = work.get('doi')
+                        if not link:
+                            link = work.get('id') # Fallback to OA ID if no DOI
+                            
+                        # Abstract
+                        # OpenAlex uses an inverted index for abstract. We need to reconstruct it?
+                        # Wait, the documentation says 'abstract_inverted_index'.
+                        # Reconstructing is complex.
+                        # Sometimes 'best_oa_location' has a pdf_url or landing_page_url.
+                        # We might need to stick to the 'abstract' if available?
+                        # Actually, OpenAlex *only* provides inverted index for abstracts in the free tier response usually.
+                        # Reconstructing:
+                        inverted = work.get('abstract_inverted_index')
+                        abstract_text = ""
+                        if inverted:
+                            # Reconstruct
+                            # Create a list of (index, word)
+                            word_index = []
+                            for word, indices in inverted.items():
+                                for idx in indices:
+                                    word_index.append((idx, word))
+                            word_index.sort()
+                            abstract_text = " ".join([w[1] for w in word_index])
+                        
+                        if not abstract_text:
+                            # Fallback?
+                            abstract_text = "Abstract not available via OpenAlex API."
+
+                        # Date
+                        pub_date_str = work.get('publication_date')
+                        if pub_date_str:
+                            pub_date = datetime.datetime.strptime(pub_date_str, "%Y-%m-%d").replace(tzinfo=pytz.utc)
+                        else:
+                            pub_date = datetime.datetime.now(pytz.utc)
+
+                        # Filter for "Research Article"?
+                        # work['type'] might be 'article', 'preprint', etc.
+                        # We'll allow preprints too.
+                        
+                        papers.append({
+                            'source': 'OpenAlex/Featured',
+                            'title': title.replace('\n', ' '),
+                            'authors': authors_str,
+                            'link': link,
+                            'abstract': abstract_text,
+                            'date': pub_date,
+                            'doi': work.get('doi') # Store DOI for dedup
+                        })
+            elif r.status_code == 429:
+                print("  Rate limit hit for OpenAlex. Sleeping...")
+                time.sleep(2)
+            else:
+                pass
+                # print(f"  Failed query for {author_name}: {r.status_code}")
+                
+            time.sleep(0.2) # Polite delay
+            
+        except Exception as e:
+            print(f"  Error querying OpenAlex for {author_name}: {e}")
+            
+    # Deduplicate internally within OpenAlex results first
+    unique_oa = {}
+    for p in papers:
+        # Use DOI or Title
+        key = p.get('doi') or p['title'].lower()
+        if key not in unique_oa:
+            unique_oa[key] = p
+            
+    print(f"  Found {len(unique_oa)} unique papers from OpenAlex.")
+    return list(unique_oa.values())
+
 def fetch_and_display_papers():
-    print(f"Fetching papers (Last {DAYS_BACK} days, >= {OLDEST_DATE_TO_INCLUDE.strftime('%Y-%m-%d')})...\n")
+    print(f"Fetching papers from {OLDEST_DATE_TO_INCLUDE.strftime('%Y-%m-%d')} to Now...")
     
     all_papers = []
     
-    # 1. arXiv
+    # 0. OpenAlex (Featured)
+    all_papers.extend(fetch_openalex_papers())
+
+    # 1. Group A: General (arXiv)
     all_papers.extend(fetch_arxiv_papers())
     
     # 2. bioRxiv
@@ -304,8 +533,8 @@ def fetch_and_display_papers():
     # PNAS Nexus
     all_papers.extend(fetch_rss("https://academic.oup.com/rss/site_6448/4114.xml", "PNAS NEXUS", "B"))
  
-    # PLOS ONE
-    all_papers.extend(fetch_rss("https://journals.plos.org/plosone/feed/atom?filterJournals=PLoSONE&q=subject%3A%22Biophysics%22", "PLOS ONE", "B"))
+    # PLOS ONE (biophysics)
+    all_papers.extend(fetch_rss("https://journals.plos.org/plosone/search/feed/atom?sortOrder=DATE_NEWEST_FIRST&filterJournals=PLoSONE&unformattedQuery=subject%3A%22biophysics%22", "PLOS ONE", "B"))
     
     # Science
     all_papers.extend(fetch_rss("https://www.science.org/rss/express.xml", "Science", "B", section_filter="Biophysics"))
@@ -365,11 +594,29 @@ def fetch_and_display_papers():
         output_lines.append("---")
         output_lines.append("")
 
-    # Write to file
-    with open("papers.md", "w") as f:
-        f.write(f"# Weekly Paper Update\n")
+    # Write structured data to JSON for the AI filter script
+    import json
+    with open("papers.json", "w") as f:
+        # Convert datetime objects to string for JSON serialization
+        json_ready_list = []
+        for p in final_list:
+            p_copy = p.copy()
+            p_copy['date'] = p['date'].isoformat()
+            json_ready_list.append(p_copy)
+        json.dump(json_ready_list, f, indent=4)
+    print(f"Saved structured data to papers.json")
+
+    # Write to file (Raw)
+    with open("raw_papers.md", "w") as f:
+        f.write(f"# Weekly Paper Update (RAW)\n")
         f.write(f"**Date Range:** {OLDEST_DATE_TO_INCLUDE.strftime('%Y-%m-%d')} to {datetime.datetime.now().strftime('%Y-%m-%d')}\n")
-        f.write(f"**Total Papers Found:** {total_count}\n\n")
+        f.write(f"**Total Papers Found:** {total_count}\n")
+        
+        # Add Source Breakdown
+        from collections import Counter
+        source_counts = Counter([p['source'] for p in final_list])
+        breakdown = ", ".join([f"{src}: {count}" for src, count in source_counts.most_common()])
+        f.write(f"**Sources:** {breakdown}\n\n")
         
         if not output_lines:
             f.write("No papers found in this date range.\n")
@@ -377,7 +624,7 @@ def fetch_and_display_papers():
             f.write("\n".join(output_lines))
     
     print(f"\nDone. Found {total_count} total unique papers.")
-    print("Saved to papers.md")
+    print("Saved to raw_papers.md")
 
 if __name__ == "__main__":
     fetch_and_display_papers()

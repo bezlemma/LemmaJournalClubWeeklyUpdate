@@ -1,13 +1,43 @@
-Daniel J Needleman
-Celeste M Nelson
-Martin C Jonikas
-Clifford P Brangwynne
-Zvonimir Dogic
-Paul Chaikin
-Ned Wingreen
-Andrej Kosmrlj
+
 Bezia Lemma
+Daniel J. Needleman
+Celeste M. Nelson
+Zvonimir Dogic
+Paul M. Chaikin
+Andrej Kosmrlj
+Mark J. Bowick
+David R. Nelson
+Noah P. Mitchell
+Peter J. Foster
+Margaret L. Gardel
+Michael P. Murrell
+Claire Walczak
+Stephanie C. Ems-McClung
+Radhika Subramanian
+Stefano Sacanna
+Katharine Goodwin
+Sebastian Furthauer
+Michael Shelley
+Che-Hang Yu
+Jinhye Bae
+Maya Anjur-Dietrich
+Colm P. Kelleher
+
 Linnea Lemma
-Noah P Mitchell
-Peter J Foster
- 
+Martin C. Jonikas
+Clifford P Brangwynne
+Ned S. Wingreen
+M Cristina Marchetti
+Suraj Shankar
+Vincenzo Vitelli
+William T. M. Irvine
+Luca Giomi
+Aparna Baskaran
+Michael F. Hagan
+Sattvic Ray
+Raymond Adkins
+Guillaume Duclos
+Itamar Kolvin
+Thomas R Powers
+Sebastian J Streichan
+L. Mahadevan
