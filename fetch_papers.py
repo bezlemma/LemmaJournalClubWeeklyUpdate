@@ -4,9 +4,19 @@ from datetime import timedelta
 import pytz
 import requests
 import time
+import re
 import feedparser
 from dateutil import parser as date_parser
 from bs4 import BeautifulSoup
+
+
+# --- Configuration ---
+DAYS_BACK = 8
+OLDEST_DATE_TO_INCLUDE = datetime.datetime.now(pytz.utc) - timedelta(days=DAYS_BACK)
+
+ARXIV_CATEGORIES = ['physics.bio-ph', 'cond-mat.soft']
+BIORXIV_COLLECTION = 'biophysics'
+
 
 def scrape_metadata(url):
     """Scrapes citation metadata from the article page."""
@@ -14,18 +24,21 @@ def scrape_metadata(url):
         # User-Agent is critical
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.9',
-            'Referer': 'https://www.google.com/',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
             'Sec-Fetch-Dest': 'document',
             'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'cross-site',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Cache-Control': 'max-age=0',
         }
         r = requests.get(url, headers=headers, timeout=10)
         if r.status_code != 200:
             # print(f"    - Scrape failed (Status {r.status_code}) for {url}")
-            return None, None
+            return None, None, None
             
         soup = BeautifulSoup(r.content, 'html.parser')
         
@@ -58,17 +71,122 @@ def scrape_metadata(url):
                  if meta_og and meta_og.get('content'):
                      abstract = meta_og['content'].strip()
                  
-        return authors, abstract
+        # Extract Article Type for Filtering
+        article_type = ""
+        for meta in soup.find_all('meta', attrs={'name': ['citation_article_type', 'dc.Type', 'article:section']}):
+            if meta.get('content'):
+                article_type = meta['content'].strip()
+                break
+                  
+        return authors, abstract, article_type
     except Exception as e:
         print(f"  Warning: Metadata scraping failed for {url}: {e}")
+        return None, None, None
+
+
+def clean_aps_abstract(summary):
+    """Clean APS feed abstracts (PRL, PRX, PRX Life, PRE).
+    
+    APS RSS summaries look like:
+      Author(s): ...<br /><p>Actual abstract text...</p><img src="..." /><br />[Journal ref]
+    
+    Returns: (clean_abstract, list_of_image_urls)
+    """
+    images = []
+    if not summary:
+        return "", images
+    
+    soup = BeautifulSoup(summary, 'html.parser')
+    
+    # Extract image URLs
+    for img in soup.find_all('img'):
+        src = img.get('src', '')
+        if src:
+            # Fix protocol-relative URLs
+            if src.startswith('//'):
+                src = 'https:' + src
+            images.append(src)
+        img.decompose()
+    
+    # Extract the actual abstract from <p> tags
+    p_tags = soup.find_all('p')
+    if p_tags:
+        abstract = ' '.join(p.get_text(strip=True) for p in p_tags)
+    else:
+        abstract = soup.get_text(strip=True)
+    
+    # Remove "Author(s): ..." prefix (everything before the abstract)
+    abstract = re.sub(r'^Author\(s\):.*?(?=\S{20,})', '', abstract, flags=re.DOTALL).strip()
+    
+    # Remove trailing journal citation like [Phys. Rev. Lett. 136, ...] Published ...
+    abstract = re.sub(r'\[Phys\.\s*Rev\..*$', '', abstract).strip()
+    abstract = re.sub(r'\[PRX\s+Life.*$', '', abstract).strip()
+    
+    return abstract, images
+
+
+def clean_biorxiv_abstract(abstract):
+    """Remove TOC graphics / figure markup from bioRxiv abstracts.
+    
+    Some bioRxiv abstracts have appended TOC graphics like:
+      ... actual abstract.  TOC Graphic  O_FIG O_LINKSMALLFIG WIDTH=200...
+      ... actual abstract.  Graphical Abstract  O_FIG ...
+    
+    Returns: clean abstract string
+    """
+    if not abstract:
+        return abstract
+    
+    # Cut at common markers
+    markers = ['TOC Graphic', 'Graphical Abstract', 'O_FIG O_LINKSMALLFIG', 'O_FIG\nO_LINKSMALLFIG']
+    for marker in markers:
+        idx = abstract.find(marker)
+        if idx > 0:
+            abstract = abstract[:idx].strip()
+    
+    return abstract
+
+
+def fetch_crossref_metadata(doi):
+    """Fetch author and abstract data from CrossRef API using a DOI.
+    
+    Returns: (authors_list, abstract_str) or (None, None) on failure.
+    """
+    if not doi:
+        return None, None
+    
+    # Clean DOI - remove 'doi:' prefix if present
+    doi = doi.replace('doi:', '').strip()
+    
+    try:
+        r = requests.get(f'https://api.crossref.org/works/{doi}', timeout=10)
+        if r.status_code != 200:
+            return None, None
+        
+        data = r.json().get('message', {})
+        
+        # Extract authors
+        authors = []
+        for a in data.get('author', []):
+            given = a.get('given', '')
+            family = a.get('family', '')
+            if given and family:
+                authors.append(f"{given} {family}")
+            elif family:
+                authors.append(family)
+        
+        # Extract abstract (may have JATS XML tags)
+        abstract = data.get('abstract', '')
+        if abstract:
+            # Strip JATS XML tags like <jats:p>, <jats:italic>, etc.
+            abstract = re.sub(r'<[^>]+>', '', abstract).strip()
+        
+        return authors if authors else None, abstract if abstract else None
+    except Exception as e:
+        print(f"  Warning: CrossRef lookup failed for {doi}: {e}")
         return None, None
 
-# --- Configuration ---
-DAYS_BACK = 7
-OLDEST_DATE_TO_INCLUDE = datetime.datetime.now(pytz.utc) - timedelta(days=DAYS_BACK)
 
-ARXIV_CATEGORIES = ['physics.bio-ph', 'cond-mat.soft']
-BIORXIV_COLLECTION = 'biophysics'
 
 # Load whitelists
 def load_list(filename):
@@ -82,20 +200,29 @@ def load_list(filename):
 GREEN_AUTHORS = load_list('greenauthors.txt')
 GREEN_KEYWORDS = load_list('greenkeywords.txt')
 
-def is_research_article(entry):
+def is_research_article(entry, source_name=None, authors_list=None, article_type=None):
     # Heuristic to filter out non-research content
-    title = entry.get('title', '').lower()
+    title = entry.get('title', '').strip()
+    title_lower = title.lower()
     summary = entry.get('summary', '').lower()
     
     # Exclude common non-research terms in title
-    exclude_terms = ['review', 'perspective', 'editorial', 'correction', 'comment', 'highlight', 'news', 'erratum', 'author correction', 'publisher correction']
-    if any(term in title for term in exclude_terms):
+    exclude_terms = [
+        'review', 'perspective', 'editorial', 'correction', 'comment', 'highlight', 
+        'news', 'erratum', 'author correction', 'publisher correction', 
+        'profile', 'q&a', 'inner workings', 'front matter', 'core concepts', 'opinion'
+    ]
+    if any(term in title_lower for term in exclude_terms):
         return False
+
+
+    # Check explicitly scraped article type if available
+    if article_type:
+        type_lower = article_type.lower()
+        if any(term in type_lower for term in ['commentary', 'perspective', 'editorial', 'news', 'interview', 'author summary', 'correction']):
+            print(f"    - Filtered out non-research type: {article_type}")
+            return False
         
-    # Check Dublin Core type if available
-    # feedparser often maps dc:type to entry.get('dc_type') or tags
-    # This is feed-dependent, so we might need to inspect tags
-    
     return True
 
 def matches_green_filter(entry):
@@ -156,8 +283,16 @@ def fetch_rss(url, source_name, group_type, section_filter=None):
             if published < OLDEST_DATE_TO_INCLUDE:
                 continue
 
-            # "Research Article" Constraint
-            if not is_research_article(entry):
+            # Check Authors for Heuristic
+            authors = []
+            if 'authors' in entry:
+                authors = [a.get('name', '') for a in entry.authors]
+            elif 'author' in entry:
+                 # PNAS might have "Firstname Lastname, Secondname Lastname" in author string
+                 authors = [entry.author]
+
+            # Initial "Research Article" Constraint (Title check only)
+            if not is_research_article(entry, source_name=source_name, authors_list=authors):
                 continue
 
             # Group B: Section Filter
@@ -190,35 +325,64 @@ def fetch_rss(url, source_name, group_type, section_filter=None):
                 authors = [entry.author]
             
             abstract = entry.get('summary', '').replace('\n', ' ')
+            images = []
+            
+            # --- APS Feed Cleaning (PRL, PRX, PRX Life, Physical Review E) ---
+            aps_sources = ['PRL', 'PRX', 'PRX Life', 'Physical Review E']
+            if source_name in aps_sources:
+                abstract, images = clean_aps_abstract(abstract)
+                # APS feeds give authors as a single comma-separated string 
+                # which is already fine — just keep as-is
             
             # --- Data Quality Checks & Fallback ---
             needs_scrape = False
             
+            # PNAS: Always scrape — RSS has smushed authors + truncated abstracts
+            if source_name == "PNAS":
+                needs_scrape = True
+            
             # Check 1: Missing Authors (Nature, PNAS Nexus)
-            if not authors:
+            elif not authors:
                 needs_scrape = True
                 
-            # Check 2: PNAS "Mashed" Authors (Long string, no commas)
-            elif source_name == "PNAS" and len(authors) == 1 and "," not in authors[0] and len(authors[0]) > 20:
-                needs_scrape = True
-                
-            # Check 3: Missing Abstract (Nature)
+            # Check 2: Missing Abstract (Nature)
             if not abstract or len(abstract) < 20:
                 needs_scrape = True
 
-            # Check 4: Soft Matter / RSC Feeds (Abstract is HTML soup)
+            # Check 3: Soft Matter / RSC Feeds (Abstract is HTML soup)
             # The feed returns <div><i><b>Soft Matter</b></i>... instead of abstract
             if source_name == "Soft Matter" or abstract.strip().startswith("<div"):
                 needs_scrape = True
                 
             if needs_scrape:
                 print(f"    - Scraping metadata for: {entry.title[:30]}...")
-                scraped_authors, scraped_abstract = scrape_metadata(entry.link)
+                scraped_authors, scraped_abstract, scraped_type = scrape_metadata(entry.link)
                 
                 if scraped_authors:
                     authors = scraped_authors
                 if scraped_abstract:
                     abstract = scraped_abstract
+                
+                # RE-CHECK FILTER WITH SCRAPED TYPE
+                if scraped_type and not is_research_article(entry, article_type=scraped_type):
+                    continue
+                
+                # CrossRef fallback for PNAS (scraping typically returns 403)
+                if source_name == "PNAS" and (not scraped_authors or not scraped_abstract):
+                    doi = entry.get('dc_identifier', '').replace('doi:', '').strip()
+                    if not doi:
+                        # Try extracting DOI from link
+                        link = entry.get('link', '')
+                        doi_match = re.search(r'10\.\d{4,}/[^\s?&#]+', link)
+                        if doi_match:
+                            doi = doi_match.group()
+                    if doi:
+                        print(f"    - CrossRef fallback for: {entry.title[:30]}...")
+                        cr_authors, cr_abstract = fetch_crossref_metadata(doi)
+                        if cr_authors and not scraped_authors:
+                            authors = cr_authors
+                        if cr_abstract and not scraped_abstract:
+                            abstract = cr_abstract
 
             paper = {
                 'source': source_name,
@@ -226,6 +390,7 @@ def fetch_rss(url, source_name, group_type, section_filter=None):
                 'authors': ", ".join(authors),
                 'link': entry.link,
                 'abstract': abstract,
+                'images': images,
                 'date': published
             }
             papers.append(paper)
@@ -275,6 +440,7 @@ def fetch_arxiv_papers():
             'authors': ", ".join([author.name for author in result.authors]),
             'link': result.entry_id,
             'abstract': result.summary.replace('\n', ' '),
+            'images': [],
             'date': published_date
         })
     print(f"  Found {len(papers)} arXiv papers.")
@@ -316,12 +482,15 @@ def fetch_biorxiv_papers():
                     paper_date = datetime.datetime.now(pytz.utc)
 
                 authors = item.get('authors', '')
+                raw_abstract = item['abstract'].replace('\n', ' ')
+                clean_abs = clean_biorxiv_abstract(raw_abstract)
                 papers.append({
                     'source': 'bioRxiv',
                     'title': item['title'].replace('\n', ' '),
                     'authors': authors,
                     'link': f"https://www.biorxiv.org/content/{item['doi']}v{item['version']}",
-                    'abstract': item['abstract'].replace('\n', ' '),
+                    'abstract': clean_abs,
+                    'images': [],
                     'date': paper_date,
                     'doi': item['doi']
                 })
@@ -364,15 +533,9 @@ def fetch_openalex_papers():
     # Calculate date range
     from_date = OLDEST_DATE_TO_INCLUDE.strftime("%Y-%m-%d")
     
-    # OpenAlex filter format: from_publication_date:2023-10-01
-    
-    # We will search for each author. 
-    # Note: Search by distinct name can be noisy if common name, but Green Authors list is usually specific.
-    # OpenAlex 'works' endpoint.
-    
     base_works_url = "https://api.openalex.org/works"
     
-    # To be polite and avoid rate limits, we'll do sequential requests.
+    # To Do: Turn this into parallel requests
     for author_name in GREEN_AUTHORS:
         # Step 1: Find Author ID
         try:
@@ -389,9 +552,7 @@ def fetch_openalex_papers():
                 
             # Take top result
             author_id = auth_data['results'][0]['id'] # formatted as https://openalex.org/A...
-            # OpenAlex API expects just the ID part or the full URI usually works. 
-            # Let's extract just the ID part A... if needed, but the filter author.id accepts the full URI too.
-            
+
             # Step 2: Fetch Works
             params = {
                 'filter': f'author.id:{author_id},from_publication_date:{from_date}',
@@ -422,14 +583,6 @@ def fetch_openalex_papers():
                         if not link:
                             link = work.get('id') # Fallback to OA ID if no DOI
                             
-                        # Abstract
-                        # OpenAlex uses an inverted index for abstract. We need to reconstruct it?
-                        # Wait, the documentation says 'abstract_inverted_index'.
-                        # Reconstructing is complex.
-                        # Sometimes 'best_oa_location' has a pdf_url or landing_page_url.
-                        # We might need to stick to the 'abstract' if available?
-                        # Actually, OpenAlex *only* provides inverted index for abstracts in the free tier response usually.
-                        # Reconstructing:
                         inverted = work.get('abstract_inverted_index')
                         abstract_text = ""
                         if inverted:
@@ -452,10 +605,6 @@ def fetch_openalex_papers():
                             pub_date = datetime.datetime.strptime(pub_date_str, "%Y-%m-%d").replace(tzinfo=pytz.utc)
                         else:
                             pub_date = datetime.datetime.now(pytz.utc)
-
-                        # Filter for "Research Article"?
-                        # work['type'] might be 'article', 'preprint', etc.
-                        # We'll allow preprints too.
                         
                         papers.append({
                             'source': 'OpenAlex/Featured',
@@ -463,6 +612,7 @@ def fetch_openalex_papers():
                             'authors': authors_str,
                             'link': link,
                             'abstract': abstract_text,
+                            'images': [],
                             'date': pub_date,
                             'doi': work.get('doi') # Store DOI for dedup
                         })
@@ -589,6 +739,11 @@ def fetch_and_display_papers():
         output_lines.append(f"<details>")
         output_lines.append(f"<summary><strong>Abstract</strong></summary>")
         output_lines.append(f"{paper['abstract']}")
+        if paper.get('images'):
+            output_lines.append("")
+            output_lines.append("**Key Images:**")
+            for img_url in paper['images']:
+                output_lines.append(f"- ![key image]({img_url})")
         output_lines.append(f"</details>")
         output_lines.append("") 
         output_lines.append("---")

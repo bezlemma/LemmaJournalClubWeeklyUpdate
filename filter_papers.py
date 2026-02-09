@@ -125,8 +125,10 @@ EXCLUSION CRITERIA:
 - NETWORK ECOLOGY: Food webs, trophic levels, ecosystem robustness, predator-prey population graphs.
 - POPULATION DYNAMICS: Lotka-Volterra models, species abundance distributions, biodiversity statistics.
 - HIGH-THROUGHPUT SCREENING: "Virtual screening," "Molecular docking studies," or "In silico characterization" of large lists of proteins without deep mechanistic insight.
-- ROUTINE MD: Standard molecular dynamics simulations (10-100ns) that just "confirm stability" of a structure without calculating free energies or phase transitions.
+- ROUTINE MD or CryoEM: The main method is CryoEM, or MD, as stated in the abstract, and there is no deeper physics
 - DATABASES: Papers that just present a list of predicted structures (e.g., "Genome-wide analysis of...").
+- Contains the word CryoEM, Structural, or MD in the title.
+- NON-RESEARCH CONTENT: Reviews, Commentaries, Perspectives, Editorials, News, or "Author Summaries". 
 
 If unsure, default to TRUE.
 Reply with a single word: TRUE or FALSE.
@@ -150,7 +152,7 @@ def summarize_paper(paper):
     prompt = f"""
 Provide a one sentence summary of the following paper.
 Do not start with a preamble "This study suggests", "The paper describes", "Researchers find", or similar phrases. 
-Start directly with the subject of the summary.
+Start directly with the subject of the summary. Assume the reader has already read the title and does not need information provided in the title.
 
 Title: {title}
 Abstract: {abstract}
@@ -242,32 +244,26 @@ def main():
     print(f"\nGeneratng {OUTPUT_FILE} with {total_kept} papers...")
     
     with open(OUTPUT_FILE, 'w') as f:
-        f.write("# Weekly Paper Update (AI Filtered)\n")
-        f.write(f"**Date:** {datetime.datetime.now().strftime('%Y-%m-%d')}\n")
-        f.write(f"**Total Papers:** {total_kept} (Selected from {len(papers)} raw)\n")
-        f.write(f"**Sources:** {breakdown}\n\n")
+        f.write("# Weekly Paper Update\n")
+        f.write(f"Date: {datetime.datetime.now().strftime('%Y-%m-%d')}<br>\n\n")
+        f.write(f"Total Papers: {total_kept} (Selected from {len(papers)} raw)<br>\n\n")
+        f.write(f"Sources: {breakdown}<br>\n\n")
         
         if featured_papers:
-            f.write("## 🌟 Featured Papers (Green Authors)\n\n")
+            f.write("# Featured Papers\n\n<br>\n\n")
             for p in featured_papers:
-                f.write(f"### {p['title']}\n")
-                f.write(f"**Date:** {p.get('date', '')[:10]}\n")
-                f.write(f"**Authors:** {p['authors']}\n")
-                f.write(f"**Link:** {p['link']}\n\n") 
-                # For featured papers, we might have stored "Full Abstract" in ai_summary or just print abstract directly
-                # The user requested "whole abstract".
-                f.write(f"<details open><summary><strong>Abstract</strong></summary>{p['abstract']}</details>\n")
-                f.write("---\n\n")
+                f.write(f"## {p['title']}\n\n")
+                f.write(f"{p['authors']}<br>\n")
+                f.write(f"{p['link']}<br>\n")
+                f.write(f"{p['abstract']}\n\n<br>\n\n")
         
         if regular_papers:
-            f.write("## 📚 Biophysics Papers\n\n")
+            f.write("# Biophysics Papers\n\n<br>\n\n")
             for p in regular_papers:
-                f.write(f"### {p['title']}\n")
-                f.write(f"**Date:** {p.get('date', '')[:10]}\n")
-                f.write(f"**Authors:** {p['authors']}\n")
-                f.write(f"**Link:** {p['link']}\n")
-                f.write(f"**AI Summary:** {p['ai_summary']}\n")
-                f.write("---\n\n")
+                f.write(f"## {p['title']}\n\n")
+                f.write(f"{p['authors']}<br>\n")
+                f.write(f"{p['link']}<br>\n")
+                f.write(f"{p['ai_summary']}\n\n<br>\n\n")
 
     print("Done!")
 

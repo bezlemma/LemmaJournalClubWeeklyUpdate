@@ -22,6 +22,54 @@ Che-Hang Yu
 Jinhye Bae
 Maya Anjur-Dietrich
 Colm P. Kelleher
+Carrie Adler
+Erwin Frey
+Frank Jülicher
+Sriram Ramaswamy
+David A. Weitz
+Andreas R. Bausch
+Jonathon Howard
+Sebastian J. Streichan
+Sophie Dumont
+Nikta Fakhri
+Xavier Trepat
+Benoit Ladoux
+Manuel Théry
+Jared E. Toettcher
+Amy S. Gladfelter
+Jerome Gros
+Megan Rothstein
+Megan G Davey
+Jeremie Palacci
+Jonathan Rodenfels
+Reto Fiolka
+Jennifer Lippencott-Shwartz
+Stanislav Y. Shvartsman
+Rikki Garner
+Reza Farhadifar
+Julia Schwartzsman
+Daniel M. Sussman
+Thomas Surrey
+Harry McNamara
+Daniel Fletcher
+Jan Bruges
+Lauren Drier
+Daniel Alber
+Sebastian Gonzalez La Corte
+Kai Mesa
+Valentina Greco
+Louis Prahl
+Ezra Levy
+Alex Hughes
+Rylie Walsh
+Xavier Trepat
+Ricardo Mallarino
+Mike Piacentino
+Ruth Williams
+Gunes Taylor
+Melanie D. White
+Crystal Rogers
+Jennifer Garrison
 
 Linnea Lemma
 Martin C. Jonikas
@@ -42,3 +90,23 @@ Thomas R Powers
 Sebastian J Streichan
 L. Mahadevan
 Aastha Garde
+Eric R. Dufresne
+Oliver Mueller-Cajar
+Omar Saleh
+Danny Seara
+Trevor GrandPre
+Mattia Serra
+Marianne Bauer
+Amy Strom
+Yoonji Kim
+Iain Cheeseman
+
+Wallace F. Marshall
+Suliana Manley
+Alfred Millett-Sikking
+Kayley Hake
+Christophe Léger
+Manuel Thery
+Alex Plum
+Kate Cavanaugh
+Mark Peifer
