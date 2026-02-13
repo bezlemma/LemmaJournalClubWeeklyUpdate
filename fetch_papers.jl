@@ -1,12 +1,7 @@
-#!/usr/bin/env julia
-
-using HTTP
-using JSON3
-using EzXML
+using HTTP, JSON3, EzXML
 using Gumbo: parsehtml, text
 using Cascadia: Selector, getattr
-using Dates
-using TimeZones
+using Dates, TimeZones
 import Gumbo
 import Cascadia
 
@@ -167,23 +162,53 @@ end
 
 function scrape_metadata(url::AbstractString)
     try
-        resp = HTTP.get(url; headers=BROWSER_HEADERS, readtimeout=10, status_exception=false)
+        # Cookie jar needed for Nature.com's idp.nature.com cookie gate
+        jar = HTTP.Cookies.CookieJar()
+        resp = HTTP.get(url; headers=BROWSER_HEADERS, readtimeout=30, status_exception=false,
+                        redirect=true, cookies=jar)
         resp.status != 200 && return nothing, nothing, nothing
 
-        doc = parsehtml(String(resp.body))
+        body = String(resp.body)
+        doc = parsehtml(body)
 
-        # Authors
+        # Authors — try multiple strategies
         authors = String[]
-        for sel in [Selector("meta[name=\"citation_author\"]")]
-            for n in eachmatch(sel, doc.root)
-                c = getattr(n, "content", "")
-                !isempty(c) && push!(authors, c)
-            end
+
+        # Strategy 1: citation_author meta tags (most journals)
+        for n in eachmatch(Selector("meta[name=\"citation_author\"]"), doc.root)
+            c = getattr(n, "content", "")
+            !isempty(c) && push!(authors, c)
         end
+
+        # Strategy 2: DC.creator meta tags
         if isempty(authors)
             for n in eachmatch(Selector("meta[name=\"DC.creator\"]"), doc.root)
                 c = getattr(n, "content", "")
                 !isempty(c) && push!(authors, strip(c))
+            end
+        end
+
+        # Strategy 3: JSON-LD structured data (Nature uses this)
+        if isempty(authors)
+            for script_node in eachmatch(Selector("script[type=\"application/ld+json\"]"), doc.root)
+                json_text = text(script_node)
+                isempty(json_text) && continue
+                try
+                    ld = JSON3.read(json_text)
+                    # Check mainEntity.author (Nature's format)
+                    main_entity = get(ld, :mainEntity, nothing)
+                    author_list = main_entity !== nothing ? get(main_entity, :author, nothing) : get(ld, :author, nothing)
+                    if author_list !== nothing && isa(author_list, AbstractVector)
+                        for a in author_list
+                            name = isa(a, AbstractDict) ? get(a, :name, "") : string(a)
+                            name = strip(string(name))
+                            !isempty(name) && push!(authors, name)
+                        end
+                    end
+                catch
+                    # JSON parsing failed, continue
+                end
+                !isempty(authors) && break
             end
         end
 
@@ -199,6 +224,25 @@ function scrape_metadata(url::AbstractString)
                 end
             end
             !isempty(abstract_text) && break
+        end
+
+        # Abstract fallback: JSON-LD description (Nature)
+        if isempty(abstract_text)
+            for script_node in eachmatch(Selector("script[type=\"application/ld+json\"]"), doc.root)
+                json_text = text(script_node)
+                isempty(json_text) && continue
+                try
+                    ld = JSON3.read(json_text)
+                    main_entity = get(ld, :mainEntity, nothing)
+                    desc = main_entity !== nothing ? get(main_entity, :description, "") : get(ld, :description, "")
+                    desc = strip(string(desc))
+                    if !isempty(desc) && length(desc) > 50
+                        abstract_text = desc
+                        break
+                    end
+                catch
+                end
+            end
         end
 
         # Article type
@@ -1134,20 +1178,7 @@ function fetch_and_display_papers()
     oldest_str = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
     now_str = Dates.format(now(), "yyyy-mm-dd")
 
-    open("raw_papers.md", "w") do f
-        println(f, "# Weekly Paper Update (RAW)")
-        println(f, "**Date Range:** $oldest_str to $now_str")
-        println(f, "**Total Papers Found:** $total_count")
-        println(f, "**Sources:** $breakdown\n")
-        if isempty(output_lines)
-            println(f, "No papers found in this date range.")
-        else
-            print(f, join(output_lines, "\n"))
-        end
-    end
-
     println("\nDone. Found $total_count total unique papers.")
-    println("Saved to raw_papers.md")
 end
 
 # ─── Entry point ─────────────────────────────────────────────────────────────

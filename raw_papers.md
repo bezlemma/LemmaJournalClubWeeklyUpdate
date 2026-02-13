@@ -1,7 +1,7 @@
 # Weekly Paper Update (RAW)
 **Date Range:** 2026-02-07 to 2026-02-13
 **Total Papers Found:** 216
-**Sources:** bioRxiv: 51, arXiv: 44, PRR: 34, Nature: 27, Soft Matter: 13, PRL: 11, Biophysical Journal: 10, PRX: 4, PLOS ONE: 4, eLife: 4, PNAS: 4, PRX Life: 3, CrossRef/Featured: 3, PNAS NEXUS: 2, Physical Review E: 2
+**Sources:** bioRxiv: 51, arXiv: 44, PRR: 34, Nature: 26, Soft Matter: 13, PRL: 11, Biophysical Journal: 10, PRX: 4, PLOS ONE: 4, eLife: 4, PNAS: 4, CrossRef/Featured: 4, PRX Life: 3, PNAS NEXUS: 2, Physical Review E: 2
 
 ### Deciphering Rapid Cell Signaling and Control of Cell Motility by Reverse Opto-Chemical Engineering
 **Source:** PRX Life
@@ -36,11 +36,11 @@ A field-programmable-gate-array-based Bayesian protocol is developed to track qu
 ### Dual recruitment of two CCM2 molecules to KRIT1 suppresses KLF4 expression
 **Source:** Nature
 **Date:** 2026-02-13
-**Authors:** 
+**Authors:** Huet-Calderwood, Clotilde, Fisher, Oriana S., Das, Sreya, Su, Valerie L., Boggon, Titus J., Calderwood, David A.
 **Link:** https://www.nature.com/articles/s41467-026-69595-7
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Loss of KRIT1 or CCM2 drives harmful KLF4 overexpression in brain vessels. Here, authors show a single KRIT1 must recruit two CCM2 proteins via dual PTB-NPxF interactions to suppress KLF4, revealing a previously unknown PTB clustering mechanism.
 </details>
 
 ---
@@ -60,11 +60,11 @@ The authors have withdrawn their manuscript because the manuscript is not comple
 ### Ultrasound effectively destabilizes and disrupts the structural integrity of enveloped respiratory viruses
 **Source:** Nature
 **Date:** 2026-02-13
-**Authors:** 
+**Authors:** Veras, Flavio P., Nakamura, Gilberto, Pereira-da-Silva, Marcelo A., Ruiz, Gilia C. M., Constantino, Carlos J. L., Martins, Ronaldo, Arruda, Eurico, Cunha, Fernando Q., Bruno, Odemir M.
 **Link:** https://www.nature.com/articles/s41598-026-37584-x
 <details>
 <summary><strong>Abstract</strong></summary>
-
+This study demonstrates that high-frequency ultrasound (3–20 MHz) can effectively disrupt the structural integrity of both Influenza A virus (H1N1) and SARS-CoV-2 through a resonance-driven mechanism distinct from classical cavitation (kHz range). Under these conditions, viral particles undergo pronounced alterations (fragmentation, envelope rupture, and loss of morphological uniformity) consistent with direct mechanical destabilization rather than thermal or bubble-mediated effects. Detailed structural analyses revealed significant disruption of the viral envelope, accompanied by measurable shifts in particle size distribution and reduced diameters, indicative of resonance-induced fragmentation. These structural modifications were paralleled by biological consequences: SARS-CoV-2 infectivity was markedly reduced in vitro, with infected cells exhibiting substantially lower viral loads. Importantly, this work provides the first experimental evidence that acoustic resonance can directly couple with viral structural components, inducing selective mechanical destabilization of the envelope. The convergence of structural and functional data supports the view that this represents a previously undescribed biophysical phenomenon, fundamentally distinct from cavitation. This resonance-mediated destabilization highlights a novel, non-invasive, and broad-spectrum antiviral strategy that differs from cavitation, more suited to asepsis and sterilization, and offers a therapeutic approach with potential applications against enveloped respiratory viruses and other clinically relevant pathogens.
 </details>
 
 ---
@@ -84,11 +84,11 @@ The authors have withdrawn their manuscript because the manuscript is not comple
 ### Impact of G-quadruplex RNA oxidation on its conformational dynamics and interaction with ALS-associated TDP-43
 **Source:** Nature
 **Date:** 2026-02-13
-**Authors:** 
+**Authors:** Ishiguro, Akira
 **Link:** https://www.nature.com/articles/s41598-026-39767-y
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Amyotrophic lateral sclerosis (ALS) is a progressive neurodegenerative disease characterized by the selective degeneration of motor neurons. The primary cause of ALS, whether sporadic or familial, is aging, and recent studies have shown that age-related RNA oxidation plays a role in the early stages of disease onset. This study focused on the vulnerability of G-quadruplex (G4) structures to oxidation and aimed to elucidate the molecular mechanism underlying the conformational changes and their interactions with the binding protein TDP-43. Guanine within G4 structures has a low redox potential, and its substitution with 8-oxoguanine (8OG) can induce structural instability and impair its function as a protein binding signal. In addition, synthetic G4-RNAs modified by oxidation were examined, and results showed that conformational changes are due to different hydrogen bond arrangements, 8OG-A mismatches, and intermolecular G4 formation. The interaction between G4 and TDP-43 decreased in proportion to the substitution rate of 8OG. Furthermore, ALS-associated mutant proteins exhibited reduced binding affinity for oxidized G4s compared with the wild-type. Considering that intra-axonal mRNA transport mediated by G4-binding proteins is essential for the survival and activity of motor neurons, this study will provide important insights into the molecular mechanisms underlying the onset of ALS with aging.
 </details>
 
 ---
@@ -108,11 +108,11 @@ Synchronization is a fundamental phenomenon observed across a wide range of phys
 ### Quantum metrology for human health
 **Source:** Nature
 **Date:** 2026-02-13
-**Authors:** 
+**Authors:** Jones, Alex R., Gilmore, Ian S., Knight, Peter L.
 **Link:** https://www.nature.com/articles/s41567-026-03168-9
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Quantum technologies could be transformative for healthcare. Alex Jones, Ian Gilmore and Peter Knight discuss the role of metrology in the adoption of these technologies.
 </details>
 
 ---
@@ -323,11 +323,11 @@ Single-molecule microscopy has been widely used to study the structure and dynam
 ### Multilayered regulation of GluK3 kainate receptors is mediated by Neto subunits and zinc
 **Source:** Nature
 **Date:** 2026-02-12
-**Authors:** 
+**Authors:** Vinnakota, Rajesh, Dawath, Bhavya K., Assaiya, Anshul, Bhar, Suparna, Kumar, Janesh
 **Link:** https://www.nature.com/articles/s42003-026-09707-7
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Vinnakota et al. studied the regulation of the GluK3 subunit of kainate receptors and its interplay with NETO auxiliary proteins and zinc using whole cell electrophysiology and single-particle cryo-EM.
 </details>
 
 ---
@@ -347,11 +347,11 @@ We report on recent methodological advances at the Life Science X-ray Scattering
 ### The redox driven Na+-pumping mechanism in Vibrio cholerae NADH-quinone oxidoreductase relies on dynamic conformational changes
 **Source:** Nature
 **Date:** 2026-02-12
-**Authors:** 
+**Authors:** Ishikawa-Fukuda, Moe, Seki, Takehito, Kishikawa, Jun-ichi, Masuya, Takahiro, Okazaki, Kei-ichi, Kato, Takayuki, Barquera, Blanca, Miyoshi, Hideto, Murai, Masatoshi
 **Link:** https://www.nature.com/articles/s41467-026-69182-w
 <details>
 <summary><strong>Abstract</strong></summary>
-
+The Na+ -pumping NADH-quinone oxidoreductase is a redox-driven sodium pump often found in pathogenic bacteria. Here, the authors demonstrate how enzyme structural changes efficiently couple electron transfer to Na+ translocation.
 </details>
 
 ---
@@ -359,11 +359,11 @@ We report on recent methodological advances at the Life Science X-ray Scattering
 ### Sequence and chemical specificity define the functional landscape of intrinsically disordered regions
 **Source:** Nature
 **Date:** 2026-02-12
-**Authors:** 
+**Authors:** Langstein-Skora, Iris, Schmid, Andrea, Huth, Frauke, Shabani, Drin, Spechtenhauser, Lorenz, Likhodeeva, Mariia, Kunert, Franziska, Metzner, Felix J., Emenecker, Ryan J., Richardson, Mary O., Aftab, Wasim, Götz, Maximilian J., Payer, Sarah K., Pietrantoni, Niccoló, Valka, Valentina, Ravichandran, Sakthi K., Bartke, Till, Hopfner, Karl-Peter, Gerland, Ulrich, Korber, Philipp, Holehouse, Alex S.
 **Link:** https://www.nature.com/articles/s41556-025-01867-8
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Langstein-Skora, Schmid, Huth et al. propose that intrinsically disordered region functionality can be driven by the interplay between linear binding motifs and contextual chemical characteristics such as charge and hydrophobicity.
 </details>
 
 ---
@@ -429,13 +429,14 @@ Small molecules that target precursor microRNAs (pre-miRNAs) offer a strategy to
 ---
 
 ### Morphodynamics of surface-attached active drops
-**Source:** Nature
+**Source:** CrossRef/Featured
 **Date:** 2026-02-12
-**Authors:** 
-**Link:** https://www.nature.com/articles/s41467-025-68235-w
+**Authors:** Alejandro Martínez-Calvo, Sujit S. Datta
+**Link:** https://doi.org/10.1038/s41467-025-68235-w
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Abstract
+                  Many biological and synthetic systems are suspensions of oriented actively-moving components. Unlike in passive suspensions, the interplay between orientational order, active flows, and interactions with boundaries gives rise to fascinating new phenomena in such active suspensions. Here, we examine the paradigmatic example of a surface-attached drop of an active fluid (an “active drop”), which has so far only been studied in the idealized limit of thin drops. We find that such surface-attached active drops can exhibit a wide array of stable steady-state shapes and internal flows that are far richer than those documented previously, depending on boundary conditions and the strength of active stresses. Our analysis uncovers quantitative principles to predict and even rationally control the conditions under which these different states arise—yielding design principles for next-generation active materials.
 </details>
 
 ---
@@ -891,11 +892,11 @@ The rational design of proteins that maintain structural integrity under concurr
 ### Bioactive lipid-mediated structural and functional regulation of the essential human potassium channel Kir7.1
 **Source:** Nature
 **Date:** 2026-02-11
-**Authors:** 
+**Authors:** Niu, Qingwei, Vu, Simon, Xu, Yuanjiang, Qian, Mingxing, Rudenko, Anastasiia, Ye, Jin, Zeng, Jianwei, Huang, Wei, Covey, Douglas F., Zhang, Rui, Fu, Ziao, Lishko, Polina V.
 **Link:** https://www.nature.com/articles/s41467-026-68819-0
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Kir7.1 is an essential potassium channel. The authors report cryo-EM structures in multiple states revealing how bioactive lipids modulate Kir7.1, and define a pharmacological landscape that identifies agonists with therapeutic potential.
 </details>
 
 ---
@@ -919,11 +920,11 @@ System identification approaches are commonly used in engineering to infer simpl
 ### Role of atomic force microscopy in characterization of heterotypic cancer spheroids and their interaction with microplastic particles
 **Source:** Nature
 **Date:** 2026-02-11
-**Authors:** 
+**Authors:** Kolesnik, Tatjana, Öhlinger, Kristin, Absenger-Novak, Markus, Meindl, Claudia, Fröhlich, Eleonore
 **Link:** https://www.nature.com/articles/s41598-026-39445-z
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Whereas the size and shape of spheroids are routinely measured, information about their mechanical properties is often lacking. This study aimed to evaluate the role of atomic force microscopy in characterizing heterotypic cancer spheroids and their interaction with microplastic particles. We examined spheroids composed of fibroblasts, THP-1-derived macrophages, and six different lung cancer cell lines. Spheroids were assessed for viability, proliferation, surface morphology, regional cell distribution, and Young’s modulus (YM). Finally, interactions between spheroids and microplastic particles were investigated under static and dynamic exposure conditions. Morphology and cell segregation differed among spheroids, and we observed significant differences in YM. We found correlations between spheroid YM and lung cancer cell doubling times, between YM measured in the presence and absence of microplastic particles, and between spheroid sizes with and without THP-1 macrophages. Uptake of microplastic particles under dynamic conditions was low, and no clear relationship with YM was apparent. Determination of YM proved to be a useful additional parameter for characterizing cancer spheroids; however, more quantitative methods for measuring particle uptake are needed to define the role of YM in particle–spheroid interactions.
 </details>
 
 ---
@@ -991,11 +992,11 @@ Protein tyrosine phosphatase 1B (PTP1B) is a negative regulator of insulin and l
 ### Two-component dynamics in supercritical $$\text {CO}_2$$ from inelastic X-ray scattering
 **Source:** Nature
 **Date:** 2026-02-11
-**Authors:** 
+**Authors:** Majumdar, Arijit, Sun, Peihao, Singleton, Madison, Paolasini, Luigi, Bosak, Alexey, Baron, Alfred Q. R., Hastings, Jerome, Ihme, Matthias
 **Link:** https://www.nature.com/articles/s41598-026-38697-z
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Supercritical fluids are characterized by unique thermodynamic properties. One of these properties is the existence of two-component dynamics that is associated with distinct low-frequency and high-frequency vibrational responses of the fluid. However, the origin of this behavior remains unknown. By combining inelastic X-ray scattering and molecular dynamics simulations, we show that this behavior can be connected to density heterogeneities arising from molecular clusters. Analyses of measurements and molecular trajectories suggest that the two-component dynamics emerges due to distinct momentum fluctuations of clustered and unbound molecules. This connection between clusters and two-component dynamics highlights the importance of molecular-structural heterogeneities in supercritical fluids, colloids, and condensed-matter systems.
 </details>
 
 ---
@@ -1102,11 +1103,11 @@ Chlorosomes are main light-harvesting complexes of green photosynthetic bacteria
 ### Telomeric G-quadruplex intermediates unveiled by complex Markov network analysis
 **Source:** Nature
 **Date:** 2026-02-11
-**Authors:** 
+**Authors:** Sáinz-Agost, A., Falo, F., Fiasconaro, A.
 **Link:** https://www.nature.com/articles/s41598-025-29993-1
 <details>
 <summary><strong>Abstract</strong></summary>
-
+G-quadruplexes are secondary, non-canonical RNA/DNA structures formed by guanine-rich sequences assembled into four-stranded helical structures by the progressive stacking of G-Tetrads, planar arrangements of guanines stabilised by monovalent ions such as $$\text {K}^{+}$$ or $$\text {Na}^{+}$$. Their stability plays a very important role in the prevention of DNA degradation, leading to the promotion or inhibition of specific biological pathways upon formation. In this work, we explore the occurrences of intermediates originating from the unfolding of these structures by using all-atom simulations, analyzing a small number of significant reaction coordinates to follow the evolution of the system by applying a mesoscopic simplification of the structures followed by two different dimensionality reduction techniques: Principal Component Analysis (PCA) and time-Independent Component Analysis (tICA). The data of the reduced trajectories are then encoded into a Complex Markov Network which, in conjunction with an Stochastic Steepest Descent, provides a hierarchical organization of the different nodes into basins of attraction. This procedure is able to reveal the main intermediates and the most relevant transitions the system undergoes in its denaturation path.
 </details>
 
 ---
@@ -1114,11 +1115,11 @@ Chlorosomes are main light-harvesting complexes of green photosynthetic bacteria
 ### FidlTrack: high-fidelity structure-aware single particle tracking resolves intracellular molecular motion in organelles sensing APP processing
 **Source:** Nature
 **Date:** 2026-02-11
-**Authors:** 
+**Authors:** Parutto, Pierre, Yuan, Yutong, Davì, Valentina, Pons-Lanau, Roger, Ebeling, Svenja, Gupta, Karnika, Bottanelli, Francesca, Garcia-Parajo, Maria F., Campelo, Felix, Kaminski, Clemens F., Chambers, Joseph E., Nixon-Abell, Jonathon, Avezov, Edward
 **Link:** https://www.nature.com/articles/s41467-026-69067-y
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Tracking fast molecules in crowded organelles is error-prone, obscuring dynamic processes like Alzheimer’s secretase activity or secretory sorting. Here, authors present FidlTrack, a structure-aware method that boosts tracking fidelity and resolves ER-exit, nanobody binding, and BACE1-APP cleavage.
 </details>
 
 ---
@@ -1565,11 +1566,11 @@ The rotational diffusion of a rigid spherical body decorated with dimers in an e
 ### Oxygen depletion in biomolecular condensates is dominated by macromolecular density
 **Source:** Nature
 **Date:** 2026-02-10
-**Authors:** 
+**Authors:** Garg, Ankush, Brasnett, Christopher, Marrink, Siewert J., Koren, Klaus, Kjaergaard, Magnus
 **Link:** https://www.nature.com/articles/s41467-026-69376-2
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Biomolecules can control biochemical reactions via droplets of macromolecules known as condensates. Here, it is shown that oxygen is partially excluded from such condensates due to the high concentration of macromolecules.
 </details>
 
 ---
@@ -1613,11 +1614,11 @@ Determining the identity, quantity and interactions of proteins is fundamental t
 ### An integrative structural biology approach reveals the dynamic organization of the R2SP quaternary chaperone complex
 **Source:** Nature
 **Date:** 2026-02-10
-**Authors:** 
+**Authors:** Santo, Paulo E., Chagot, Marie-Eve, Gizardin-Fredon, Hugo, Ley, Marie, Chenuel, Thomas, Deslignière, Evolène, Plassart, Laura, Paiva, Ana C. F., Sousa, Pedro M. F., Bertrand, Edouard, Charpentier, Bruno, Verheggen, Céline, Quinternet, Marc, Meyer, Philippe, Bandeiras, Tiago M., Cianférani, Sarah, Plisson-Chastang, Célia, Manival, Xavier
 **Link:** https://www.nature.com/articles/s41467-026-69157-x
 <details>
 <summary><strong>Abstract</strong></summary>
-
+R2SP belongs to the R2TPlike quaternary chaperone family and consists of RUVBL1/RUVBL2 AAA+ ATPases, SPAG1 and PIH1D2. Here, authors combined biochemistry, NMR, structural&nbsp;MS and cryo-EM to investigate its 3D organization, mode of assembly and ATPase activity.
 </details>
 
 ---
@@ -1649,11 +1650,11 @@ Antiviral discovery is frequently hindered by a  stoichiometric blind spot--a la
 ### Positive cooperativity between RAS-binding and cysteine-rich domains regulates RAF membrane binding kinetics via lateral rebinding
 **Source:** Nature
 **Date:** 2026-02-10
-**Authors:** 
+**Authors:** Jimenez Salinas, Andres, Tevdorashvili, Kesaria, Grim, Julian, Morales, Alexia, Chakhrakia, Ani, Kwang Lee, Young
 **Link:** https://www.nature.com/articles/s41467-026-69437-6
 <details>
 <summary><strong>Abstract</strong></summary>
-
+The authors investigate RAF– membrane interactions using a quantitative bottom-up reconstitution approach. The study reveals that positive cooperativity between lipid and protein domains modulates membrane binding kinetics via lateral rebinding to RAS, providing mechanistic insight into RAF activation.
 </details>
 
 ---
@@ -1673,11 +1674,11 @@ Antiviral discovery is frequently hindered by a  stoichiometric blind spot--a la
 ### Molecular determinant of low-voltage dependence of human Nav1.7 inactivation revealed by efficacy-based Nav1.7 selective inhibitor
 **Source:** Nature
 **Date:** 2026-02-10
-**Authors:** 
+**Authors:** Zhao, Fang, Xi, Chuchu, Li, Jie, Ren, Kerui, Tang, Qinglian, Liang, Huaduan, Yang, Shilong, Zhu, Michael X., Cao, Zhengyu
 **Link:** https://www.nature.com/articles/s41467-026-69184-8
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Nav1.7 is a threshold current generator. Here, authors show that Thr1398 underlies the low voltage dependence of hNav1.7, determines its function as a threshold channel. This low-voltage dependence may be exploited to develop Nav1.7 selective inhibitors for pain therapy.
 </details>
 
 ---
@@ -1709,11 +1710,11 @@ Ageing is commonly viewed as a consequence of cumulative molecular damage and de
 ### Pan centromeric FISH enhances precision in radiation biodosimetry
 **Source:** Nature
 **Date:** 2026-02-10
-**Authors:** 
+**Authors:** Chaurasia, Rajesh Kumar, Notnani, Aarti, Vaz, Devina Fenilon, Shirsath, Kapil B., Fatima, Sheeri, Bhat, Nagesh N., Khan, Arshad, Kumar, Dhruv, Sapra, Balvinder K.
 **Link:** https://www.nature.com/articles/s41598-025-34407-3
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Accurate biodosimetry is critical for assessing radiation exposure in radiological emergencies, occupational monitoring, and clinical management, where precise dose estimation informs life-saving decisions and regulatory compliance. Current gold-standard cytogenetic methods face limitations in sensitivity and reproducibility, especially at low doses (&lt; 0.5&nbsp;Gy) (practical limitations at low doses, including very low dicentric yields, higher statistical noise, and greater scoring uncertainty as aberration frequencies near background levels). This study presents a systematic comparison of pan-centromeric fluorescence in situ hybridization (pan-cent-FISH) and Giemsa staining for detecting dicentric (DC) and ring (R) chromosomes following 60Co-γ irradiation (0–3&nbsp;Gy). Analysis of more than 15,000 metaphases per technique revealed enhanced sensitivity of pan-cent-FISH technique, demonstrating a 1.72-fold higher linear coefficient and enhanced (1.13-fold) quadratic coefficient (β), indicating improved sensitivity across both low and high dose ranges. Blind validation with eight samples showed pan-cent-FISH achieved ~ 2-fold greater accuracy, with mean absolute differences of 0.0538&nbsp;Gy (vs. 0.1105&nbsp;Gy for Giemsa) and average relative errors of 7.13% (vs. 15.35% for Giemsa). At low doses (0.1&nbsp;Gy), pan-cent-FISH maintained 9.0% error, while Giemsa exceeded acceptable limits (21.0% error). The standardized fluorescence detection used for the technique eliminated morphological ambiguities, reducing false negatives by ~ 40% and improving first-pass accuracy.
 </details>
 
 ---
@@ -2201,11 +2202,11 @@ The Intrinsically Disordered Protein (IDP) Tau is, under a hyperphosphorylated f
 ### Resolving the contradiction between simulation and experimental results of using gold nanoparticles in proton therapy
 **Source:** Nature
 **Date:** 2026-02-09
-**Authors:** 
+**Authors:** Tabbakh, Farshid
 **Link:** https://www.nature.com/articles/s41598-026-39621-1
 <details>
 <summary><strong>Abstract</strong></summary>
-
+While gold nanoparticles (GNP)s in proton therapy are widely assumed to exert radio-sensitization via mechanism of secondary electron emission, the discrepancies between simulations and experimental outcomes shows that, in some cases, the secondary electron hypothesis fails to explain the experimental observations particularly distant DNA damage beyond the range of low-energy electrons. These persistent discrepancies show weaknesses of this mechanism, as noted by multiple studies. Resolving the long-standing discrepancy is the main purpose of present research. We predict the survival fractions and sensitization enhancement by Geant4 to bridge the gap between simulation and in-vitro data. Through Geant4 Monte Carlo simulations we demonstrate that proton stopping – not electron emission- by GNPs is the dominant mechanism, driving the GNP enhanced proton therapy via amplification of proton’s linear energy transfer (LET). For the first time, our model successfully reconciles simulation with experimental data by quantifying the key radiobiological parameters: dose enhancement ratio (DER) and sensitization enhancement ratio (SER). These findings redefine GNPs as proton energy modulators rather than electron emitters, resolving the long-standing simulation-experiment discrepancies. However, it is emphasized that, the secondary electron emission from metallic NPs in the range of nano-scale have remarkable impact. Furthermore, we derive a mathematical relationship between DER and cell survival fraction (SF) in the linear-quadratic (LQ) model with predicted survival curves showing strong agreement with in-vitro data.
 </details>
 
 ---
@@ -2213,11 +2214,11 @@ The Intrinsically Disordered Protein (IDP) Tau is, under a hyperphosphorylated f
 ### Molecular mechanisms of flotillin complexes in organizing membrane microdomains
 **Source:** Nature
 **Date:** 2026-02-09
-**Authors:** 
+**Authors:** Lu, Ming-Ao, Qian, Yunwen, Ma, Liangwen, Hong, Jinzhi, Li, Xiaopeng, Yu, Li, Guo, Qiang, Gao, Ning
 **Link:** https://www.nature.com/articles/s41467-026-69197-3
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Flotillins are key organizers of membrane microdomains essential for cellular functions. Here, authors determine the structure of the human flotillin complex both in vitro and in situ, revealing its assembly into a dome-shaped oligomer that serves as a scaffold for membrane organization.
 </details>
 
 ---
@@ -2225,11 +2226,11 @@ The Intrinsically Disordered Protein (IDP) Tau is, under a hyperphosphorylated f
 ### Integrated virtual screening, ADMET profiling, and molecular dynamics simulations of novel natural HDAC6 inhibitors with the potential to ameliorate skeletal muscle degeneration
 **Source:** Nature
 **Date:** 2026-02-09
-**Authors:** 
+**Authors:** Ahmad, Khurshid, Ahmad, Syed Sayeed, Choi, Inho
 **Link:** https://www.nature.com/articles/s41598-026-39066-6
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Histone deacetylase 6 (HDAC6) helps maintain muscle health and regulates protein balance. In atrophic muscle, increased HDAC6 activity destabilizes microtubules and intensifies protein degradation. Therefore, selective HDAC6 inhibition is a promising approach to preserving muscle health. In this study, we conducted a comprehensive computational analysis, including virtual screening of 449,058 natural compounds from the SuperNatural 3.0 database, to identify novel natural HDAC6 inhibitors. The top candidates were filtered for drug-likeness and ADMET properties, then subjected to molecular docking and molecular dynamics simulations (MDS) to evaluate binding stability and energy profiles. The 20 best-scoring compounds (range of LibDock score: 120.54 to 167.81) were visually analyzed for their docking poses, and top-ranked compounds, SN0000021 and SN0000043, were selected for evaluation. Two natural compounds, SN0000021 and SN0000043, consistently showed strong predicted binding, favorable pharmacokinetic features, and stable interaction with the HDAC6 catalytic pocket throughout a 200-ns MDS. SN0000021 has moderate solubility, high Caco-2 permeability, and ~ 93% intestinal absorption, while SN0000043 shows slightly higher solubility, moderate permeability, and ~ 75% absorption. Both are AMES non-toxic and synthetically accessible. Free-energy calculations further confirmed their binding potential. These results indicate that SN0000021 and SN0000043 are plausible natural scaffolds for the development of selective HDAC6 inhibitors. Experimental validation in HDAC6 enzyme assays and SM models is required to confirm their anti-atrophic effects.
 </details>
 
 ---
@@ -2405,11 +2406,11 @@ Histone trimethylation on the tail residue H3K9 of nucleosomes is a hallmark of 
 ### A polymer physics model of the interphase cell nucleus for radiobiological simulations
 **Source:** Nature
 **Date:** 2026-02-09
-**Authors:** 
+**Authors:** Zhao, Man, Huang, Guomin, Xu, Zi, Huang, Xiaoyan, Liang, Ying
 **Link:** https://www.nature.com/articles/s41598-026-39234-8
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Advances in chromatin architectures achieved through super-resolution imaging and high-throughput chromosome conformation capture (Hi-C) techniques remain to be integrated into the modeling framework of radiobiology. In this study, the chromosomal and chromatin interactions in an interphase cell nucleus were described by polymer physics principles. To overcome the prohibitive computational cost, a multi-stage relaxation strategy was employed to decouple the relaxation processes of different structural levels. A distance-dependent DNA end rejoining model and a graph theory-based connected component analysis algorithm were implemented to simulate chromosome aberrations. Experimental measurements of chromosome aberrations in human skin fibroblasts exposed to both γ-rays and α particles were selected to benchmark the performance. The model efficiently reproduced 3D chromatin architectures, including chromosome territories and subcompartments, chromatin domains and loops. The predicted contact map and contact probability were consistent with Hi-C measurements. Model predicted dicentrics, interstitial deletions, and total aberrations aligned with experimental data within 20% for γ-rays and α particles, showing substantial improvement over previous reports. The proposed polymer physics-based model bridges structural biology and radiobiological simulations, demonstrating strong potential for accurate prediction of DNA damage and chromosome aberrations. Future refinements will integrate spatio-temporal repair dynamics and whole-genome sequencing data to enhance high-LET radiobiological effect predictions.
 </details>
 
 ---
@@ -2441,11 +2442,25 @@ Hearing and balance rely on the conversion of a mechanical stimulus into an elec
 ### Molecular dynamics simulations of solar-wind induced H2O formation and retention in vesicles of lunar soil
 **Source:** Nature
 **Date:** 2026-02-09
-**Authors:** 
+**Authors:** Shoji, Daigo
 **Link:** https://www.nature.com/articles/s41598-025-34389-2
 <details>
 <summary><strong>Abstract</strong></summary>
-
+Several observations have shown that the lunar surface contains both 
+                $$\hbox {H}_2$$
+              O molecules and OH. One possible origin of these chemical species are implanted solar-wind hydrogen. However, the reaction pathway from hydrogen to 
+                $$\hbox {H}_2$$
+              O remains unclear. Here, we use reactive molecular dynamics simulations to investigate 
+                $$\hbox {H}_2$$
+              O formation at vesicle walls in plagioclase grains. When hydrogen atoms were implanted into plagioclase containing a spherical vesicle, 2–3 times more hydrogen became preferentially trapped at the vesicle wall as OH due to oxygen dangling bonds. The accumulation of OH and subsequent trapping of hydrogen atoms led to the synthesis of 
+                $$\hbox {H}_2$$
+              O molecules. If the trapped hydrogen does not diffuse over several lunar days, which is plausible given the strong bonding energy of the dangling bonds (>5 eV), up to a few wt% of 
+                $$\hbox {H}_2$$
+              O can form near vesicle walls. Furthermore, in vesicles lacking pathways to the outer space, their closed structure inhibits 
+                $$\hbox {H}_2$$
+              O diffusion, consistent with the detection of 
+                $$\hbox {H}_2$$
+              O in Apollo soils.
 </details>
 
 ---
@@ -2465,11 +2480,11 @@ Natural Killer(NK) cells eliminate target cells through antibody-dependent cell-
 ### Photoinduced proton transfer in differently structured water: an EPR approach to solving a classic problem
 **Source:** Nature
 **Date:** 2026-02-09
-**Authors:** 
+**Authors:** Barbon, Antonio, Savitsky, Anton, Grigoriev, Igor A., Reznikov, Vladimir A., Kirilyuk, Igor A., Lushchekina, Sofya, Moroz, Ilia B., Eliash, Tamar, Friedman, Noga, Sheves, Mordehai, Carmieli, Raanan, Weiner, Lev
 **Link:** https://www.nature.com/articles/s41598-026-38650-0
 <details>
 <summary><strong>Abstract</strong></summary>
-
+The mechanism of proton transfer (PT), and how it is affected by water structure, is a fundamental issue in numerous chemical and biological processes. Formulated more than 200 years ago, a possible model for PT in aqueous media was proposed by Grotthuss, which continues to be actively studied and debated. In this study, we exploit electron paramagnetic resonance to investigate PT in aqueous solutions. Our proposed method employs pH-sensitive stable nitroxyl radicals and makes use of photolysis of 2-nitrobenzaldehyde to generate protons in the sub-nanosecond timescale. This approach was used to study the impact of classical chaotropic compounds on PT as studied in various aqueous solutions, i.e. 8 M urea, 6 M guanidine hydrochloride (Gdn·HCl), and potassium chloride (KCl). Our findings confirm significant impacts on PT rates. For instance, in 6 M Gdn·HCl, PT occurred 40-fold slower than in water. The method’s sensitivity to water structure is demonstrated, highlighting its potential for monitoring the kinetics of PT in ice and in proteins.
 </details>
 
 ---
@@ -2525,11 +2540,11 @@ The Finitely Extensible Nonlinear Elastic (FENE) dumbbell model is a widely used
 ### Computational optimization of DEK1 calpain domain solubility through integrated structural modelling and data-driven targeted mutagenesis
 **Source:** Nature
 **Date:** 2026-02-08
-**Authors:** 
+**Authors:** Dabiri, Mohammad, Levarski, Zdenko, Struhárňanská, Eva, Demko, Viktor, Beneš, Vladimir, Turňa, Jan, Stuchlík, Stanislav
 **Link:** https://www.nature.com/articles/s41598-026-38805-z
 <details>
 <summary><strong>Abstract</strong></summary>
-
+The DEFECTIVE KERNEL 1 (DEK1) protein plays essential functions throughout plant development. DEK1 is a multidomain 240 kDa protein with yet unsolved 3D structure. To facilitate structural and functional studies of DEK1, here we investigate its calpain protease core domain (CysPc) from Physcomitrium patens. Using integrated structural modelling we propose targeted mutagenesis of CysPc to enhance its solubility during recombinant protein production. We created a pipeline to predict the topology of the CysPc domain with improved precision, providing a robust framework for further exploration. We evaluated the native and mutant structures by MD simulations, concentrating on several solubility-related parameters. Following these features, we implemented specific single, double, and triple amino acid mutagenesis to select variants with improved solubility. Our method preserves overall structural integrity while reducing aggregation-prone traits. We advocate for the utilization of optimized data driven method that can effectively traverse the extensive combinatorial space and prioritize mutation sets with the greatest potential for enhancing solubility. This framework provides a logical, data-driven approach to improving protein solubility, particularly beneficial in situations lacking high-resolution structural data.
 </details>
 
 ---
@@ -2537,11 +2552,11 @@ The Finitely Extensible Nonlinear Elastic (FENE) dumbbell model is a widely used
 ### Existence and stability of time-fractional Keller-Segel-Navier-Stokes system with Poisson jumps
 **Source:** Nature
 **Date:** 2026-02-08
-**Authors:** 
+**Authors:** Divyabala, K., Durga, N.
 **Link:** https://www.nature.com/articles/s41598-025-28809-6
 <details>
 <summary><strong>Abstract</strong></summary>
-
+This manuscript investigates the time-fractional stochastic Keller-Segel-Navier-Stokes system in Hilbert space. This work provides a theoretical framework for analyzing cell migration by incorporating memory effects and environmental noise into the chemotactic signaling and fluid interaction. The proposed system captures key dynamics of cells respond to external gradients during directed movement. The existence of local and global mild solutions with uniqueness is studied under suitable conditions by using Banach fixed point and Banach implicit function theorem. The results are obtained in the pth moment by employing fractional calculus, stochastic analysis and Mittag-Leffler functions. Furthermore, we investigated the asymptotic stability of the proposed system as time approaches infinity.
 </details>
 
 ---
@@ -2585,11 +2600,11 @@ Kinase family proteins constitute the second largest protein class targeted in d
 ### Electrostatic properties of disordered regions control transcription factor search and pioneer activity
 **Source:** Nature
 **Date:** 2026-02-08
-**Authors:** 
+**Authors:** Sakong, Sim, Fierz, Beat, Suter, David M.
 **Link:** https://www.nature.com/articles/s41467-026-69284-5
 <details>
 <summary><strong>Abstract</strong></summary>
-
+This work describes how positive charge in the peptide chain flanking the DNA-binding domain of transcription factors speeds up their search on free and chromatinized DNA, helping to explain why some transcription factors act as stronger pioneers.
 </details>
 
 ---

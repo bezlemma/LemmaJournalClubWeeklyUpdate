@@ -1,12 +1,4 @@
-#!/usr/bin/env julia
-# filter_papers.jl — Julia port of filter_papers.py
-# AI-powered paper filtering and summarization using Gemini REST API.
-# Input:  papers.json
-# Output: papers_final.md
-
-using JSON3
-using HTTP
-using Dates
+using JSON3, HTTP, Dates
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
@@ -160,6 +152,7 @@ INCLUSION CRITERIA:
 - Novel use of physics to understand biological systems.
 
 EXCLUSION CRITERIA:
+- Not about biology or soft matter (quantum mechanics, astronomy, particle physics)
 - Static structural biology (routine crystallography).
 - Purely clinical, medical, or descriptive genetics/omics.
 - Pure materials science with no biological application.
