@@ -5,17 +5,53 @@ import pytz
 import requests
 import time
 import re
+import json
 import feedparser
 from dateutil import parser as date_parser
 from bs4 import BeautifulSoup
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 # --- Configuration ---
-DAYS_BACK = 8
+DAYS_BACK = 6
 OLDEST_DATE_TO_INCLUDE = datetime.datetime.now(pytz.utc) - timedelta(days=DAYS_BACK)
 
 ARXIV_CATEGORIES = ['physics.bio-ph', 'cond-mat.soft']
 BIORXIV_COLLECTION = 'biophysics'
+
+# --- Journal Feed Configuration ---
+# Each feed has: url, name, group (include_all / section_filter / green_filter)
+# include_all:     Fetch all papers from the feed
+# section_filter:  Only include if tags/title/summary match the section_filter string
+# green_filter:    Only include papers matching green author/keyword lists
+JOURNAL_FEEDS = [
+    # Group A: Include all papers from these biophysics-specific feeds
+    {"url": "http://feeds.rsc.org/rss/sm", "name": "Soft Matter", "group": "include_all"},
+    {"url": "https://www.cell.com/biophysj/inpress.rss", "name": "Biophysical Journal", "group": "include_all"},
+    {"url": "https://feeds.aps.org/rss/tocsec/PRE-Biologicalphysics.xml", "name": "Physical Review E", "group": "include_all"},
+    {"url": "https://feeds.aps.org/rss/tocsec/PRL-SoftMatterBiologicalandInterdisciplinaryPhysics.xml", "name": "PRL", "group": "include_all"},
+    {"url": "https://feeds.aps.org/rss/recent/prx.xml", "name": "PRX", "group": "include_all"},
+    {"url": "http://feeds.aps.org/rss/recent/prxlife.xml", "name": "PRX Life", "group": "include_all"},
+    {"url": "https://feeds.aps.org/rss/recent/prresearch.xml", "name": "PRR", "group": "include_all"},
+    {"url": "http://www.nature.com/subjects/biophysics.rss", "name": "Nature", "group": "include_all"},
+    {"url": "https://www.pnas.org/action/showFeed?type=searchTopic&taxonomyCode=topic&tagCodeOr=biophys-bio&tagCodeOr=biophys-phys", "name": "PNAS", "group": "include_all"},
+    # Group B: Broad feeds filtered by section
+    {"url": "https://academic.oup.com/rss/site_6448/4114.xml", "name": "PNAS NEXUS", "group": "include_all"},
+    {"url": "https://journals.plos.org/plosone/search/feed/atom?sortOrder=DATE_NEWEST_FIRST&filterJournals=PLoSONE&unformattedQuery=subject%3A%22biophysics%22", "name": "PLOS ONE", "group": "include_all"},
+    {"url": "https://www.science.org/rss/express.xml", "name": "Science", "group": "section_filter", "section_filter": "Biophysics"},
+    # Group C: Broad feeds filtered by green authors/keywords
+    {"url": "https://www.cell.com/cell/current.rss", "name": "Cell", "group": "green_filter"},
+    {"url": "https://elifesciences.org/rss/recent.xml", "name": "eLife", "group": "green_filter"},
+    {"url": "https://www.molbiolcell.org/action/showFeed?type=etoc&feed=rss&jc=mboc", "name": "MBoC", "group": "green_filter"},
+    # Development feed is 404
+    # {"url": "https://journals.biologists.com/dev/rss/recent.xml", "name": "Development", "group": "green_filter"},
+]
+
+APS_SOURCES = ['PRL', 'PRX', 'PRX Life', 'Physical Review E', 'PRR']
+
+
+
 
 
 def scrape_metadata(url):
@@ -147,6 +183,83 @@ def clean_biorxiv_abstract(abstract):
     return abstract
 
 
+RSC_SOURCES = ['Soft Matter']
+
+def clean_rsc_abstract(summary):
+    """Clean RSC feed abstracts (Soft Matter, etc.).
+    
+    RSC RSS summaries contain multiple <div> blocks with:
+      - Journal name, year, manuscript status, DOI
+      - Open Access badge images
+      - Creative Commons license images and links
+      - Graphical abstract image (GA?id=...)
+      - Author names + truncated abstract + RSC copyright footer
+    
+    Returns: (clean_abstract, authors_str, list_of_image_urls)
+    """
+    images = []
+    if not summary:
+        return "", "", images
+    
+    soup = BeautifulSoup(summary, 'html.parser')
+    
+    # Extract graphical abstract images (GA service URLs)
+    for img in soup.find_all('img'):
+        src = img.get('src', '')
+        alt = img.get('alt', '')
+        if src and 'ImageService/image/GA' in src:
+            if src.startswith('//'):
+                src = 'https:' + src
+            elif src.startswith('http://'):
+                src = src.replace('http://', 'https://', 1)
+            images.append(src)
+    
+    # The content div is typically the last <div> containing author + abstract
+    # It has pattern: AuthorNames<br/>Abstract text...<br/>The content of this RSS Feed...
+    divs = soup.find_all('div')
+    
+    abstract = ""
+    authors_str = ""
+    
+    for div in divs:
+        text = div.get_text(separator='\n', strip=True)
+        # Skip metadata divs (journal name, DOI, Open Access, Creative Commons)
+        if text.startswith('Soft Matter') or text.startswith('Nanoscale'):
+            continue
+        if 'Open Access' in text and len(text) < 50:
+            continue
+        if 'Creative Commons' in text or 'licensed under' in text:
+            continue
+        
+        # The content div has authors + abstract
+        # Split on <br/> - first segment is authors, rest is abstract
+        parts = []
+        for child in div.children:
+            if child.name == 'br':
+                parts.append('\n')
+            elif hasattr(child, 'get_text'):
+                parts.append(child.get_text(strip=True))
+            elif isinstance(child, str):
+                t = child.strip()
+                if t:
+                    parts.append(t)
+        
+        full_text = ''.join(parts)
+        segments = [s.strip() for s in full_text.split('\n') if s.strip()]
+        
+        # Need at least authors + abstract
+        if len(segments) >= 2:
+            # Filter out RSC copyright footer
+            segments = [s for s in segments if 'The content of this RSS Feed' not in s
+                       and 'To cite this article before page numbers' not in s]
+            
+            if segments:
+                authors_str = segments[0]
+                abstract = ' '.join(segments[1:])
+    
+    return abstract, authors_str, images
+
+
 def fetch_crossref_metadata(doi):
     """Fetch author and abstract data from CrossRef API using a DOI.
     
@@ -197,7 +310,36 @@ def load_list(filename):
         print(f"Warning: {filename} not found.")
         return []
 
-GREEN_AUTHORS = load_list('greenauthors.txt')
+ORCID_PATTERN = re.compile(r'^(\d{4}-\d{4}-\d{4}-[\dX]{4})\s*-\s*(.+)$')
+
+def load_green_authors_with_orcids(filename):
+    """Parse greenauthors.txt. Lines can be:
+       ORCID - Author Name   →  (orcid, name) tuple
+       Author Name           →  (None, name) tuple
+    Returns (orcid_list, name_list) where:
+       orcid_list = [(orcid, name), ...] for CrossRef fetching
+       name_list  = [name, ...] for green-filter matching on RSS papers
+    """
+    orcid_list = []
+    name_list = []
+    try:
+        with open(filename, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                m = ORCID_PATTERN.match(line)
+                if m:
+                    orcid, name = m.group(1), m.group(2).strip()
+                    orcid_list.append((orcid, name))
+                    name_list.append(name)
+                else:
+                    name_list.append(line)
+    except FileNotFoundError:
+        print(f"Warning: {filename} not found.")
+    return orcid_list, name_list
+
+GREEN_ORCIDS, GREEN_AUTHORS = load_green_authors_with_orcids('greenauthors.txt')
 GREEN_KEYWORDS = load_list('greenkeywords.txt')
 
 def is_research_article(entry, source_name=None, authors_list=None, article_type=None):
@@ -246,7 +388,8 @@ def matches_green_filter(entry):
     return False
 
 def fetch_rss(url, source_name, group_type, section_filter=None):
-    print(f"Fetching {source_name} ({group_type})...")
+    """Fetch papers from an RSS feed with optional section or green-author filtering."""
+    print(f"Fetching {source_name}...")
     papers = []
     
     # Headers to mimic a browser
@@ -295,25 +438,19 @@ def fetch_rss(url, source_name, group_type, section_filter=None):
             if not is_research_article(entry, source_name=source_name, authors_list=authors):
                 continue
 
-            # Group B: Section Filter
-            if group_type == 'B' and section_filter:
+            # Section filter: check tags, category, title, summary
+            if group_type == 'section_filter' and section_filter:
                 tags = [t.get('term', '').lower() for t in entry.get('tags', [])]
                 tags += [t.get('label', '').lower() for t in entry.get('tags', [])]
                 cat = entry.get('category', '').lower()
-                
-                # Check tags/category
-                category_match = section_filter.lower() in [t.lower() for t in tags] or section_filter.lower() in cat
-                
-                # Check title/summary for section (e.g. "Biophysics: Title")
-                # PNAS titles often don't have it, but maybe summary?
-                text_match = section_filter.lower() in entry.get('title', '').lower() or section_filter.lower() in entry.get('summary', '').lower()
-                
+                sf = section_filter.lower()
+                category_match = sf in tags or sf in cat
+                text_match = sf in entry.get('title', '').lower() or sf in entry.get('summary', '').lower()
                 if not (category_match or text_match):
-                     # If generic feed and strict filter requested, skip.
-                     continue
+                    continue
 
-            # Group C: Author/Keyword Filter
-            if group_type == 'C':
+            # Green filter: only include papers matching green authors/keywords
+            if group_type == 'green_filter':
                 if not matches_green_filter(entry):
                     continue
 
@@ -327,12 +464,17 @@ def fetch_rss(url, source_name, group_type, section_filter=None):
             abstract = entry.get('summary', '').replace('\n', ' ')
             images = []
             
-            # --- APS Feed Cleaning (PRL, PRX, PRX Life, Physical Review E) ---
-            aps_sources = ['PRL', 'PRX', 'PRX Life', 'Physical Review E']
-            if source_name in aps_sources:
+            # --- APS Feed Cleaning (PRL, PRX, PRX Life, PRE, PRR) ---
+            if source_name in APS_SOURCES:
                 abstract, images = clean_aps_abstract(abstract)
-                # APS feeds give authors as a single comma-separated string 
-                # which is already fine — just keep as-is
+            
+            # --- RSC Feed Cleaning (Soft Matter, etc.) ---
+            if source_name in RSC_SOURCES:
+                rsc_abstract, rsc_authors, images = clean_rsc_abstract(entry.get('summary', ''))
+                if rsc_abstract:
+                    abstract = rsc_abstract
+                if rsc_authors:
+                    authors = [rsc_authors]
             
             # --- Data Quality Checks & Fallback ---
             needs_scrape = False
@@ -347,11 +489,6 @@ def fetch_rss(url, source_name, group_type, section_filter=None):
                 
             # Check 2: Missing Abstract (Nature)
             if not abstract or len(abstract) < 20:
-                needs_scrape = True
-
-            # Check 3: Soft Matter / RSC Feeds (Abstract is HTML soup)
-            # The feed returns <div><i><b>Soft Matter</b></i>... instead of abstract
-            if source_name == "Soft Matter" or abstract.strip().startswith("<div"):
                 needs_scrape = True
                 
             if needs_scrape:
@@ -403,48 +540,59 @@ def fetch_rss(url, source_name, group_type, section_filter=None):
 
 def fetch_arxiv_papers():
     print(f"Fetching arXiv papers...")
-    # Construct the query
     query_string = " OR ".join([f"cat:{cat}" for cat in ARXIV_CATEGORIES])
 
-    client = arxiv.Client()
-    search = arxiv.Search(
-        query=query_string,
-        max_results=200, 
-        sort_by=arxiv.SortCriterion.SubmittedDate,
-        sort_order=arxiv.SortOrder.Descending
-    )
+    max_retries = 3
+    for attempt in range(1, max_retries + 1):
+        client = arxiv.Client()
+        search = arxiv.Search(
+            query=query_string,
+            max_results=200, 
+            sort_by=arxiv.SortCriterion.SubmittedDate,
+            sort_order=arxiv.SortOrder.Descending
+        )
 
-    papers = []
-    seen_ids = set()
+        papers = []
+        seen_ids = set()
 
-    for result in client.results(search):
-        published_date = result.published.replace(tzinfo=pytz.utc)
-        
-        if published_date < OLDEST_DATE_TO_INCLUDE:
-            break
+        try:
+            for result in client.results(search):
+                published_date = result.published.replace(tzinfo=pytz.utc)
+                
+                if published_date < OLDEST_DATE_TO_INCLUDE:
+                    break
 
-        paper_id = result.entry_id.split('/')[-1].split('v')[0]
-        
-        if paper_id in seen_ids:
-            continue
-        seen_ids.add(paper_id)
+                paper_id = result.entry_id.split('/')[-1].split('v')[0]
+                
+                if paper_id in seen_ids:
+                    continue
+                seen_ids.add(paper_id)
 
-        # "Research Article" check for arXiv? 
-        # Usually checking excluding "Review" in title is good enough
-        if not is_research_article({'title': result.title, 'summary': result.summary}):
-             continue
+                if not is_research_article({'title': result.title, 'summary': result.summary}):
+                     continue
 
-        papers.append({
-            'source': 'arXiv',
-            'title': result.title.replace('\n', ' '),
-            'authors': ", ".join([author.name for author in result.authors]),
-            'link': result.entry_id,
-            'abstract': result.summary.replace('\n', ' '),
-            'images': [],
-            'date': published_date
-        })
-    print(f"  Found {len(papers)} arXiv papers.")
-    return papers
+                papers.append({
+                    'source': 'arXiv',
+                    'title': result.title.replace('\n', ' '),
+                    'authors': ", ".join([author.name for author in result.authors]),
+                    'link': result.entry_id,
+                    'abstract': result.summary.replace('\n', ' '),
+                    'images': [],
+                    'date': published_date
+                })
+            print(f"  Found {len(papers)} arXiv papers.")
+            return papers
+        except Exception as e:
+            wait_secs = 30 * attempt
+            if attempt < max_retries:
+                print(f"  arXiv error (attempt {attempt}/{max_retries}): {e}")
+                print(f"  Waiting {wait_secs}s before retrying...")
+                time.sleep(wait_secs)
+            else:
+                print(f"  arXiv error after {max_retries} attempts: {e}")
+                print(f"  Continuing with {len(papers)} arXiv papers found so far.")
+                return papers
+    return []
 
 def fetch_biorxiv_papers():
     print(f"Fetching bioRxiv papers...")
@@ -457,19 +605,28 @@ def fetch_biorxiv_papers():
     while True:
         url = f"https://api.biorxiv.org/details/biorxiv/{start_date_str}/{end_date_str}/{cursor}/json"
         
-        # Retry logic for bioRxiv
-        max_retries = 3
+        # Retry logic for bioRxiv with rate-limit-aware backoff
+        max_retries = 4
         data = None
-        for attempt in range(max_retries):
+        for attempt in range(1, max_retries + 1):
             try:
-                # print(f"  Debug: Fetching cursor {cursor}...")
                 response = requests.get(url, timeout=30)
+                if response.status_code == 429:
+                    wait_secs = 15 * attempt
+                    print(f"  bioRxiv rate limit (429) at cursor {cursor}. Waiting {wait_secs}s (attempt {attempt}/{max_retries})...")
+                    time.sleep(wait_secs)
+                    continue
                 response.raise_for_status()
                 data = response.json()
                 break 
+            except requests.exceptions.HTTPError as e:
+                wait_secs = 10 * attempt
+                print(f"  bioRxiv HTTP error at cursor {cursor}: {e}. Waiting {wait_secs}s (attempt {attempt}/{max_retries})...")
+                time.sleep(wait_secs)
             except Exception as e:
-                print(f"  Error fetching bioRxiv: {e}. Retrying ({attempt+1}/{max_retries})...")
-                time.sleep(2)
+                wait_secs = 5 * attempt
+                print(f"  bioRxiv error at cursor {cursor}: {e}. Waiting {wait_secs}s (attempt {attempt}/{max_retries})...")
+                time.sleep(wait_secs)
         
         if not data or 'collection' not in data:
             break
@@ -519,207 +676,181 @@ def fetch_biorxiv_papers():
     print(f"  Found {len(final)} bioRxiv papers (biophysics).")
     return final
 
-def fetch_openalex_papers():
-    print(f"Fetching OpenAlex papers for Green Authors...")
-    # Just to be safe, reload green authors here or pass it in
-    # Use global GREEN_AUTHORS list loaded at top
+CROSSREF_MAILTO = "lemma@princeton.edu"  # For polite pool (faster rate limits)
+
+def _query_crossref_orcid(orcid, author_name, from_date):
+    """Query CrossRef for a single author's recent papers by ORCID. Used by ThreadPoolExecutor."""
+    results_papers = []
+    max_retries = 4
+    url = "https://api.crossref.org/works"
+    params = {
+        'filter': f'orcid:{orcid},from-pub-date:{from_date}',
+        'rows': 10,
+        'sort': 'published',
+        'order': 'desc',
+        'mailto': CROSSREF_MAILTO,
+    }
     
-    if not GREEN_AUTHORS:
-        print("  No Green Authors found to search.")
+    for attempt in range(1, max_retries + 1):
+        try:
+            r = requests.get(url, params=params, timeout=15)
+            if r.status_code == 200:
+                data = r.json()
+                for item in data.get('message', {}).get('items', []):
+                    title_parts = item.get('title', ['No Title'])
+                    title = title_parts[0] if title_parts else 'No Title'
+                    
+                    # Parse authors
+                    authors_raw = item.get('author', [])
+                    authors_list = []
+                    for a in authors_raw:
+                        given = a.get('given', '')
+                        family = a.get('family', '')
+                        if given and family:
+                            authors_list.append(f"{given} {family}")
+                        elif family:
+                            authors_list.append(family)
+                    authors_str = ", ".join(authors_list) if authors_list else "Unknown"
+                    
+                    # DOI link
+                    doi = item.get('DOI', '')
+                    link = f"https://doi.org/{doi}" if doi else item.get('URL', '')
+                    
+                    # Abstract (CrossRef includes it for some publishers)
+                    abstract_text = item.get('abstract', '')
+                    if abstract_text:
+                        # CrossRef abstracts sometimes have JATS XML tags
+                        abstract_text = re.sub(r'<[^>]+>', '', abstract_text).strip()
+                    if not abstract_text:
+                        abstract_text = "Abstract not available via CrossRef API."
+                    
+                    # Publication date
+                    date_parts = item.get('published', {}).get('date-parts', [[]])
+                    if date_parts and date_parts[0]:
+                        parts = date_parts[0]
+                        year = parts[0] if len(parts) > 0 else 2026
+                        month = parts[1] if len(parts) > 1 else 1
+                        day = parts[2] if len(parts) > 2 else 1
+                        pub_date = datetime.datetime(year, month, day, tzinfo=pytz.utc)
+                    else:
+                        pub_date = datetime.datetime.now(pytz.utc)
+                    
+                    results_papers.append({
+                        'source': 'CrossRef/Featured',
+                        'title': title.replace('\n', ' '),
+                        'authors': authors_str,
+                        'link': link,
+                        'abstract': abstract_text,
+                        'images': [],
+                        'date': pub_date,
+                        'doi': f"https://doi.org/{doi}" if doi else None
+                    })
+                return results_papers
+            elif r.status_code == 429:
+                wait_secs = 5 * attempt
+                time.sleep(wait_secs)
+                continue  # Retry
+            else:
+                # Non-retryable HTTP error
+                print(f"  ❌ CrossRef failed for {author_name}: HTTP {r.status_code}")
+                return results_papers
+                
+        except requests.exceptions.Timeout:
+            if attempt < max_retries:
+                time.sleep(3 * attempt)
+            else:
+                print(f"  ❌ CrossRef failed for {author_name}: timeout after {max_retries} attempts")
+        except Exception as e:
+            print(f"  ❌ CrossRef failed for {author_name}: {e}")
+            return results_papers
+        
+    return results_papers
+
+
+def fetch_crossref_papers():
+    """Fetch recent papers by green-listed authors via CrossRef API using ORCIDs (parallelized)."""
+    print(f"Fetching CrossRef papers for Green Authors ({len(GREEN_ORCIDS)} with ORCIDs)...")
+    
+    if not GREEN_ORCIDS:
+        print("  No Green Authors with ORCIDs found to search.")
         return []
         
     papers = []
-    
-    # Calculate date range
     from_date = OLDEST_DATE_TO_INCLUDE.strftime("%Y-%m-%d")
     
-    base_works_url = "https://api.openalex.org/works"
-    
-    # To Do: Turn this into parallel requests
-    for author_name in GREEN_AUTHORS:
-        # Step 1: Find Author ID
-        try:
-            # Search for author
-            auth_r = requests.get("https://api.openalex.org/authors", params={'search': author_name}, timeout=10)
-            if auth_r.status_code != 200:
-                print(f"  Failed to search author '{author_name}': {auth_r.status_code}")
-                continue
-                
-            auth_data = auth_r.json()
-            if not auth_data.get('results'):
-                print(f"  No author found for '{author_name}'")
-                continue
-                
-            # Take top result
-            author_id = auth_data['results'][0]['id'] # formatted as https://openalex.org/A...
-
-            # Step 2: Fetch Works
-            params = {
-                'filter': f'author.id:{author_id},from_publication_date:{from_date}',
-                'per-page': 10,
-                'sort': 'publication_date:desc'
-            }
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {
+            executor.submit(_query_crossref_orcid, orcid, name, from_date): name
+            for orcid, name in GREEN_ORCIDS
+        }
+        for future in as_completed(futures):
+            papers.extend(future.result())
             
-            r = requests.get(base_works_url, params=params, timeout=10)
-            if r.status_code == 200:
-                data = r.json()
-                results = data.get('results', [])
-                if results:
-                    # print(f"  Found {len(results)} matches for '{author_name}'")
-                    for work in results:
-                        # Extract fields
-                        title = work.get('title', 'No Title')
-                        
-                        # Authors string
-                        try:
-                            authors_list = [a['author']['display_name'] for a in work.get('authorships', [])]
-                            authors_str = ", ".join(authors_list)
-                        except:
-                            authors_str = "Unknown"
-                            
-                        # Link and DOI
-                        # OpenAlex provides 'doi' field and 'id' (openalex id)
-                        link = work.get('doi')
-                        if not link:
-                            link = work.get('id') # Fallback to OA ID if no DOI
-                            
-                        inverted = work.get('abstract_inverted_index')
-                        abstract_text = ""
-                        if inverted:
-                            # Reconstruct
-                            # Create a list of (index, word)
-                            word_index = []
-                            for word, indices in inverted.items():
-                                for idx in indices:
-                                    word_index.append((idx, word))
-                            word_index.sort()
-                            abstract_text = " ".join([w[1] for w in word_index])
-                        
-                        if not abstract_text:
-                            # Fallback?
-                            abstract_text = "Abstract not available via OpenAlex API."
-
-                        # Date
-                        pub_date_str = work.get('publication_date')
-                        if pub_date_str:
-                            pub_date = datetime.datetime.strptime(pub_date_str, "%Y-%m-%d").replace(tzinfo=pytz.utc)
-                        else:
-                            pub_date = datetime.datetime.now(pytz.utc)
-                        
-                        papers.append({
-                            'source': 'OpenAlex/Featured',
-                            'title': title.replace('\n', ' '),
-                            'authors': authors_str,
-                            'link': link,
-                            'abstract': abstract_text,
-                            'images': [],
-                            'date': pub_date,
-                            'doi': work.get('doi') # Store DOI for dedup
-                        })
-            elif r.status_code == 429:
-                print("  Rate limit hit for OpenAlex. Sleeping...")
-                time.sleep(2)
-            else:
-                pass
-                # print(f"  Failed query for {author_name}: {r.status_code}")
-                
-            time.sleep(0.2) # Polite delay
-            
-        except Exception as e:
-            print(f"  Error querying OpenAlex for {author_name}: {e}")
-            
-    # Deduplicate internally within OpenAlex results first
-    unique_oa = {}
+    # Deduplicate internally — prefer DOI, fall back to title
+    unique = {}
     for p in papers:
-        # Use DOI or Title
         key = p.get('doi') or p['title'].lower()
-        if key not in unique_oa:
-            unique_oa[key] = p
+        if key not in unique:
+            unique[key] = p
             
-    print(f"  Found {len(unique_oa)} unique papers from OpenAlex.")
-    return list(unique_oa.values())
+    print(f"  Found {len(unique)} unique papers from CrossRef.")
+    return list(unique.values())
 
 def fetch_and_display_papers():
     print(f"Fetching papers from {OLDEST_DATE_TO_INCLUDE.strftime('%Y-%m-%d')} to Now...")
     
     all_papers = []
     
-    # 0. OpenAlex (Featured)
-    all_papers.extend(fetch_openalex_papers())
+    # 0. CrossRef (Featured) — parallelized internally
+    all_papers.extend(fetch_crossref_papers())
 
-    # 1. Group A: General (arXiv)
+    # 1. arXiv
     all_papers.extend(fetch_arxiv_papers())
     
     # 2. bioRxiv
     all_papers.extend(fetch_biorxiv_papers())
     
-    # 3. Group A: Specialized (Fetch All)
-    # Soft Matter
-    all_papers.extend(fetch_rss("http://feeds.rsc.org/rss/sm", "Soft Matter", "A"))
-    
-    # Biophysical Journal
-    all_papers.extend(fetch_rss("https://www.cell.com/biophysj/inpress.rss", "Biophysical Journal", "A"))
-    
-    # Physical Review E
-    all_papers.extend(fetch_rss("https://feeds.aps.org/rss/tocsec/PRE-Biologicalphysics.xml", "Physical Review E", "A"))
+    # 3. Journal RSS feeds — fetched in parallel
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {
+            executor.submit(
+                fetch_rss,
+                feed["url"],
+                feed["name"],
+                feed["group"],
+                feed.get("section_filter")
+            ): feed["name"]
+            for feed in JOURNAL_FEEDS
+        }
+        for future in as_completed(futures):
+            name = futures[future]
+            try:
+                all_papers.extend(future.result())
+            except Exception as e:
+                print(f"  Error fetching {name}: {e}")
 
-    # PRL
-    all_papers.extend(fetch_rss("https://feeds.aps.org/rss/tocsec/PRL-SoftMatterBiologicalandInterdisciplinaryPhysics.xml", "PRL", "A"))
-
-    # PRX
-    all_papers.extend(fetch_rss("https://feeds.aps.org/rss/recent/prx.xml", "PRX", "A"))
-
-    # PRX Life
-    all_papers.extend(fetch_rss("http://feeds.aps.org/rss/recent/prxlife.xml", "PRX Life", "A")) 
-
-    # Nature (Biophysics subject feed)
-    all_papers.extend(fetch_rss("http://www.nature.com/subjects/biophysics.rss", "Nature", "A"))
-
-    # PNAS (Biophysics Topic)
-    all_papers.extend(fetch_rss("https://www.pnas.org/action/showFeed?type=searchTopic&taxonomyCode=topic&tagCodeOr=biophys-bio&tagCodeOr=biophys-phys", "PNAS", "A"))
-   
-    # 4. Group B: Broad 
-     
-    # PNAS Nexus
-    all_papers.extend(fetch_rss("https://academic.oup.com/rss/site_6448/4114.xml", "PNAS NEXUS", "B"))
- 
-    # PLOS ONE (biophysics)
-    all_papers.extend(fetch_rss("https://journals.plos.org/plosone/search/feed/atom?sortOrder=DATE_NEWEST_FIRST&filterJournals=PLoSONE&unformattedQuery=subject%3A%22biophysics%22", "PLOS ONE", "B"))
-    
-    # Science
-    all_papers.extend(fetch_rss("https://www.science.org/rss/express.xml", "Science", "B", section_filter="Biophysics"))
-
-    # 5. Group C: General (Author/Keyword)
-    # Cell
-    all_papers.extend(fetch_rss("https://www.cell.com/cell/current.rss", "Cell", "C"))
-    # eLife
-    all_papers.extend(fetch_rss("https://elifesciences.org/rss/recent.xml", "eLife", "C"))
-    # MBoC
-    all_papers.extend(fetch_rss("https://www.molbiolcell.org/action/showFeed?type=etoc&feed=rss&jc=mboc", "MBoC", "C"))
-    
-    # Development [404]
-    # all_papers.extend(fetch_rss("https://journals.biologists.com/dev/rss/recent.xml", "Development", "C"))
-
-
-    # Deduplication
-    unique_papers_map = {}
+    # --- Deduplication ---
+    # Two-pass: first by DOI (exact match), then by normalized title
+    unique_by_doi = {}
+    no_doi_papers = []
     for p in all_papers:
-        # Title normalization: Lowercase, strip punctuation? 
+        doi = p.get('doi')
+        if doi:
+            if doi not in unique_by_doi:
+                unique_by_doi[doi] = p
+            elif p['date'] < unique_by_doi[doi]['date']:
+                unique_by_doi[doi] = p
+        else:
+            no_doi_papers.append(p)
+    
+    # Second pass: title-based dedup for papers without DOI + cross-check DOI papers
+    unique_papers_map = {}
+    for p in list(unique_by_doi.values()) + no_doi_papers:
         title_clean = "".join(e for e in p['title'].lower() if e.isalnum())
-        
-        # Or checking Link equality
-        link = p['link']
-        
-        # Primary key: Title seems appropriate for cross-feed dedup (e.g. arXiv vs Journal)
-        # But titles can change slightly.
-        # Let's try Title + First Author Surname?
-        # For now, strict Title equality.
         if title_clean not in unique_papers_map:
             unique_papers_map[title_clean] = p
-        else:
-            # Keep earliest date?
-            if p['date'] < unique_papers_map[title_clean]['date']:
-                unique_papers_map[title_clean] = p
+        elif p['date'] < unique_papers_map[title_clean]['date']:
+            unique_papers_map[title_clean] = p
             
     final_list = list(unique_papers_map.values())
     
@@ -750,9 +881,7 @@ def fetch_and_display_papers():
         output_lines.append("")
 
     # Write structured data to JSON for the AI filter script
-    import json
     with open("papers.json", "w") as f:
-        # Convert datetime objects to string for JSON serialization
         json_ready_list = []
         for p in final_list:
             p_copy = p.copy()
@@ -767,8 +896,6 @@ def fetch_and_display_papers():
         f.write(f"**Date Range:** {OLDEST_DATE_TO_INCLUDE.strftime('%Y-%m-%d')} to {datetime.datetime.now().strftime('%Y-%m-%d')}\n")
         f.write(f"**Total Papers Found:** {total_count}\n")
         
-        # Add Source Breakdown
-        from collections import Counter
         source_counts = Counter([p['source'] for p in final_list])
         breakdown = ", ".join([f"{src}: {count}" for src, count in source_counts.most_common()])
         f.write(f"**Sources:** {breakdown}\n\n")

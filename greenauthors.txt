@@ -1,112 +1,109 @@
 
-Bezia Lemma
-Daniel J. Needleman
-Celeste M. Nelson
-Zvonimir Dogic
-Paul M. Chaikin
-Andrej Kosmrlj
-Mark J. Bowick
-David R. Nelson
-Noah P. Mitchell
-Peter J. Foster
-Margaret L. Gardel
-Michael P. Murrell
-Claire Walczak
-Stephanie C. Ems-McClung
-Radhika Subramanian
-Stefano Sacanna
-Katharine Goodwin
-Sebastian Furthauer
-Michael Shelley
-Che-Hang Yu
-Jinhye Bae
-Maya Anjur-Dietrich
-Colm P. Kelleher
-Carrie Adler
-Erwin Frey
-Frank Jülicher
-Sriram Ramaswamy
-David A. Weitz
-Andreas R. Bausch
-Jonathon Howard
-Sebastian J. Streichan
-Sophie Dumont
-Nikta Fakhri
-Xavier Trepat
-Benoit Ladoux
-Manuel Théry
-Jared E. Toettcher
-Amy S. Gladfelter
-Jerome Gros
-Megan Rothstein
-Megan G Davey
-Jeremie Palacci
-Jonathan Rodenfels
-Reto Fiolka
-Jennifer Lippencott-Shwartz
-Stanislav Y. Shvartsman
-Rikki Garner
-Reza Farhadifar
-Julia Schwartzsman
-Daniel M. Sussman
-Thomas Surrey
-Harry McNamara
-Daniel Fletcher
-Jan Bruges
-Lauren Drier
-Daniel Alber
-Sebastian Gonzalez La Corte
-Kai Mesa
-Valentina Greco
-Louis Prahl
-Ezra Levy
-Alex Hughes
-Rylie Walsh
-Xavier Trepat
-Ricardo Mallarino
-Mike Piacentino
-Ruth Williams
-Gunes Taylor
-Melanie D. White
-Crystal Rogers
-Jennifer Garrison
+0000-0003-3542-069X - Bezia Lemma
+0000-0003-3642-9864 - Daniel J. Needleman
+0000-0002-2304-9486 - Celeste M. Nelson
+0000-0003-0142-1838 - Zvonimir Dogic
+0000-0001-9864-0089 - Paul M. Chaikin
+0000-0001-6137-9200 - Andrej Kosmrlj
+0000-0003-1716-2754 - Mark J. Bowick
+0000-0003-1562-7677 - David R. Nelson
+0000-0003-1922-8470 - Noah P. Mitchell
+0000-0002-1856-7932 - Peter J. Foster
+0000-0003-1846-9854 - Margaret L. Gardel
+0000-0002-9108-8137 - Michael P. Murrell
+0000-0002-7378-2133 - Claire Walczak
+0000-0001-5209-0739 - Stephanie C. Ems-McClung
+0009-0000-5284-4238 - Radhika Subramanian
+0000-0002-8399-3524 - Stefano Sacanna
+0009-0000-3564-1535 - Katharine Goodwin
+0000-0001-9581-5963 - Sebastian Furthauer
+0000-0002-4835-0339 - Michael Shelley
+0000-0002-0353-9752 - Che-Hang Yu
+0000-0002-5336-2836 - Jinhye Bae
+0000-0001-5223-8908 - Maya Anjur-Dietrich
+0000-0001-6000-540X - Colm P. Kelleher
+0000-0002-3883-0654 - Carrie Adler
+0000-0001-8792-3358 - Erwin Frey
+0000-0003-4731-9185 - Frank Jülicher
+0000-0001-5511-4716 - Sriram Ramaswamy
+0000-0002-9555-1248 - David A. Weitz
+0000-0002-5473-9324 - Andreas R. Bausch
+0000-0002-9566-0700 - Jonathon Howard
+0000-0002-8283-1523 - Sophie Dumont
+0000-0003-1261-7465 - Nikta Fakhri
+0000-0002-7621-5214 - Xavier Trepat
+0000-0003-2086-1556 - Benoit Ladoux
+0000-0002-9968-1779 - Manuel Théry
+0000-0002-1546-4030 - Jared E. Toettcher
+0000-0002-2490-6945 - Amy S. Gladfelter
+0000-0002-2264-2851 - Jerome Gros
+0000-0002-5165-9505 - Megan Rothstein
+0000-0003-0194-9229 - Megan G Davey
+0000-0002-7253-9465 - Jeremie Palacci
+0000-0003-3538-8482 - Jonathan Rodenfels
+0000-0002-4636-5000 - Reto Fiolka
+0000-0002-8601-3501 - Jennifer Lippincott‐Schwartz
+0000-0002-9152-9334 - Stanislav Y. Shvartsman
+0000-0001-9998-4596 - Rikki Garner
+0000-0003-2792-5380 - Reza Farhadifar
+0000-0003-4563-4835 - Julia Schwartzman
+0000-0002-4226-5264 - Daniel M. Sussman
+0000-0001-9082-1870 - Thomas Surrey
+0009-0006-6593-6477 - Harry McNamara
+0000-0003-1610-7729 - Daniel Fletcher
+0000-0002-6731-4130 - Jan Bruges
+0000-0003-0558-9099 - Lauren Dreier
+0000-0002-1765-8912 - Daniel Alber
+0000-0003-1607-5632 - Sebastian Gonzalez La Corte
+0000-0003-4452-9048 - Kai Mesa
+0000-0003-2066-6304 - Valentina Greco
+0000-0002-7811-6041 - Louis Prahl
+0000-0002-0807-2573 - Ezra Levy
+0000-0003-4966-8346 - Alex Hughes
+0000-0003-4426-6102 - Rylie Walsh
+0000-0002-8971-4864 - Ricardo Mallarino
+0000-0003-1773-031X - Mike Piacentino
+0000-0002-1827-6342 - Ruth Williams
+0000-0003-0579-9416 - Gunes Taylor
+0000-0001-9881-4907 - Melanie D. White
+0000-0002-9549-1089 - Crystal Rogers
+0000-0003-2567-1305 - Jennifer Garrison
 
-Linnea Lemma
-Martin C. Jonikas
-Clifford P Brangwynne
-Ned S. Wingreen
-M Cristina Marchetti
-Suraj Shankar
-Vincenzo Vitelli
-William T. M. Irvine
-Luca Giomi
-Aparna Baskaran
-Michael F. Hagan
-Sattvic Ray
-Raymond Adkins
-Guillaume Duclos
-Itamar Kolvin
-Thomas R Powers
-Sebastian J Streichan
-L. Mahadevan
-Aastha Garde
-Eric R. Dufresne
-Oliver Mueller-Cajar
-Omar Saleh
-Danny Seara
-Trevor GrandPre
-Mattia Serra
-Marianne Bauer
-Amy Strom
-Yoonji Kim
-Iain Cheeseman
+0000-0001-8482-4573 - Linnea Lemma
+0000-0002-9519-6055 - Martin C. Jonikas
+0000-0002-1350-9960 - Clifford P Brangwynne
+0000-0001-7384-2821 - Ned S. Wingreen
+0000-0003-3583-4999 - M Cristina Marchetti
+0000-0002-9827-1735 - Suraj Shankar
+0000-0001-6328-8783 - Vincenzo Vitelli
+0000-0002-4925-2060 - William T. M. Irvine
+0000-0001-7740-5960 - Luca Giomi
+0000-0003-1899-9978 - Aparna Baskaran
+0000-0003-2658-8159 - Michael F. Hagan
+0000-0002-4261-7311 - Sattvic Ray
+0000-0001-8423-5031 - Raymond Adkins
+0000-0001-9010-8952 - Guillaume Duclos
+0000-0002-6869-1245 - Itamar Kolvin
+0000-0003-1049-9581 - Thomas R Powers
+0000-0002-6105-9087 - Sebastian J Streichan
+0000-0001-9527-4802 - L. Mahadevan
+0000-0002-7503-5721 - Aastha Garde
+0000-0001-5052-8282 - Eric R. Dufresne
+0000-0003-2866-5963 - Oliver Mueller-Cajar
+0000-0002-6314-3565 - Omar Saleh
+0000-0001-5615-2888 - Daniel S. Seara
+0000-0002-3565-6873 - Trevor GrandPre
+0000-0002-0825-7404 - Mattia Serra
+0000-0002-1191-986X - Marianne Bauer
+0000-0002-1674-3242 - Amy Strom
+0000-0001-5084-2773 - Yoonji Kim
+0000-0002-3829-5612 - Iain Cheeseman
 
-Wallace F. Marshall
-Suliana Manley
-Alfred Millett-Sikking
-Kayley Hake
-Christophe Léger
-Manuel Thery
-Alex Plum
-Kate Cavanaugh
-Mark Peifer
+0000-0002-8467-5763 - Wallace F. Marshall
+0000-0002-4755-4778 - Suliana Manley
+0000-0003-3310-1417 - Kayley Hake
+0000-0002-8871-6059 - Christophe Léger
+0000-0002-9968-1779 - Manuel Thery
+0000-0003-4076-2424 - Alex Plum
+0000-0001-9293-0296 - Kate Cavanaugh
+0000-0003-1412-3987 - Mark Peifer

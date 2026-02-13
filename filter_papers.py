@@ -52,19 +52,26 @@ def normalize_author_identifier(name_str):
         
     return (last.lower(), first_initial.lower())
 
+ORCID_LINE_PATTERN = re.compile(r'^\d{4}-\d{4}-\d{4}-[\dX]{4}\s*-\s*(.+)$')
+
 def load_green_authors_identifiers(filename):
     """
     Returns a SET of (last_name, first_initial) tuples.
+    Handles both 'ORCID - Author Name' and plain 'Author Name' lines.
     """
     identifiers = set()
     try:
         with open(filename, 'r') as f:
             for line in f:
                 line = line.strip()
-                if line:
-                    ident = normalize_author_identifier(line)
-                    if ident:
-                        identifiers.add(ident)
+                if not line:
+                    continue
+                # Strip ORCID prefix if present
+                m = ORCID_LINE_PATTERN.match(line)
+                name = m.group(1).strip() if m else line
+                ident = normalize_author_identifier(name)
+                if ident:
+                    identifiers.add(ident)
     except FileNotFoundError:
         print(f"Warning: {filename} not found.")
     return identifiers
@@ -173,9 +180,8 @@ def process_one_paper(paper):
         # 1. Check Green Authors
         if matches_green_author(paper):
             # print(f"  [Green] {paper['title'][:30]}...")
-            # SKIP AI SUMMARY for Featured papers, use full abstract
-            # We prefix it with specific marker or just store it
-            paper['ai_summary'] = "**Full Abstract:** " + paper['abstract']
+            summary = summarize_paper(paper)
+            paper['ai_summary'] = summary
             return paper, 'featured'
             
         # 2. AI Classification
@@ -191,9 +197,6 @@ def process_one_paper(paper):
             
     except Exception as e:
         print(f"Error processing {paper['title'][:30]}...: {e}")
-        # Default to regular if catastrophic failure, or just skip? 
-        # Current logic is safer to skip if we can't even process it, 
-        # but classify_paper handles its own errors.
         return paper, None
 
 def main():
@@ -241,29 +244,40 @@ def main():
     source_counts = Counter([p['source'] for p in all_final_papers])
     breakdown = ", ".join([f"{src}: {count}" for src, count in source_counts.most_common()])
     
-    print(f"\nGeneratng {OUTPUT_FILE} with {total_kept} papers...")
+    # Generate date string for frontmatter title (e.g. "Feb02 '27")
+    now = datetime.datetime.now()
+    date_str = now.strftime("%b%d '%y")
+    
+    print(f"\nGenerating {OUTPUT_FILE} with {total_kept} papers...")
     
     with open(OUTPUT_FILE, 'w') as f:
-        f.write("# Weekly Paper Update\n")
-        f.write(f"Date: {datetime.datetime.now().strftime('%Y-%m-%d')}<br>\n\n")
-        f.write(f"Total Papers: {total_kept} (Selected from {len(papers)} raw)<br>\n\n")
-        f.write(f"Sources: {breakdown}<br>\n\n")
+        # YAML frontmatter
+        f.write("---\n")
+        f.write(f"title: \"Weekly Update {date_str}\"\n")
+        f.write("format:\n")
+        f.write("  html:\n")
+        f.write("    toc: false\n")
+        f.write("---\n\n")
         
+        # Featured Papers section with Quarto grid layout
         if featured_papers:
-            f.write("# Featured Papers\n\n<br>\n\n")
+            f.write("# Featured Papers\n\n")
+            f.write("::: {.grid}\n\n")
             for p in featured_papers:
-                f.write(f"## {p['title']}\n\n")
-                f.write(f"{p['authors']}<br>\n")
-                f.write(f"{p['link']}<br>\n")
-                f.write(f"{p['abstract']}\n\n<br>\n\n")
+                f.write("::: {.g-col-12 .g-col-md-6}\n")
+                f.write(f"#### [{p['title']}]({p['link']})\n")
+                f.write(f"*{p['authors']}* <br>\n")
+                f.write(f"{p['ai_summary']}\n")
+                f.write(":::\n\n")
+            f.write(":::\n\n")
         
+        # Regular Papers section
         if regular_papers:
-            f.write("# Biophysics Papers\n\n<br>\n\n")
+            f.write("## More Papers\n\n")
             for p in regular_papers:
-                f.write(f"## {p['title']}\n\n")
-                f.write(f"{p['authors']}<br>\n")
-                f.write(f"{p['link']}<br>\n")
-                f.write(f"{p['ai_summary']}\n\n<br>\n\n")
+                f.write(f"#### [{p['title']}]({p['link']})\n")
+                f.write(f"*{p['authors']}* <br>\n")
+                f.write(f"{p['ai_summary']}\n\n")
 
     print("Done!")
 
