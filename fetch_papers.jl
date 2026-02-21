@@ -12,6 +12,8 @@ const OLDEST_DATE = now(tz"UTC") - Day(DAYS_BACK)
 
 const ARXIV_CATEGORIES = ["physics.bio-ph", "cond-mat.soft"]
 const BIORXIV_COLLECTION = "biophysics"
+const ARXIV_USER_AGENT = "LemmaJournalClub/1.0 (weekly paper fetch; contact: lemma@princeton.edu)"
+const ARXIV_MIN_REQUEST_INTERVAL_SECS = 3.5
 
 # Journal Feed Configuration
 # group: :include_all / :section_filter / :green_filter
@@ -716,6 +718,26 @@ end
 
 # ─── arXiv Fetching (direct API) ────────────────────────────────────────────
 
+function arxiv_retry_wait_seconds(resp::HTTP.Response, attempt::Int)::Int
+    retry_after_str = HTTP.header(resp, "Retry-After", "")
+    if !isempty(retry_after_str)
+        parsed = tryparse(Int, strip(retry_after_str))
+        if parsed !== nothing && parsed > 0
+            return parsed
+        end
+    end
+    return min(15 * (2 ^ (attempt - 1)), 180)
+end
+
+function arxiv_enforce_rate_limit!(last_request_time::Base.RefValue{Float64})
+    now_ts = time()
+    elapsed = now_ts - last_request_time[]
+    if elapsed < ARXIV_MIN_REQUEST_INTERVAL_SECS
+        sleep(ARXIV_MIN_REQUEST_INTERVAL_SECS - elapsed)
+    end
+    last_request_time[] = time()
+end
+
 function fetch_arxiv_papers()
     println("Fetching arXiv papers...")
     query_string = join(["cat:$c" for c in ARXIV_CATEGORIES], " OR ")
@@ -723,9 +745,10 @@ function fetch_arxiv_papers()
     papers = Paper[]
     seen_ids = Set{String}()
     start = 0
-    page_size = 50
+    page_size = 25
     max_results = 200
-    max_retries = 4
+    max_retries = 6
+    last_request_time = Ref(0.0)
 
     while start < max_results
         params = Dict(
@@ -743,26 +766,39 @@ function fetch_arxiv_papers()
         data = nothing
         for attempt in 1:max_retries
             try
-                resp = HTTP.get(url; headers=["User-Agent" => "LemmaJournalClub/1.0 (weekly paper fetch)"], readtimeout=30, status_exception=false)
-                if resp.status == 429
-                    wait_secs = 15 * attempt
+                arxiv_enforce_rate_limit!(last_request_time)
+                resp = HTTP.get(
+                    url;
+                    headers=["User-Agent" => ARXIV_USER_AGENT],
+                    readtimeout=60,
+                    status_exception=false
+                )
+                if resp.status == 429 || resp.status == 502 || resp.status == 503 || resp.status == 504
+                    wait_secs = arxiv_retry_wait_seconds(resp, attempt)
                     if attempt < max_retries
-                        println("  arXiv rate limit (429). Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
+                        println("  arXiv temporary error ($(resp.status)). Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
                         sleep(wait_secs)
                         continue
                     else
-                        println("  ❌ arXiv rate limit persisted after $max_retries attempts.")
+                        println("  ❌ arXiv temporary errors persisted after $max_retries attempts.")
                         println("  Continuing with $(length(papers)) arXiv papers found so far.")
                         return papers
+                    end
+                elseif resp.status >= 500
+                    wait_secs = min(10 * attempt, 60)
+                    if attempt < max_retries
+                        println("  arXiv server error ($(resp.status)). Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
+                        sleep(wait_secs)
+                        continue
                     end
                 end
                 resp.status >= 400 && error("HTTP $(resp.status)")
                 data = String(resp.body)
                 break
             catch e
-                wait_secs = 10 * attempt
+                wait_secs = min(10 * (2 ^ (attempt - 1)), 120)
                 if attempt < max_retries
-                    println("  arXiv error: $e. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
+                    println("  arXiv request error: $e. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
                     sleep(wait_secs)
                 else
                     println("  ❌ arXiv failed after $max_retries attempts: $e")
@@ -841,7 +877,8 @@ function fetch_arxiv_papers()
 
         done && break
         start += page_size
-        sleep(5)  # Polite delay between pages
+        # Additional inter-page delay to stay safely below arXiv API limits.
+        sleep(1)
     end
 
     println("  Found $(length(papers)) arXiv papers.")
