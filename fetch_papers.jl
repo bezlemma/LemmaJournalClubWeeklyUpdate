@@ -12,8 +12,11 @@ const OLDEST_DATE = now(tz"UTC") - Day(DAYS_BACK)
 
 const ARXIV_CATEGORIES = ["physics.bio-ph", "cond-mat.soft"]
 const BIORXIV_COLLECTION = "biophysics"
-const ARXIV_USER_AGENT = "LemmaJournalClub/1.0 (weekly paper fetch; contact: lemma@princeton.edu)"
+const ARXIV_USER_AGENT = get(ENV, "ARXIV_USER_AGENT", "LemmaJournalClubWeeklyUpdate/1.0")
 const ARXIV_MIN_REQUEST_INTERVAL_SECS = 3.5
+const ARXIV_DEBUG = get(ENV, "ARXIV_DEBUG", "0") == "1"
+const ARXIV_MAX_BACKOFF_SECS = something(tryparse(Int, get(ENV, "ARXIV_MAX_BACKOFF_SECS", "20")), 20)
+const ARXIV_MODE = lowercase(strip(get(ENV, "ARXIV_MODE", "auto")))
 
 # Journal Feed Configuration
 # group: :include_all / :section_filter / :green_filter
@@ -723,10 +726,10 @@ function arxiv_retry_wait_seconds(resp::HTTP.Response, attempt::Int)::Int
     if !isempty(retry_after_str)
         parsed = tryparse(Int, strip(retry_after_str))
         if parsed !== nothing && parsed > 0
-            return parsed
+            return min(parsed, ARXIV_MAX_BACKOFF_SECS)
         end
     end
-    return min(15 * (2 ^ (attempt - 1)), 180)
+    return min(3 * (2 ^ (attempt - 1)), ARXIV_MAX_BACKOFF_SECS)
 end
 
 function arxiv_enforce_rate_limit!(last_request_time::Base.RefValue{Float64})
@@ -738,17 +741,95 @@ function arxiv_enforce_rate_limit!(last_request_time::Base.RefValue{Float64})
     last_request_time[] = time()
 end
 
+function arxiv_paper_id_from_link(link::AbstractString)::String
+    isempty(link) && return ""
+    m = match(r"arxiv\.org\/abs\/([^?#]+)", link)
+    m !== nothing && return replace(m.captures[1], r"v\d+$" => "")
+    tail = split(link, "/")[end]
+    return replace(tail, r"v\d+$" => "")
+end
+
+function fetch_arxiv_papers_rss(seen_ids::Set{String}=Set{String}())
+    println("  Falling back to arXiv RSS feeds...")
+    papers = Paper[]
+
+    for cat in ARXIV_CATEGORIES
+        url = "https://rss.arxiv.org/rss/$cat"
+        try
+            resp = HTTP.get(url; headers=RSS_HEADERS, readtimeout=30, status_exception=false)
+            if resp.status != 200
+                println("  arXiv RSS error for $cat: HTTP $(resp.status)")
+                continue
+            end
+
+            xmldoc = try
+                EzXML.parsexml(String(resp.body))
+            catch e
+                println("  arXiv RSS parse error for $cat: $e")
+                continue
+            end
+
+            entries = extract_feed_entries(xmldoc)
+            for entry in entries
+                published = parse_feed_date(entry)
+                published === nothing && continue
+                published < OLDEST_DATE && continue
+
+                title = replace(xml_child_text(entry, "title"), "\n" => " ")
+                isempty(title) && continue
+
+                summary = xml_child_text(entry, "description")
+                isempty(summary) && (summary = xml_child_text(entry, "summary"))
+                summary = replace(summary, "\n" => " ")
+                !is_research_article(title, summary) && continue
+
+                link = get_entry_link(entry)
+                paper_id = arxiv_paper_id_from_link(link)
+                isempty(paper_id) && continue
+                paper_id in seen_ids && continue
+                push!(seen_ids, paper_id)
+
+                authors = get_entry_authors(entry)
+                push!(papers, Paper(
+                    source="arXiv",
+                    title=title,
+                    authors=join(authors, ", "),
+                    link=link,
+                    abstract_text=summary,
+                    images=String[],
+                    date=published,
+                ))
+            end
+        catch e
+            println("  arXiv RSS fetch error for $cat: $e")
+        end
+    end
+
+    println("  arXiv RSS fallback found $(length(papers)) papers.")
+    return papers
+end
+
 function fetch_arxiv_papers()
     println("Fetching arXiv papers...")
+    if ARXIV_MODE == "rss"
+        papers = fetch_arxiv_papers_rss()
+        println("  Found $(length(papers)) arXiv papers.")
+        return papers
+    elseif ARXIV_MODE != "auto"
+        println("  Warning: Unknown ARXIV_MODE='$ARXIV_MODE'. Using 'auto'.")
+    end
+
     query_string = join(["cat:$c" for c in ARXIV_CATEGORIES], " OR ")
 
     papers = Paper[]
     seen_ids = Set{String}()
     start = 0
-    page_size = 25
-    max_results = 200
-    max_retries = 6
+    page_size = something(tryparse(Int, get(ENV, "ARXIV_PAGE_SIZE", "25")), 25)
+    max_results = something(tryparse(Int, get(ENV, "ARXIV_MAX_RESULTS", "200")), 200)
+    max_retries = something(tryparse(Int, get(ENV, "ARXIV_MAX_RETRIES", "3")), 3)
     last_request_time = Ref(0.0)
+    pages_fetched = 0
+    api_failed_before_first_page = false
 
     while start < max_results
         params = Dict(
@@ -767,12 +848,18 @@ function fetch_arxiv_papers()
         for attempt in 1:max_retries
             try
                 arxiv_enforce_rate_limit!(last_request_time)
+                req_t0 = time()
                 resp = HTTP.get(
                     url;
                     headers=["User-Agent" => ARXIV_USER_AGENT],
                     readtimeout=60,
                     status_exception=false
                 )
+                if ARXIV_DEBUG
+                    elapsed = round(time() - req_t0; digits=3)
+                    retry_after = HTTP.header(resp, "Retry-After", "")
+                    println("  [arXiv debug] start=$start attempt=$attempt status=$(resp.status) elapsed=$(elapsed)s retry_after='$(retry_after)'")
+                end
                 if resp.status == 429 || resp.status == 502 || resp.status == 503 || resp.status == 504
                     wait_secs = arxiv_retry_wait_seconds(resp, attempt)
                     if attempt < max_retries
@@ -781,8 +868,8 @@ function fetch_arxiv_papers()
                         continue
                     else
                         println("  ❌ arXiv temporary errors persisted after $max_retries attempts.")
-                        println("  Continuing with $(length(papers)) arXiv papers found so far.")
-                        return papers
+                        api_failed_before_first_page = (pages_fetched == 0)
+                        break
                     end
                 elseif resp.status >= 500
                     wait_secs = min(10 * attempt, 60)
@@ -797,13 +884,16 @@ function fetch_arxiv_papers()
                 break
             catch e
                 wait_secs = min(10 * (2 ^ (attempt - 1)), 120)
+                if ARXIV_DEBUG
+                    println("  [arXiv debug] start=$start attempt=$attempt exception=$(typeof(e))")
+                end
                 if attempt < max_retries
                     println("  arXiv request error: $e. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
                     sleep(wait_secs)
                 else
                     println("  ❌ arXiv failed after $max_retries attempts: $e")
-                    println("  Continuing with $(length(papers)) arXiv papers found so far.")
-                    return papers
+                    api_failed_before_first_page = (pages_fetched == 0)
+                    break
                 end
             end
         end
@@ -814,6 +904,7 @@ function fetch_arxiv_papers()
             EzXML.parsexml(data)
         catch e
             println("  Warning: Could not parse arXiv XML: $e")
+            api_failed_before_first_page = (pages_fetched == 0)
             break
         end
 
@@ -876,9 +967,14 @@ function fetch_arxiv_papers()
         end
 
         done && break
+        pages_fetched += 1
         start += page_size
         # Additional inter-page delay to stay safely below arXiv API limits.
         sleep(1)
+    end
+
+    if api_failed_before_first_page && isempty(papers)
+        papers = fetch_arxiv_papers_rss(seen_ids)
     end
 
     println("  Found $(length(papers)) arXiv papers.")
