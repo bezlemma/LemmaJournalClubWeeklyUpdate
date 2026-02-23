@@ -7,12 +7,7 @@ const INPUT_FILE = "papers.json"
 const OUTPUT_FILE = "papers_final.md"
 const GREEN_AUTHORS_FILE = "greenauthors.txt"
 const GEMINI_MODEL = "gemini-3-flash-preview"
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent?key=$GEMINI_API_KEY"
-
-if isempty(GEMINI_API_KEY)
-    println("Error: GEMINI_API_KEY environment variable not set.")
-    exit(1)
-end
+const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
 
 # ─── Author matching ────────────────────────────────────────────────────────
 
@@ -93,15 +88,18 @@ end
 
 """Call Gemini API with a prompt and return the text response."""
 function gemini_generate(prompt::String; max_retries=3)::String
+    isempty(GEMINI_API_KEY) && return ""
+
     body = Dict(
         "contents" => [Dict(
             "parts" => [Dict("text" => prompt)]
         )]
     )
+    url = "$GEMINI_URL_BASE?key=$(HTTP.escapeuri(GEMINI_API_KEY))"
 
     for attempt in 1:max_retries
         try
-            resp = HTTP.post(GEMINI_URL,
+            resp = HTTP.post(url,
                 ["Content-Type" => "application/json"],
                 JSON3.write(body);
                 readtimeout=30,
@@ -171,11 +169,16 @@ Reply with a single word: TRUE or FALSE.
 """
 
     try
-        result = uppercase(gemini_generate(prompt))
-        if occursin("TRUE", result)
+        result_raw = gemini_generate(prompt)
+        result = uppercase(strip(result_raw))
+        if result == "TRUE"
             return true, "AI Approved"
-        else
+        elseif result == "FALSE"
             return false, "AI Rejected"
+        elseif isempty(result)
+            return true, "AI Unavailable Fallback"
+        else
+            return true, "AI Ambiguous Fallback"
         end
     catch e
         println("  Error classifying '$(first(title, 30))...': $e")
@@ -201,6 +204,20 @@ Abstract: $abstract_text
         println("  Error summarizing '$(first(title, 30))...': $e")
         return "Summary unavailable."
     end
+end
+
+function escape_markdown_text(s::AbstractString)::String
+    out = replace(s, "\\" => "\\\\")
+    out = replace(out, "*" => "\\*", "_" => "\\_", "`" => "\\`")
+    out = replace(out, "[" => "\\[", "]" => "\\]")
+    out = replace(out, "\n" => " ")
+    return strip(out)
+end
+
+function markdown_link_target(url::AbstractString)::String
+    u = strip(url)
+    isempty(u) && return "#"
+    return "<$u>"
 end
 
 # ─── Paper processing ───────────────────────────────────────────────────────
@@ -238,6 +255,11 @@ end
 # ─── Main ────────────────────────────────────────────────────────────────────
 
 function main()
+    if isempty(GEMINI_API_KEY)
+        println("Error: GEMINI_API_KEY environment variable not set.")
+        return
+    end
+
     println("Loading papers from $INPUT_FILE...")
     if !isfile(INPUT_FILE)
         println("Error: $INPUT_FILE not found. Run fetch_papers.jl first.")
@@ -264,7 +286,12 @@ function main()
             @async begin
                 Base.acquire(sem)
                 try
-                    results[i] = process_one_paper(paper)
+                    try
+                        results[i] = process_one_paper(paper)
+                    catch e
+                        println("Error in worker for paper $i: $e")
+                        results[i] = (paper, "", nothing)
+                    end
 
                     # Print progress as each paper completes
                     Threads.atomic_add!(completed, 1)
@@ -292,6 +319,9 @@ function main()
 
     # Collect results
     for (i, result) in enumerate(results)
+        if !isassigned(results, i)
+            continue
+        end
         paper, summary, category = result
         if category == :featured
             push!(featured_papers, (paper=paper, summary=summary))
@@ -312,9 +342,10 @@ function main()
     sorted_sources = sort(collect(source_counts); by=x -> x[2], rev=true)
     breakdown = join(["$(src): $(cnt)" for (src, cnt) in sorted_sources], ", ")
 
-    date_str = Dates.format(now(), "udd 'yy")
+    date_str = Dates.format(now(), "u d 'yy")
 
     println("\nGenerating $OUTPUT_FILE with $total_kept papers...")
+    println("Source breakdown: $breakdown")
 
     open(OUTPUT_FILE, "w") do f
         # YAML frontmatter
@@ -330,9 +361,12 @@ function main()
             println(f, "# Featured Papers\n")
             println(f, "::: {.grid}\n")
             for item in featured_papers
+                title = escape_markdown_text(string(get(item.paper, :title, "")))
+                authors = escape_markdown_text(string(get(item.paper, :authors, "")))
+                link = markdown_link_target(string(get(item.paper, :link, "")))
                 println(f, "::: {.g-col-12 .g-col-md-6}")
-                println(f, "#### [$(get(item.paper, :title, ""))]($(get(item.paper, :link, "")))")
-                println(f, "*$(get(item.paper, :authors, ""))* <br>")
+                println(f, "#### [$title]($link)")
+                println(f, "*$authors* <br>")
                 println(f, item.summary)
                 println(f, ":::\n")
             end
@@ -343,8 +377,11 @@ function main()
         if !isempty(regular_papers)
             println(f, "## More Papers\n")
             for item in regular_papers
-                println(f, "#### [$(get(item.paper, :title, ""))]($(get(item.paper, :link, "")))")
-                println(f, "*$(get(item.paper, :authors, ""))* <br>")
+                title = escape_markdown_text(string(get(item.paper, :title, "")))
+                authors = escape_markdown_text(string(get(item.paper, :authors, "")))
+                link = markdown_link_target(string(get(item.paper, :link, "")))
+                println(f, "#### [$title]($link)")
+                println(f, "*$authors* <br>")
                 println(f, "$(item.summary)\n")
             end
         end

@@ -2,6 +2,39 @@
     {
         "images": [
         ],
+        "source": "CrossRef/Featured",
+        "doi": "https://doi.org/10.1515/mim-2025-0029",
+        "title": "Smart microscopy: current implementations and a roadmap for interoperability",
+        "link": "https://doi.org/10.1515/mim-2025-0029",
+        "abstract": "Abstract\n                  Smart microscopy is transforming life sciences by automating experimental imaging workflows and enabling real-time adaptation based on feedback from images and other data streams. This shift increases throughput, improves reproducibility, and expands the functional capabilities of microscopes. However, the current landscape is highly fragmented. Academic researchers often develop custom solutions for specific scientific needs, while industry offerings are typically proprietary and tied to specific hardware. This diversity, while fostering innovation, also creates major challenges in interoperability, reproducibility, and standardization, which slows progress and adaption. This article presents a collaborative effort between academic and industry leaders to survey the current state of smart microscopy, highlight representative implementations, and identify common technical and organizational barriers. We propose a framework for greater interoperability based on shared standards, modular software design, and community-driven development. Our goal is to support collaboration across the field and lay the groundwork for a more connected, reusable, and accessible smart microscopy ecosystem. We conclude with a call to action for researchers, hardware developers, and institutions to join in building an open, interoperable foundation that will unlock the full potential of smart microscopy in life science research.",
+        "authors": "Lucien Hinderling, Hannah S. Heil, Alfredo Rates, Philipp Seidel, P.S. Kesavan, Manuel Gunkel, Benedict Diederich, Thomas Guilbert, Rémy Torro, Otmane Bouchareb, Claire Demeautis, Célia Martin, Scott Brooks, Evangelos Sisamakis, Erwan Grandgirard, Jerome Mutterer, Harrison Oatman, Jared Toettcher, Andrii Rogov, Nelda Antonovaite, Karl Johansson, Johannes K. Ahnlinde, Oscar André, Philip Nordenfelt, Pontus Nordenfelt, Claudia Pfander, Jürgen Reymann, Talley Lambert, Marco R. Cosenza, Jan O. Korbel, Rainer Pepperkok, Lukas C. Kapitein, Olivier Pertz, Nils Norlin, Aliaksandr Halavatyi, Rafael Camacho",
+        "date": "2026-02-23T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "bioRxiv",
+        "doi": "10.1101/2024.09.27.614973",
+        "title": "Quantifying 3D Live-Cell Membrane Dynamics Using Dynamic Metal-Induced Energy Transfer Spectroscopy (dynaMIET)",
+        "link": "https://www.biorxiv.org/content/10.1101/2024.09.27.614973v3",
+        "abstract": "The dynamic behavior of cellular membranes underpins essential biological processes, including signal transduction, intracellular trafficking, and mechanotransduction. However, simultaneously quantifying lateral molecular diffusion and vertical membrane fluctuations in live cells remains challenging. Here, we present dynamic metal-induced energy transfer spectroscopy (dynaMIET), which integrates metal-induced energy transfer with fluorescence correlation spectroscopy to resolve three-dimensional membrane dynamics with nanometer axial sensitivity and microsecond temporal resolution. dynaMIET enables concurrent measurement of lateral diffusion and vertical undulations within a single acquisition. We validate the method using simulations and model membranes and demonstrate its robustness in living cells, applying it to the plasma membrane, endoplasmic reticulum, and nuclear envelope. By capturing both molecular mobility and membrane fluctuations, dynaMIET provides a powerful, non-invasive tool for probing membrane mechanics and organization. This advance opens new avenues for studying membrane-associated phenomena in health and disease, including cancer cell mechanics, protein-membrane interactions, and organelle dynamics.",
+        "authors": "Gallea, J. I.; Karedla, N.; Wang, D.; Enderlein, J.; Chen, T.",
+        "date": "2026-02-21T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "bioRxiv",
+        "doi": "10.64898/2026.01.07.698041",
+        "title": "Accelerated sampling of protein dynamics using BioEmu augmented molecular simulation",
+        "link": "https://www.biorxiv.org/content/10.64898/2026.01.07.698041v2",
+        "abstract": "We introduce a workflow that integrates BioEmu-generated conformational ensemble with physics-based molecular simulations and Markov State Models to sample Boltzmann-weighted conformational populations across biomolecules. Molecular simulations initiated from BioEmu ensemble capture active-to-inactive transitions in CDK2 and BRAF, two members of the serine-threonine kinase family, and elucidate how the disease-causing V600E mutation in BRAF drives population shifts among distinct metastable states relative to the wild type. Furthermore, we combined BioEmu ensemble with experimental cryo-EM data to construct all-atom conformational ensembles of biomolecules. In comparison to the AlphaFold2 reduced multiple sequence alignment (rMSA-AF2) approach, BioEmu-generated ensembles sample a broader conformational space for serine-threonine kinases but fail to capture conformational heterogeneity in several cases, including Glycine transporter 1 (GlyT1), a membrane transporter, and plasmepsin-II (PlmII), an aspartic protease. Systems where side-chain conformational heterogeneity governs protein dynamics such as cryptic pocket opening in PlmII or transitions between multiple metastable states in GlyT1; molecular simulations initiated from BioEmu generated ensemble do not capture the full spectrum of conformational heterogeneity. Overall, this study presents a straightforward framework for integrating generative AI based protein emulators with statistical physics to recover Boltzmann-weighted conformational ensembles at scale, while also highlighting critical limitations that necessitate careful, system-specific analysis when interpreting protein conformational landscapes.",
+        "authors": "Bhakat, S.; Strauch, E.-M.",
+        "date": "2026-02-21T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
         "source": "PLOS ONE",
         "doi": null,
         "title": "The venom gland transcriptome of <i>Tityus paraguayensis</i> reveals a diverse array of bioactive molecules from the Brazilian Cerrado",
@@ -9,6 +42,50 @@
         "abstract": "<p>by Henrique Ranieri Covali-Pontes, Brayhan Meneguelli, Jéssica de Moraes Carretone, Alynne Coelho Ribeiro, Angélica Camargo dos Santos, Thais Fernanda Carlos, Marcos Roberto Chiaratti, Milene Ferro, Flávio Henrique Silva, Renata dos Santos Rodrigues, Malson Neilson Lucena</p>  Scorpions are arthropods with venom glands at their telson that produce chemicals such as peptides and proteins. These compounds may have pharmacological effects, including antimicrobial, ion channel modulating, and antihypertensive activities. Our study aims to examine the transcripts from the venom glands of <i>Tityus paraguayensis</i>, focusing on identifying and annotating the genes expressed in these glands. A transcript encoding a potassium channel-modulating peptide was selected for 3D structural modeling, phylogenetic analysis, and interaction assessment. Initially, the scorpions’ telsons were dissected and analyzed using transcriptome sequencing. The data were then assembled and functionally annotated. The sequencing and assembly of the venom gland transcriptome produced a set of 37,283 transcripts, of which 523 were annotated as potentially related to venom components. Among the venom components, peptides that modulate sodium (8%), potassium (9%), and calcium (1%) channels, antimicrobial peptides (6%), antihypertensives (2%), phospholipases (1%), and metalloproteinases (29%) were identified, along with other compounds (44%). Specific highlights include the structural-functional analysis of four key peptides: TpNa3, a probable β-toxin sodium channel modulator with a βαββ structural motif; TpHyp1, a long-chain antihypertensive peptide that contains the conserved KPP motif; TpAP1, a short antimicrobial peptide with a low positive charge and an α-helical structure; and TpK8 is a potassium toxin that was previously partly identified (α-KTx). Molecular modeling and docking analyses showed that TpK8 binds with high affinity and stability, especially to the Kv1.3 channel, through specific interactions with the selectivity filter. These findings emphasize the extensive molecular diversity of <i>T. paraguayensis</i> venom, highlighting its potential as a rich and largely unexplored source of bioactive molecules. This makes it a promising target for developing new bioactive compounds for biotechnological and therapeutic use.",
         "authors": "Henrique Ranieri Covali-Pontes, Brayhan Meneguelli, Jéssica de Moraes Carretone, Alynne Coelho Ribeiro, Angélica Camargo dos Santos, Thais Fernanda Carlos, Marcos Roberto Chiaratti, Milene Ferro, Flávio Henrique Silva, Renata dos Santos Rodrigues, Malson Neilson Lucena",
         "date": "2026-02-20T14:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "PRR",
+        "doi": null,
+        "title": "Active loop extrusion modulates the mechanical response of chromatin under tension",
+        "link": "http://link.aps.org/doi/10.1103/qfdv-vhv1",
+        "abstract": "Chromosomes are complex biopolymers folded into dynamic loops via a loop-extrusion process and may experience various mechanical forces in vivo. We develop a force-dependent model of chromatin loop extrusion and investigate its mechanical consequences on chromosome organization using simulations and…",
+        "authors": "Hossein Salari and Daniel Jost",
+        "date": "2026-02-20T10:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "PRR",
+        "doi": null,
+        "title": "Preservation and destruction of the purity of two-photon states in the interaction with a classical nanoscatterer",
+        "link": "http://link.aps.org/doi/10.1103/hb1h-jw72",
+        "abstract": "The optical resonances supported by nanostructures offer the possibility to enhance the interaction between matter and quantum states of light. On the other hand, due to abrupt changes in the optical response the quantum states of light can be significantly affected by the interaction. In this work,…",
+        "authors": "Álvaro Nodar, Ruben Esteban, Carlos Maciel-Escudero, Jon Lasa-Alonso, Javier Aizpurua, and Gabriel Molina-Terriza",
+        "date": "2026-02-20T10:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "PRR",
+        "doi": null,
+        "title": "Quantum circuits for simulating linear interferometers",
+        "link": "http://link.aps.org/doi/10.1103/z5l3-z2dr",
+        "abstract": "Motivated by recent proposals for quantum proof of work protocols, we investigate approaches for simulating linear optical interferometers using digital quantum circuits. We focus on a second quantization approach, where the quantum computer's registers represent optical modes. We can then use stand…",
+        "authors": "Hudson Leone, Peter S. Turner, and Simon Devitt",
+        "date": "2026-02-20T10:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "PRR",
+        "doi": null,
+        "title": "Subsampling factorization machine annealing",
+        "link": "http://link.aps.org/doi/10.1103/qgpq-6dmr",
+        "abstract": "Quantum computing and machine learning are state-of-the-art technologies that have been investigated intensively in both academia and industry. The hybrid technology of these two ingredients is expected to be a powerful tool to solve complex problems in many branches of science and engineering such …",
+        "authors": "Yusuke Hama and Tadashi Kadowaki",
+        "date": "2026-02-20T10:00:00+00:00"
     },
     {
         "images": [
@@ -20,6 +97,41 @@
         "link": "http://link.aps.org/doi/10.1103/qfwc-584t",
         "abstract": "A scalable benchmarking framework using cycle error reconstruction is demonstrated to precisely identify and predict physical errors in a 14-qubit transversal ᴄɴᴏᴛ, enabling a clearer path to fault-tolerant quantum computing.",
         "authors": "Nicholas Fazio, Robert Freund, Debankan Sannamoth, Alex Steiner, Christian D. Marciniak, Manuel Rispler, Robin Harper, Thomas Monz, Joseph Emerson, and Stephen D. Bartlett",
+        "date": "2026-02-20T10:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "Physical Review E",
+        "doi": null,
+        "title": "Critical phase transition in bee movement dynamics can be modeled using a two-dimensional cellular automaton",
+        "link": "http://link.aps.org/doi/10.1103/dc35-lmgd",
+        "abstract": "The collective behavior of numerous animal species, including insects, exhibits scale-free behavior indicative of the critical (second-order) phase transition. Previous research uncovered such phenomena in the behavior of honeybees, most notably the long-range correlations in space and time. Further…",
+        "authors": "Ivan Shpurov and Tom Froese",
+        "date": "2026-02-20T10:00:00+00:00"
+    },
+    {
+        "images": [
+            "https://cdn.journals.aps.org/journals/PRRESEARCH/key_images/10.1103/7s9h-p8v1.png"
+        ],
+        "source": "PRR",
+        "doi": null,
+        "title": "Energetically efficient, mediated mechanical system for precise control of hoisting operations",
+        "link": "http://link.aps.org/doi/10.1103/7s9h-p8v1",
+        "abstract": "A precise control protocol for hoisting a load quickly while avoiding gaining any undesired excitation energy is introduced. This protocol is implemented through a massive harmonic oscillator, which recycles most of the kinetic energy, and an energetically passive guiding system, which modulates the length of the rope to translate the harmonic motion into the designed protocol.",
+        "authors": "Mikel Palmero, Juan Gonzalo Muga, and Ander Tobalina",
+        "date": "2026-02-20T10:00:00+00:00"
+    },
+    {
+        "images": [
+            "https://cdn.journals.aps.org/journals/PRL/key_images/10.1103/6cdq-1nvv.png"
+        ],
+        "source": "PRL",
+        "doi": null,
+        "title": "Light-Dependent Switching of Circling Handedness in Microswimmer Navigation",
+        "link": "http://link.aps.org/doi/10.1103/6cdq-1nvv",
+        "abstract": "In response to changes in illumination, a swimming microorganism reverses the direction of its circular trajectory by tilting its flagella’s planes of motion.",
+        "authors": "Zhao Wang, Samuel A. Bentley, Jiawei Li, Kirsty Y. Wan, and Alan C. H. Tsang",
         "date": "2026-02-20T10:00:00+00:00"
     },
     {
@@ -137,12 +249,23 @@
     {
         "images": [
         ],
+        "source": "bioRxiv",
+        "doi": "10.1101/2025.11.21.689726",
+        "title": "Accurate interdomain contacts in mixed folded proteins from NMR-guided coarse-grained simulations",
+        "link": "https://www.biorxiv.org/content/10.1101/2025.11.21.689726v2",
+        "abstract": "Intrinsically disordered, low-complexity regions frequently cooperate with folded domains to mediate protein-protein interactions, yet accurately describing these mixed folded-disordered systems remains challenging. To visualize these mixed folded proteins, experimentally guided coarse-grained (CG) molecular dynamics simulations are often employed to extend the timescales required to capture the complex dynamics in play. However, the minimalistic nature of these approaches often compromises structural accuracy and can lead to inaccurate inter-domain interactions. Here we introduce backbone dihedral terms directly derived from NMR chemical shift data in CG-simulations to characterize the open state of a mixed-folded construct of the anti-aggregation chaperone DNAJB6 that contains a folded J-domain and a disordered GF linker. By tuning residue-specific backbone dihedral parameters to match NMR-derived secondary-structure propensities of the linker in CG-simulations, we generate conformational ensembles that yield accurate interdomain contact maps. In agreement with analysis of NMR relaxation data, the resulting ensembles show that even in the nominally open state the linker experiences motions that resemble those of the closed state driven by hydrophobic residues in GF. More generally we show that by expanding CG-simulations to allow them to capture both local and global structural properties, physically relevant interdomain contacts can be retrieved.",
+        "authors": "Hobbs, B.; Limmer, N.; Clenshaw, G. L.; Ossa, F.; Karamanos, T. K.",
+        "date": "2026-02-20T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
         "source": "CrossRef/Featured",
         "doi": "https://doi.org/10.64898/2026.02.19.706651",
         "title": "A molecular and spatial resource defining tubulin isotype organization during corneal development",
         "link": "https://doi.org/10.64898/2026.02.19.706651",
         "abstract": "Microtubules are essential components of the cytoskeleton that support epithelial organization, polarity, and tissue morphogenesis. They are composed of α- and β-tubulin heterodimers, each encoded by distinct genes that generate closely related but functionally distinct isotypes. Although several tubulin isotypes have been implicated in ocular development and disease, how isotype diversity is organized during corneal morphogenesis remains poorly defined. Herein, we use the developing chick embryo as a model system to investigate the conservation and spatiotemporal localization of tubulin isotypes during corneal development. Through comparative amino acid sequence analysis, we show that chick and human α- and β-tubulin isotypes are highly conserved at structural and catalytic domains, with divergence concentrated in C-terminal regions associated with post-translational modifications. To relate these molecular features to tissue-level organization, we performed a longitudinal immunohistochemical analysis of five tubulin isotypes across key stages of corneal development. We identify distinct and dynamic patterns of isotype enrichment along apico-basal and central-peripheral axes within the cornea, as well as isotype-specific redistribution during epithelial maturation and corneal endothelial differentiation. Notably, TUBA5/TUBA4A exhibits tightly regulated localization, including enrichment at the leading edge of migratory corneal stromal progenitor cells and within the maturing corneal endothelium. Together, these data establish the chick embryo as a conserved and tractable model for studying tubulin isotype diversity in the cornea, and more broadly across other tissues, and to provide a developmental resource linking tubulin sequence identity to spatially defined microtubule organization during epithelial morphogenesis.",
-        "authors": "Raneesh Ramarapu, William R Stoehr, Mia Meisen, Sarah Border, Sara Thomasy, Crystal D. Rogers",
+        "authors": "Raneesh Ramarapu, William R Stoehr, Mia Miesen, Sarah Border, Sara Thomasy, Crystal D. Rogers",
         "date": "2026-02-20T00:00:00+00:00"
     },
     {
@@ -187,6 +310,17 @@
         "link": "https://www.biorxiv.org/content/10.64898/2026.02.18.706705v1",
         "abstract": "The raphidophyte Chattonella marina is a harmful algal bloom (HAB) species known for its distinct diurnal vertical migration (DVM), a behavior important for its survival and bloom formation. However, the single-cell mechanisms governing this migration remain unclear. In this study, we investigated the swimming characteristics of individual C. marina cells during day (light) and night (dark) phases. We observed a strong positive correlation between the length of the propulsive anterior flagellum and the cell's swimming speed. We discovered that the length distribution of the anterior flagellum is different during the day and at night. We also found that the beat frequency of the anterior flagellum was significantly higher during the day compared to the night. This resulted in faster mean swimming speeds during the light phase. To investigate the mechanism of length regulation, we tested the role of intraflagellar transport (IFT) using the IFT dynein inhibitor, ciliobrevin D. Treatment with ciliobrevin D induced a time- and concentration-dependent shortening of the anterior flagellum. This is the first pharmacological evidence to suggest that an IFT-like mechanism may actively control motile flagellar length in C. marina. These findings suggest that C. marina modulates its swimming speed through diurnal changes in both flagellar length and beat frequency, likely as an energy-saving strategy coupled to its DVM.",
         "authors": "Fujita, Y.; Kage, A.; Nishizaka, T.",
+        "date": "2026-02-20T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "bioRxiv",
+        "doi": "10.1101/2025.06.17.660072",
+        "title": "RNA Selectively Modulates Activity of Virulent Amyloid PSMα3 and Host Defense LL-37 via Phase Separation and Aggregation Dynamics",
+        "link": "https://www.biorxiv.org/content/10.1101/2025.06.17.660072v2",
+        "abstract": "Amyloids, classically associated with neurodegenerative disease, also play important roles in infection and immunity. Phenol-soluble modulins (PSMs) from Staphylococcus aureus are amyloid-forming virulence peptides that contribute to cytotoxicity, immune modulation, and biofilm stability. PSM3 forms cross- amyloid fibrils and shares sequence and -helical self-assembly features with LL-37, a human host-defence peptide that forms non-amyloid -helical assemblies. Here, we identify RNA as a context-dependent regulator of their assembly pathways and biological activity. RNA consistently reduces LL-37 cytotoxicity toward human cells without compromising its antibacterial function, suggesting a host-protective effect. In contrast, RNA preserves PSM3 cytotoxic and antimicrobial activity over time by reshaping its assembly landscape, promoting liquid-liquid phase separation at low concentrations and stabilizing dynamic -helical intermediates. At higher RNA concentrations, both peptides transition into distinct aggregated states, amorphous for LL-37 and fibrillar for PSM3, correlating with divergent functional outcomes. The amyloid inhibitor EGCG abolishes the bioactivity of both peptides by redirecting assembly into non-functional aggregates, highlighting that activity depends on supramolecular architecture and reversibility rather than aggregation per se. Together, these findings establish RNA as an environmental regulator of -helical peptide assemblies and reveal phase transitions as tuneable determinants of peptide function, with implications for microbial virulence, innate immunity, and therapeutic intervention in infectious and protein-aggregation-associated diseases.",
+        "authors": "Rayan, B.; Barnea, E.; Indig, R.; Pantoja, C. F.; Gayk, J.; Lupu-Haber, Y.; Upcher, A.; Argoetti, A.; Aunstrup Larsen, J.; Buell, A. K.; Zweckstetter, M.; Landau, M.",
         "date": "2026-02-20T00:00:00+00:00"
     },
     {
@@ -298,6 +432,83 @@
         "abstract": "The NBAR-domain containing protein endophilin, as a major player in many endocytic pathways, has offered considerable insight into BAR-domain driven membrane remodeling. However, understanding the interaction of the different subdomains of endophilin and their abilities to sense and generate negative Gaussian curvature are yet unanswered questions, with significant implications for the mechanisms and regulation of unconventional endocytic pathways. Using coarse-grained molecular dynamics simulation, we demonstrate the synergistic remodeling capabilities of the NBAR remodeling unit, as well as its ability to sort to and generate membrane regions with negative Gaussian curvature. We find that the assembly of NBAR scaffolds at regions of negative Gaussian curvature facilitate membrane hemifission in dynamic bud formation. These insights provide an additional role for endophilin scaffolds in endocytosis, as well as emphasizing the importance of developing new ways to study negative Gaussian curvature.",
         "authors": "Beiter, J. R.; Tsai, F.-C.; Bassereau, P.; Voth, G. A.",
         "date": "2026-02-20T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Light-Activated Self-thermophoretic Janus Nanopropellers",
+        "link": "http://arxiv.org/abs/2602.17548v1",
+        "abstract": "Achieving controlled and directed motion of artificial nanoscale systems in three-dimensional fluid environments remains a key-challenge in active matter, primarily due to the prevailing thermal fluctuations that rapidly randomize the particle trajectories. While significant progress has been made with micrometer-sized particles, imparting sufficient mechanical energy, or self-propulsion, to nanometer-sized particles to overcome Brownian diffusion and enable controlled transport remains a major issue for emerging applications in nanoscience and nanomedicine. Here, we address this challenge by demonstrating the fuel-free, reversible, and tunable active behavior of gold-silica (Au-SiO2) Janus nanoparticles (radius R=33 nm) induced by optical excitation. Using single particle tracking, we provide direct experimental evidence of self-thermophoresis, clearly distinguishing active motion from thermal noise. These light-driven Janus nanoparticles constitute a minimal yet robust photothermal system for investigating active matter and its manipulation at the nanoscale.",
+        "authors": "Henri Truong, Chiara Moretti, Lionel Buisson, Benjamin Abecassis, Eric Grelet",
+        "date": "2026-02-19T17:02:46+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Densely-packed particle raft at vertically vibrated air-water interface",
+        "link": "http://arxiv.org/abs/2602.17539v1",
+        "abstract": "We investigate the dynamics of a dense raft of millimeter-sized granular particles at a vertically vibrated air-water interface, which displays a rich set of patterns and particle dynamics as we vary the vibration amplitude, frequency, and particle packing fraction. While the classical parametric instability with standing waves still occurs over a certain parameter space, the measured wave dispersion relations indicate an increasing role in the raft's emerging elasticity at higher packing fractions, which induces a decrease in the effective surface tension and an increase in an out-of-plane bending modulus. At higher vibration frequencies and lower amplitudes, we also identified a regime without standing waves in which individual particles exhibit thermal-like motion and transition from diffusive to sub-diffusive transport as the packing fraction increases. Glassy behaviors such as spatial and temporal heterogeneity in particle dynamics occur as well, which is analogous to supercooled liquids. When the vibration amplitude is increased starting in this supercooled regime, a large cavity eventually forms inside the raft with its size and shape related to the vibration frequency and the injected vibration energy. The cavitation results in the coexistence of free surface water waves inside the cavity and thermal-like particle motion in the raft.",
+        "authors": "Xiuhe Yan, Tabitha C. Watson, Hongyi Xiao",
+        "date": "2026-02-19T16:53:06+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Tunable asymmetric swimming in biflagellate microswimmers",
+        "link": "http://arxiv.org/abs/2602.17521v1",
+        "abstract": "Many biological microswimmers can modulate their swimming gait to achieve directional control of motility, especially when performing steering towards specific directional cues. This can be achieved without the need for obvious morphological or structural asymmetries in the form of the organism, or in the number or organisation of propulsion-generating appendages such as cilia. In this work, we identify and validate a core principle of asymmetric turning in biflagellate microswimmers: propulsive forces interact constructively to drive translation whilst interacting destructively to drive rotation. We explore the ramifications of this tunable biflagellar swimming mechanism across a range of systems, from a simple, back-of-the-envelope model to a detailed computational representation of an exemplar swimmer. This leads to a markedly general quantitative relation between key drivers of asymmetry, such as ciliary beat frequency, and the curvature of emergent trajectories. We discuss how the model green alga Chlamydomonas reinhardtii, which actuates its two cilia in a symmetric breaststroke for forward swimming, may exploit this feature for phototaxis. Finally, we validate our predictions in a Chlamydomonas-inspired robophysical model, implementing closed-loop control to achieve phototactic turning.",
+        "authors": "Benjamin J. Walker, Clément Moreau, Tommie L. Robinson, Zhaochen J. Xu, Daniel I. Goldman, Eamonn A. Gaffney, Kirsty Y. Wan",
+        "date": "2026-02-19T16:35:24+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Tracking the Brownian motion of DNA-functionalized magnetic nanoparticles for conformation analysis beyond the optical resolution limit",
+        "link": "http://arxiv.org/abs/2602.17496v1",
+        "abstract": "Brownian motion provides access to hydrodynamic properties of nanoscale objects independent of their optical resolvability. Here, we present a diffusion-based approach to infer effective particle size distributions of DNA-functionalized magnetic nanoparticles (MNPs), consisting of a magnetic core and a polystyrene shell, in a regime where direct geometric sizing is limited by optical diffraction. Using multi-particle tracking microscopy, we analyze the Brownian dynamics of MNPs grafted with double-stranded DNA (dsDNA) of varying contour length under low-salt conditions. A physically motivated model is introduced that relates dsDNA contour length to an effective hydrodynamic diameter via an attenuated corona description. The measured diffusion coefficient distributions exhibit a systematic and monotonic dependence on dsDNA length in quantitative agreement with the model. While the tracked objects are predominantly dsDNA-mediated agglomerates rather than isolated nanoparticles, clustering does not obscure the length-dependent signal. Instead, the dsDNA corona determines the hydrodynamic scaling, whereas agglomeration mainly introduces an offset and distribution broadening. These results demonstrate that Brownian dynamics enables robust readout of biomolecular length scales even far below the optical resolution limit. The distribution-based approach is inherently tolerant to polydispersity and aggregation, making diffusion-based tracking a simple and promising strategy for future biotechnological and biomedical assays.",
+        "authors": "Christian Janzen, Fabian Schmid-Michels, Yahya Shubbak, Melanie Wegener, Karl-Josef Dietz, Inga Ennen, Rico Huhnstock, Arno Ehresmann, Andreas Hütten",
+        "date": "2026-02-19T16:10:57+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Data-Driven Prediction of Dielectric Anisotropy in Nematic Liquid Crystals",
+        "link": "http://arxiv.org/abs/2602.17382v1",
+        "abstract": "We curate a large-scale dataset of low frequency dielectric anisotropy values for low molecular weight liquid crystals. Using this dataset, we demonstrate that supervised machine-learning models can predict dielectric anisotropy with substantially improved accuracy (RMSE 2.6) compared to estimates obtained from the Maier-Meier relations using molecular properties from both the widely used semiempirical AM1 method (RMSE 9.7) and the modern r2scan-3c composite method (RMSE 11.2). Realising the potential of machine learning techniques for liquid crystalline materials requires carefully curated data to be accessible, and on this basis we propose a simple and standard template for reporting data.",
+        "authors": "Charles Parton-Barr, Richard J. Mandle",
+        "date": "2026-02-19T14:08:10+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Shortcut learning in geometric knot classification",
+        "link": "http://arxiv.org/abs/2602.17350v1",
+        "abstract": "Classifying the topology of closed curves is a central problem in low dimensional topology with applications beyond mathematics spanning protein folding, polymer physics and even magnetohydrodynamics. The central problem is how to determine whether two embeddings of a closed arc are equivalent under ambient isotopy. Given the striking ability of neural networks to solve complex classification tasks, it is therefore natural to ask if the knot classification problem can be tackled using Machine Learning (ML). In this paper, we investigate generic shortcut methods employed by ML to solve the knot classification challenge and specifically discover hidden non-topological features in training data generated through Molecular Dynamics simulations of polygonal knots that are used by ML to arrive to positive classifications results. We then provide a rigorous foundation for future attempts to tackle the knot classification challenge using ML by developing a publicly-available (i) dataset, that aims to remove the potential of non-topological feature classification and (ii) code, that can generate knot embeddings that faithfully explore chosen geometric state space with fixed knot topology. We expect that our work will accelerate the development of ML models that can solve complex geometric knot classification challenges.",
+        "authors": "Djordje Mihajlovic, Davide Michieletto",
+        "date": "2026-02-19T13:36:19+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Spatio-temporal air flow properties in a 3D personalised model of the human lung",
+        "link": "http://arxiv.org/abs/2602.17265v1",
+        "abstract": "We propose a multi-scale lung model to investigate spatio-temporal distributions of ventilation variables. Lung envelope and large airway geometries are derived from CT scans; smaller airways are generated using a physiologically consistent algorithm. Tissue mechanics is modeled using nonlinear elasticity under small deformations, coupled with local air pressure from fluid dynamics within the bronchial tree. Airflow accounts for inertia and static airway compliance. Simulations employ finite elements. Using this model, we explore spatio-temporal airflows and shear stresses distributions.",
+        "authors": "Jonathan Stéphano, Michaël Brunengo, Riccardo Di Dio, Thomas Laporte, Benjamin Mauroy",
+        "date": "2026-02-19T11:11:17+00:00"
     },
     {
         "images": [
@@ -469,6 +680,17 @@
     {
         "images": [
         ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "How Molecular Motors' Interaction Shapes Flagellar Beat and Its Fluctuations",
+        "link": "http://arxiv.org/abs/2602.17163v1",
+        "abstract": "The stochastic dynamics of flagellar beating for micro-swimmers, such as flagellated cells, sperms and microalgae, is dominated by a feedback mechanism between flagellar shape and the rate of activation/de-activation of the $N \\gg 1$ driving molecular motors. In the context of the so-called rigid filament models, where the axoneme is described by a single degree of freedom $X(t)$, we investigate the effect of direct coupling between the activity dynamics of adjacent motors, parametrized by $K \\ge 0$. A functional Fokker-Planck equation for $X$ and the state of the $N$ motors is obtained. In the limit of small coupling $K \\ll 1$, we derive a system of equations governing the dynamics of the Fourier modes of the active motor density, obtaining estimates for several observables and the fluctuations' quality factor $Q$. For larger $K$ we resort to numerical simulations. The effect of introducing the coupling $K>0$ is to increase characteristic times and the beating period. Moreover at large $K$s the limit cycle becomes bi-stable, with abrupt avalanches of the motor dynamics. Increasing $K$ is similar to what observed in the case $K=0$ when the confining elastic force is strongly reduced. The quality factor of fluctuations has a non-monotonic behavior: it first increases with $K$, then decreases. This is accompanied by the reduction and eventual disappearance of regions where the fraction of activated motor is nor $0$ neither $1$.",
+        "authors": "F. Fanelli, A. Puglisi",
+        "date": "2026-02-19T08:21:11+00:00"
+    },
+    {
+        "images": [
+        ],
         "source": "PNAS",
         "doi": null,
         "title": "A hybrid compass mechanism combining radical pairs and magnetite crystals",
@@ -487,6 +709,28 @@
         "abstract": "Unraveling the molecular mechanisms underlying long-range mutational effects on function is a challenging prospect. In this study, we delineate the consequences of a mutation located at a site distal to the functional region in a promiscuous acyl-CoA binding domain. A W86A mutation at a distal C-terminal segment induces two-stage noncooperative unfolding in an otherwise cooperatively unfolding protein, with the mutant exhibiting properties of a molten-globule with large equilibrium fluctuations at 310 K. Under the same conditions, NMR reveals a fourfold increase of a slow-exchanging alternate conformation in the W86A mutant, relative to the wild-type. These manifest as altered dynamic and thermodynamic coupling patterns promoting significant conformational excursions of helix 1, thus stabilizing an intermediate involving unfolded or undocked helix 1. The nonnative interactions mediated by helix 1, in turn, partially occlude the ligand-binding pocket influencing function in a chain-length-dependent manner. Further, the two-stage unfolding switches to a single transition in the W86A mutant in the presence of the ligand while simultaneously suppressing the population of the alternate conformation. Our results provide insights into how mutations could trigger long-range effects through modulation of the native ensemble properties, and the uniquely interconnected nature of the underlying molecular mechanisms.",
         "authors": "Rahul Dani, Iladeiti Kurbah, Dhruv Kumar Chaurasiya, Rohan Nath, Arunkumar Krishnan, David Fushman, Athi N. Naganathan",
         "date": "2026-02-19T08:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Reverse segregation in dense granular flow through narrow vertical channel",
+        "link": "http://arxiv.org/abs/2602.17137v1",
+        "abstract": "Controlling flow-induced segregation in a granular mixture is highly relevant to many industrial settings. To enhance mixing or promote segregation, the continuous gravity flow of a bidisperse granular mixture through a series of narrow vertical channels with exit slots is investigated. The bidisperse mixture is composed of two different sizes of particles, but of the same density. In dense flow, segregation occurs, leading to formation of bands. The bands of large particles appear at a distance away from the walls. This finding is in contrast to that in shear-driven segregation in a dense flow where large particles segregate towards the walls. Using a phenomenological model, it has been shown that rolling and bouncing induced segregation is the dominant mechanism. When cylindrical inserts are placed to modify flow patterns, that significantly influences segregation patterns. The symmetrical placement of a cylindrical insert close to the exit slot vanishes the bands and enhances mixing. However, with two inserts placed symmetrically and close to the exit slot, the degree of segregation in the reverse direction is greatly enhanced compared to that without insert. In the former, small particles accumulate in thin regions adjacent to the walls, and large particles comprise the bulk of the domain and the flowing stream. The heap formation above the insert in a narrow channel, when the insert is close to the exit, enhances mixing in one configuration, whereas it amplifies reverse segregation in the other.",
+        "authors": "Bhanjan Debnath",
+        "date": "2026-02-19T07:20:15+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Stockmayer Fluid with a Shifted Dipole: Bulk Behavior",
+        "link": "http://arxiv.org/abs/2602.17026v1",
+        "abstract": "Shifting the point dipole from the center of a Stockmayer particle is a simple geometric modification that has been explored previously, yet its implications for liquid structure, dielectric response, and phase behavior remain incompletely understood. Here, we combine molecular dynamics simulations with analytical theory to provide a unified physical interpretation of how dipole displacement reshapes microscopic correlations and propagates to macroscopic thermodynamic properties. We show that dipole shifting breaks the fore-aft symmetry of the local electrostatic field, producing only modest changes in radial packing but strong alterations in angular structure within the first solvation shell. Enhanced alignment near the dipole head is accompanied by frustrated orientational correlations near the tail, leading to broader angular distributions and a shift away from axial configurations at strong coupling. These structural asymmetries weaken cooperative ordering and result in a systematic reduction of the dielectric constant, despite locally stronger interactions. For large shifts, the dielectric response approaches the Debye limit, indicating effective suppression of dipole-dipole correlations. The same geometric frustration governs vapor-liquid equilibria: while increasing dipole strength raises the critical temperature, even modest shifts disrupt the highly polarized liquid states that emerge at strong coupling and can suppress ferroelectric-like ordering. Predictions from a reparameterized COFFEE theory capture these trends within its domain of validity, highlighting the direct connection between local orientational structure and macroscopic observables. Overall, this work demonstrates that dipole location, not only magnitude, provides a powerful control parameter in dipolar fluids and offers a clear framework for understanding geometric frustration in electrostatic liquids.",
+        "authors": "Pierre J. Walker, Ananya Venkatachalam, Samuel Varner, Bilin Zhuang, Zhen-Gang Wang",
+        "date": "2026-02-19T02:45:55+00:00"
     },
     {
         "images": [
@@ -789,6 +1033,83 @@
     {
         "images": [
         ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Quantifying Chirality in Helical Polymers via a Geometric Extension of the Kremer-Grest Model",
+        "link": "http://arxiv.org/abs/2602.16912v1",
+        "abstract": "Chirality in polymeric systems enables a wide range of emergent optical, mechanical, and transport phenomena, yet a unified framework that quantitatively connects molecular-scale geometry to chiral behavior remains lacking. Existing theoretical descriptions typically emphasize either continuum models, such as the helical wormlike chain (HWLC), which neglect intermolecular interactions, or mesophase-level theories, which obscure the role of molecular geometry. In this work, we introduce a comprehensive framework for quantifying chirality in helical polymers by extending the Kremer-Grest bead-spring model to explicitly map intrinsic curvature and torsion onto bond angle and dihedral potentials. We establish direct theoretical relationships between helical parameters such as pitch and radius, and connect them to a normalized, dimensionless chirality characteristic, $χ$ that captures local geometric correlations absent from conventional HWLC descriptions. Furthermore, using molecular dynamics simulations, we systematically quantify the influence of excluded volume interactions and thermal fluctuations on helical geometry and chirality, dispelling the common assumption that monotonic increases in chirality are associated only with decreasing pitch. Finally, we present a coarse-graining procedure that facilitates a direct comparison between experimental helical polymers and the Kremer-Grest helical chain, demonstrating quantitative agreement across a diverse set of polymer classes. This unified geometric and particle-based description provides a predictive roadmap for selecting and engineering chiral Kremer-Grest models and offers a general platform for designing polymeric materials with controlled and tunable chirality.",
+        "authors": "Michael Grant, Poornima Padmanabhan",
+        "date": "2026-02-18T21:57:24+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "How Continuous Symmetry Stabilizes the Ordered Phase of Polar Flocks",
+        "link": "http://arxiv.org/abs/2602.16865v1",
+        "abstract": "We study the stability of the ordered phase of compressible polar flocks against the nucleation of counter-propagating droplets, using a combination of analytical theory, microscopic and hydrodynamic simulations. For discrete-symmetry flocks, such droplets are known to always grow and propagate, making the ordered phase metastable. We explain how, on the contrary, continuous symmetry can stabilize the ordered phase at small enough noise by destabilizing the leading edge of growing droplets. Flocking models with continuous symmetries thus have a lower critical dimension than their discrete-symmetry counterparts, in contrast to equilibrium physics.",
+        "authors": "Omer Granek, Hugues Chaté, Yariv Kafri, Sunghan Ro, Alexandre Solon, Julien Tailleur",
+        "date": "2026-02-18T20:48:54+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Complete closed-form solutions to the problem of inextensional bending for surfaces of translation and origami tessellations",
+        "link": "http://arxiv.org/abs/2602.16860v1",
+        "abstract": "Plates generally admit six deformation modes: three of which are high in strain energy, stretch the plate's midsurface and are called membrane modes; and three are low-energy, bend the midsurface without stretching it and are called bending modes. For origami tessellations, and other corrugated compliant thin shells, the modes are mixed and it is no longer clear what modes, if any, are low in energy in the sense that they are inextensional. Here, it is shown, by direct construction of closed-form solutions, that when the midsurface is a surface of translation, there exists three infinitesimally inextensional deformation modes that correspond to (1) stretching, with an effective Poisson's effect; (2) bending, with an effective synclastic or anti-clastic effect; and to (3) twisting. The provided expressions are valid irrespective of surface regularity and, in particular, properly handle any creases be them straight or curved. The results provide a powerful benchmark for the validation of numerical methods and further insight into the elastic stiffness of thin corrugated compliant shells.",
+        "authors": "Adam Reddy, Asma Karami, Hussein Nassar",
+        "date": "2026-02-18T20:38:51+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Supersymmetry and Nonreciprocity",
+        "link": "http://arxiv.org/abs/2602.16824v1",
+        "abstract": "Nonreciprocal theories are used to model a broad array of non-equilibrium phenomena found in nature ranging from biological systems like networks of neurons to the behavior of overflowing water fountains. This includes systems broadly classified as active matter systems. We show that the stochastic theories which describe nonreciprocal interactions can be mapped into quantum field theories described by a supersymmetric action with a single supercharge. The theories are generically non-Hermitian. This generalizes the past work of Parisi and Sourlas on reciprocal theories, which model systems with interactions derived from potentials.",
+        "authors": "Savdeep Sethi, Gabriel Artur Weiderpass",
+        "date": "2026-02-18T19:45:32+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Design Principles for Fluid Molecular Ferroelectrics",
+        "link": "http://arxiv.org/abs/2602.16649v1",
+        "abstract": "Fluid molecular ferroelectrics are a new class of organic materials where ferroelectricity is found in conjunction with 3D fluidity whilst still retaining spontaneous polarization values comparable to their traditional solid state counterparts. One of the major challenges for soft condensed matter physics is predicting whether a fluid molecular material will form ferroelectric phase with nematic or smectic order. Through the synthesis of forty five systematically varied molecules, and by analogy to solid molecular ferroelectrics, is it shown that subtle hydrogen fluorine substitution allows for tuneable syn-parallel pairing motifs resulting in either specific pairings leading too geometrically constrained lamellar order or diversified pairings stabilising nematic ordering. Large-scale, fully atomistic molecular dynamics simulations reveal that smectic ferroelectricity emerges from discrete lateral pairing modes, whereas nematic phases arise from a multiplicity of equivalent polar configurations. Together, these findings establish experimentally validated design principles for fluid molecular ferroelectrics and provide a predictive framework for engineering functional polar fluids.",
+        "authors": "Calum J Gibb, Jordan Hobbs, William C Ogle, Richard J Mandle",
+        "date": "2026-02-18T17:45:26+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Enhanced Diffusion Sampling: Efficient Rare Event Sampling and Free Energy Calculation with Diffusion Models",
+        "link": "http://arxiv.org/abs/2602.16634v1",
+        "abstract": "The rare-event sampling problem has long been the central limiting factor in molecular dynamics (MD), especially in biomolecular simulation. Recently, diffusion models such as BioEmu have emerged as powerful equilibrium samplers that generate independent samples from complex molecular distributions, eliminating the cost of sampling rare transition events. However, a sampling problem remains when computing observables that rely on states which are rare in equilibrium, for example folding free energies. Here, we introduce enhanced diffusion sampling, enabling efficient exploration of rare-event regions while preserving unbiased thermodynamic estimators. The key idea is to perform quantitatively accurate steering protocols to generate biased ensembles and subsequently recover equilibrium statistics via exact reweighting. We instantiate our framework in three algorithms: UmbrellaDiff (umbrella sampling with diffusion models), $Δ$G-Diff (free-energy differences via tilted ensembles), and MetaDiff (a batchwise analogue for metadynamics). Across toy systems, protein folding landscapes and folding free energies, our methods achieve fast, accurate, and scalable estimation of equilibrium properties within GPU-minutes to hours per system -- closing the rare-event sampling gap that remained after the advent of diffusion-model equilibrium samplers.",
+        "authors": "Yu Xie, Ludwig Winkler, Lixin Sun, Sarah Lewis, Adam E. Foster, José Jiménez Luna, Tim Hempel, Michael Gastegger, Yaoyi Chen, Iryna Zaporozhets, Cecilia Clementi, Christopher M. Bishop, Frank Noé",
+        "date": "2026-02-18T17:26:15+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Phase-Field Models for Particle-Stabilised Emulsions",
+        "link": "http://arxiv.org/abs/2602.16622v1",
+        "abstract": "Particle-stabilised emulsions are a cornerstone of soft matter science due to their broad application and fundamental relevance. Computer simulations provide key insights into the formation and behaviour of these emulsions, yet current methods are limited by the spatiotemporal scales accessible for study. The principal issue is that particles are resolved individually. In this work, an alternative strategy is introduced based on phase-field theory, for which we establish the framework. By evolving continuous fields, large-scale dynamics can be simulated in a computationally efficient manner. Our approach is then applied to model the complex formation of a bicontinuous interfacially jammed emulsion gel (bijel) via solvent-transfer induced phase separation (STrIPS). By resolving the coupled dynamics of liquid phase separation and nanoparticle adsorption, the model allows for the characterisation of the influence of nanoparticles on the morphology. Higher concentrations of nanoparticles are found to reduce the average domain size of STrIPS bijels, in line with previous experimental evidence. The presented phase-field model thus represents a promising approach for the morphological investigation of complex particle-stabilised emulsions.",
+        "authors": "Elisabeth C. Eij, Joost de Graaf, Martin F. Haase, Jesse M. Steenhoff",
+        "date": "2026-02-18T17:17:22+00:00"
+    },
+    {
+        "images": [
+        ],
         "source": "PLOS ONE",
         "doi": null,
         "title": "A regression-based method to estimate vessel mass for use in whale-ship strike risk models",
@@ -796,6 +1117,28 @@
         "abstract": "<p>by Alexandra Mayette, Sean W. Brillant</p>  Vessel-whale collisions are one of the major threats that large whales face worldwide. The probability of lethal injury is an important factor to consider when conducting vessel strike risk assessment, which helps identify areas most at risk. To calculate the probability of lethality, these assessments have commonly used published models, which only account for the vessel speed. A biophysical model has been developed to simulate a vessel strike and estimate a probability of lethality, better accounting for the multiple parameters involved in the interaction, such as whale morphology, vessel dimensions, as well as speed. While the biophysical model is likely to provide more accurate estimates of lethality, some of the parameters required in the model input are not readily accessible, particularly a vessel’s displacement (i.e., its total mass). To facilitate the use of the biophysical model for all users, our objective was to compute vessel-type-specific equations to convert a vessel’s length overall to an estimated displacement. We collected the characteristics from n = 873 vessels, including vessel length overall, maximum deadweight tonnage, and total displacement when available. Vessel data was collected from Automatic Information System static data and other sources, and represented twelve vessel types. We computed a linear regression to test the correlation between the log of vessel length and the log of displacement, by vessel type. The model was significant (p < 0.001, R<sup>2</sup> = 0.978) and each vessel type was significantly different from at least one other vessel type. We demonstrated that these equations can then be used to compute the probability of lethality of a vessel strike with the biophysical model and obtain an estimate factored by vessel size. This can be an important tool for risk assessments and can better inform management and conservation measures for large whales.",
         "authors": "Alexandra Mayette, Sean W. Brillant",
         "date": "2026-02-18T14:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Three dimensional contractile droplet under confinement",
+        "link": "http://arxiv.org/abs/2602.16408v1",
+        "abstract": "We numerically study the dynamics of a three-dimensional contractile fluid droplet in the bulk and under confinement. We show that varying activity leads to a variety of shapes and motile regimes whose motion is driven by an interplay between spontaneous flows and elasticity. In the bulk the droplet self-propels unidirectionally, acquiring either an almost spherical shape at intermediate activity or a peanut-like geometry for larger values. Under confinement, the droplet exhibits a previously unreported oscillating dynamics characterized by periodic hits against opposite walls of a microchannel while moving forward. These results could be of interest for the study of artificial microswimmers and their biological analogs, such as living cells.",
+        "authors": "Adriano Tiribocchi, Marco Lauricella, Andrea Montessori, Sauro Succi",
+        "date": "2026-02-18T12:33:36+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Hidden universality in dislocation-loops mediated three-dimensional crystal melting",
+        "link": "http://arxiv.org/abs/2602.16390v1",
+        "abstract": "Understanding why and how crystalline solids melt remains a central problem in condensed-matter physics. Dislocation loops are fundamental topological excitations that control the thermodynamic stability of crystals, yet their role in setting universal aspects of melting has remained unclear. Here we show, within dislocation-mediated melting theory, that the free-energy condition for loop proliferation leads to a universal ratio between the energy of a minimal dislocation loop and the thermal energy at melting. For minimal dislocation loops that begin to proliferate at the onset of melting, this ratio takes the purely geometric value $\\mathcal{E}_* = E_{\\rm loop}/(k_B T_m) \\approx 25.1$, independent of elastic moduli and chemistry-dependent details. This result provides a microscopic explanation for recent empirical findings by Lunkenheimer \\emph{et al.}, who identified a closely related universal energy scale $\\approx 24.6$ from viscosity data. The same framework also rationalizes the empirical $2/3$ rule relating the glass-transition and melting temperatures.",
+        "authors": "Alessio Zaccone, Konrad Samwer",
+        "date": "2026-02-18T11:56:45+00:00"
     },
     {
         "images": [
@@ -864,6 +1207,28 @@
         "abstract": "Imaging cells and their interactions across the whole biosphere with molecular-scale resolution is key for understanding structure–function relations. Cryogenic electron tomography (cryo-ET) is a powerful method for obtaining this critical information. However, cryo-ET studies are challenging and often limited to a small number of cell types per study. Here, we collate cryo-ET data from hundreds of cells and tissues across the biosphere to i) identify emerging methodological trends, ii) pinpoint strategies to reduce imaging time and costs, iii) quantitatively compare methods for cell freezing and sectioning, and iv) census cryo-ET species coverage across all domains of life. Comparing the fraction of cellular material within a single lamella across all domains of life reveals an order of magnitude difference between eukaryotes (1%) compared to bacteria (9%) and archaea (14%). We calculate the fraction of cellular material which can be imaged using distinct sectioning methods on multicellular communities and tissues—identifying serial lift-out as a powerful approach for obtaining more complete cellular depictions. Finally, we show that the biodiversity of current cryo-ET studies is 2 to 3 orders of magnitude lower than in sequence libraries and 4 to 5 lower than the total predicted on Earth. Our analyses reveal major evolutionary lineages which remain critically understudied and highlight where future cryo-ET research would be most impactful.",
         "authors": "T. Bertie Ansell, Louis Berrios, Kabir G. Peay, Peter D. Dahlberg",
         "date": "2026-02-18T08:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Asymptotic Effects of Incident Angle and Lateral Conduction in Electromagnetic Skin Heating",
+        "link": "http://arxiv.org/abs/2602.16751v1",
+        "abstract": "Previously we derived the leading term asymptotic solution of temperature distribution in skin heating by an electromagnetic beam at an arbitrary incident angle. The asymptotic analysis is based on that the penetration depth of the beam into skin is much smaller than the size of beam cross-section. It allows arbitrary incident angle. We expand the temperature in powers of the small depth to lateral scale ratio. The incident angle affects all terms in the expansion while the lateral heat conduction appears only in terms of positive even powers. The previously obtained leading term solution captures only the main effect of incident angle. The main effect of lateral heat conduction is contained in the second order term, which is mathematically negligible in the limit of small depth to lateral scale ratio. At a moderate length scale ratio (e.g., 0.1), however, the contribution from lateral conduction is quite significant and needs to be included in a meaningful approximate solution. In this study, we derive closed form analytical expressions for the first order and the second order terms in the asymptotic expansion. The resulting asymptotic solution is capable of predicting the temperature distribution accurately including the effects of both incident angle and lateral heat conduction even at a moderate length scale ratio.",
+        "authors": "Ulises Jaime-Yepez, Hongyun Wang, Shannon E. Foley, Hong Zhou",
+        "date": "2026-02-18T05:55:29+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Self-Organized Bioelectricity via Collective Pump Alignment: Physical Origin of Chemiosmosis",
+        "link": "http://arxiv.org/abs/2602.16171v1",
+        "abstract": "Chemiosmosis maintains life in nonequilibrium through ion transport across membranes, yet the origin of this order remains unclear. We develop a minimal model in which ion pump orientation and the intracellular electrochemical potential mutually reinforce each other. This model shows that fluctuations can induce collective pump alignment and the formation of a membrane potential. The alignment undergoes a phase transition from disordered to ordered, analogous to the Ising model. Our results provide a self-organizing mechanism for the emergence of bioelectricity, with implications for the origin of life.",
+        "authors": "Ryosuke Nishide, Kunihiko Kaneko",
+        "date": "2026-02-18T04:13:32+00:00"
     },
     {
         "images": [
@@ -1004,7 +1369,7 @@
         "doi": "10.64898/2026.02.17.706469",
         "title": "Mechanism of Gating and Isoform-Specific Inhibition in Renal CLC Chloride Channels",
         "link": "https://www.biorxiv.org/content/10.64898/2026.02.17.706469v1",
-        "abstract": "Hyponatremia is a prevalent disorder marked by excess water retention and substantial morbidity, motivating interest in the CLC-Ka chloride channel as a therapeutic target. Selectively inhibiting CLC-Ka without affecting the closely related CLC-Kb is essential for preventing serious side effects. However, developing isoform selective inhibitors has been challenging because most small molecules do not distinguish between CLC Ka and CLC Kb, and the basis for selectivity in the few known exceptions remains unclear. The small molecule BIM1 preferentially inhibits CLC Ka over CLC Kb, providing an opportunity to dissect isoform specific pharmacology. To investigate this mechanism, we determined cryo EM structures of BIM1 and BIM15, a related nonselective analog, bound to a CLC K variant engineered to match the human CLC Ka binding pocket. Structural and computational analyses reveal that inhibition and isoform selectivity are anchored by interactions with a conserved lysine, with surrounding binding site residues subtly tuning the local electrostatic environment to promote or disfavor these contacts. These analyses further identify a dynamic extracellular loop that intermittently occludes the access pathway, indicating its role as a gate for ions and inhibitors. BIM15 engages this gating loop more extensively than BIM1, suggesting that differential loop engagement contributes to inhibitor selectivity. To probe how gating reshapes this region, we solved the structure in the presence of Ca2+;, which favors channel opening, and found the gating loop ordered and withdrawn from the pathway. Together, these findings elucidate how CLC K channels gate and how subtle binding-site differences and loop dynamics shape isoform specific drug binding, providing a foundation for designing next generation CLC Ka inhibitors.",
+        "abstract": "Hyponatremia is a prevalent disorder marked by excess water retention and substantial morbidity, motivating interest in the CLC-Ka chloride channel as a therapeutic target. Selectively inhibiting CLC-Ka without affecting the closely related CLC-Kb is essential for preventing serious side effects. However, developing isoform-selective inhibitors has been challenging because most small molecules do not distinguish between CLC-Ka and CLC-Kb, and the basis for selectivity in the few known exceptions remains unclear. The small molecule BIM1 preferentially inhibits CLC-Ka over CLC-Kb, providing an opportunity to dissect isoform-specific pharmacology. To investigate this mechanism, we determined cryo-EM structures of BIM1 and BIM15, a related nonselective analog, bound to a CLC-K variant engineered to match the human CLC-Ka binding pocket. Structural and computational analyses reveal that inhibition and isoform selectivity are anchored by interactions with a conserved lysine, with surrounding binding-site residues subtly tuning the local electrostatic environment to promote or disfavor these contacts. These analyses further identify a dynamic extracellular loop that intermittently occludes the access pathway, indicating its role as a gate for ions and inhibitors. BIM15 engages this gating loop more extensively than BIM1, suggesting that differential loop engagement contributes to inhibitor selectivity. To probe how gating reshapes this region, we solved the structure in the presence of Ca{superscript 2}, which favors channel opening, and found the gating loop ordered and withdrawn from the pathway. Together, these findings elucidate how CLC-K channels gate and how subtle binding-site differences and loop dynamics shape isoform-specific drug binding, providing a foundation for designing next-generation CLC-Ka inhibitors.  Significance StatementHyponatremia is a major clinical problem with limited therapeutic options. The kidney chloride channel CLC-Ka is an attractive drug target, but its high sequence similarity to CLC-Kb complicates the development of isoform-selective inhibitors, which is required to create a safe drug. Combining cryo-EM structures with molecular dynamics simulations, we define how inhibitors bind at the pore entryway of CLC-Ka and uncover the molecular basis for inhibitor isoform selectivity. We further show that a dynamic extracellular loop can cap the pore and act as a gating element that shapes inhibitor access and engagement. These findings establish a mechanistic foundation for developing improved treatments for hyponatremia.",
         "authors": "Chen, C.-T.; Sobecks, B. L.; Powers, A. S.; Kreiter, J.; Das, A.; Barry, C. N.; Chen, M.; Hinman, A.; Petrakian, C. F.; Trifkovic, N.; Williams, B.; Wood, C. A. P.; Xu, M.; Dror, R. O.; Chiu, W.; Maduke, M.",
         "date": "2026-02-18T00:00:00+00:00"
     },
@@ -1015,7 +1380,7 @@
         "doi": "10.64898/2026.02.17.706271",
         "title": "Quantifying interleaflet coupling of phase behavior and observing anti-registered phases in asymmetric lipid bilayers",
         "link": "https://www.biorxiv.org/content/10.64898/2026.02.17.706271v1",
-        "abstract": "Model asymmetric lipid bilayers provide a powerful platform for probing how lateral phase behavior in one leaflet is coupled to that of the opposing leaflet. Here, we use calcium-induced hemifusion to generate asymmetric giant unilamellar vesicles (aGUVs) and investigate how lipid composition modulates interleaflet coupling of liquid-liquid phase separation. Symmetric GUVs composed of cholesterol, the high-melting lipid DPPC, and a low-melting phosphatidylcholine (either 14:1-PC or 16:1-PC) were prepared at compositions exhibiting coexisting liquid-ordered (Lo) and liquid-disordered (Ld) phases. Hemifusion with a uniformly mixed supported lipid bilayer composed of the low-melting lipid and cholesterol selectively altered the outer leaflet composition, producing aGUVs with controlled but variable asymmetry. Quantification of outer leaflet exchange using both probe-exit and probe-entry fluorescence measurements revealed substantial vesicle-to-vesicle variability within a given preparation, resulting in overlapping populations of phase-separated and uniformly mixed aGUVs. To account for this variability, we developed a population-based, coupled-distributions framework that enables robust determination of the asymmetric miscibility boundary, defined as the outer leaflet composition at which macroscopic phase separation is suppressed. Independent analyses of probe-exit and probe-entry data yielded consistent boundary locations. Comparing the two lipid systems, we find that aGUVs containing 14:1-PC require significantly greater outer leaflet exchange to abolish phase separation than those containing 16:1-PC. Only in the 14:1-PC system do we observe vesicles exhibiting coexistence of distinct anti-registered phases, a theoretically predicted but rarely observed regime consistent with large hydrophobic mismatch. By expressing both symmetric and asymmetric miscibility boundaries in a common fractional-coordinate framework, we introduce a phenomenological parameter, {triangleup}*, that quantifies the direction and strength of interleaflet coupling of phase behavior. Together, these results demonstrate that modest changes in lipid chain length can markedly alter asymmetric miscibility boundaries and provide a quantitative link between experimental observations, leaflet dominance concepts, and coupled-leaflet theories of membrane organization.",
+        "abstract": "Model asymmetric lipid bilayers provide a powerful platform for probing how lateral phase behavior in one leaflet is coupled to that of the opposing leaflet. Here, we use calcium-induced hemifusion to generate asymmetric giant unilamellar vesicles (aGUVs) and investigate how lipid composition modulates interleaflet coupling of liquid-liquid phase separation. Symmetric GUVs composed of cholesterol, the high-melting lipid DPPC, and a low-melting phosphatidylcholine (either 14:1-PC or 16:1-PC) were prepared at compositions exhibiting coexisting liquid-ordered (Lo) and liquid-disordered (Ld) phases. Hemifusion with a uniformly mixed supported lipid bilayer composed of the low-melting lipid and cholesterol selectively altered the outer leaflet composition, producing aGUVs with controlled but variable asymmetry. Quantification of outer leaflet exchange using both probe-exit and probe-entry fluorescence measurements revealed substantial vesicle-to-vesicle variability within a given preparation, resulting in overlapping populations of phase-separated and uniformly mixed aGUVs. To account for this variability, we developed a population-based, coupled-distributions framework that enables robust determination of the asymmetric miscibility boundary, defined as the outer leaflet composition at which macroscopic phase separation is suppressed. Independent analyses of probe-exit and probe-entry data yielded consistent boundary locations. Comparing the two lipid systems, we find that aGUVs containing 14:1-PC require significantly greater outer leaflet exchange to abolish phase separation than those containing 16:1-PC. Only in the 14:1-PC system do we observe vesicles exhibiting coexistence of distinct anti-registered phases, a theoretically predicted but rarely observed regime consistent with large hydrophobic mismatch. By expressing both symmetric and asymmetric miscibility boundaries in a common fractional-coordinate framework, we introduce a phenomenological parameter, {Delta}*, that quantifies the direction and strength of interleaflet coupling of phase behavior. Together, these results demonstrate that modest changes in lipid chain length can markedly alter asymmetric miscibility boundaries and provide a quantitative link between experimental observations, leaflet dominance concepts, and coupled-leaflet theories of membrane organization.  Statement of SignificanceMembrane asymmetry is a defining feature of eukaryotic cells whose influence on lateral membrane organization remains unclear. Using asymmetric giant vesicles, we find that coexisting liquid-ordered and liquid-disordered domains transition to a uniform appearance as saturated lipid in the outer leaflet is replaced with unsaturated lipid. The extent of exchange required to disrupt phase separation increased with acyl-chain length mismatch, revealing a compositional dependence of interleaflet coupling. In mixtures with greater hydrophobic mismatch, we also observe coexisting anti-registered phases predicted by theory but rarely observed experimentally, providing new constraints for models of coupled-leaflet behavior. By accounting for vesicle-to-vesicle compositional variability, these results provide a framework for measuring asymmetric miscibility boundaries and for connecting asymmetric membrane organization to lipid raft phenomena.",
         "authors": "Kennison-Cook, K. B.; Cooper, A. M.; Heberle, F. A.",
         "date": "2026-02-18T00:00:00+00:00"
     },
@@ -1039,17 +1404,6 @@
         "link": "https://www.biorxiv.org/content/10.64898/2026.01.19.700293v2",
         "abstract": "Following DNA replication, cohesion maintains sister chromatids in spatial proximity with a certain degree of alignment. This tethering, mediated by the cohesin complex,may facilitate DNA repair and enable proper chromosome individualization and segregation during mitosis. However, it is still unclear how cohesion is established and how it reshapes the relative organization of replicated chromosomes to achieve its functions. In this study, we address these questions in the biological context of budding yeast, by disentangling the interplay between two major structural functions of cohesin: organizing individual chromatids through loop extrusion and sister chromatids through cohesion. Combining polymer modeling and detailed analysis of recent experimental data of replicated chromosomes in G2/M, we show that extruding and cohesive cohesins are sparsely distributed leading to mildly compacted and loosely aligned sister chromatids. Genome-wide analysis of inter-chromatid contact maps in WT and mutant conditions suggests that cohesion is asymmetric, favoring the tethering between non-homologous cohesin-enriched regions. Our work highlights the dual role played by cohesin in structuring the replicated genome and questions how homologous recombination may function in the context of asymmetric, partial alignment of sister chromatids.",
         "authors": "D'Asaro, D.; Arbona, J.-M.; Vaillant, C.; Jost, D.",
-        "date": "2026-02-18T00:00:00+00:00"
-    },
-    {
-        "images": [
-        ],
-        "source": "bioRxiv",
-        "doi": "10.64898/2026.02.16.706158",
-        "title": "Bringing calorimetry (back) to life",
-        "link": "https://www.biorxiv.org/content/10.64898/2026.02.16.706158v1",
-        "abstract": "Micro-calorimetry offers significant potential as a quantitative method for studying the structure and function of biological systems, for instance, by probing the excess heat released by cellular or sub-cellular structures, isothermal or not, when external parameters change. We present the conceptual framework of nonequilibrium calorimetry, and as illustrations, we compute the heat capacity of biophysical models with few degrees of freedom related to ciliar motion (rowing model) and molecular motor motion (flashing ratchets). Our quantitative predictions reveal intriguing dependencies of the (nonequilibrium) heat capacity as a function of relevant biophysical parameters, which can even take negative values as a result of biological activity.",
-        "authors": "Khodabandehlou, F.; Maes, C.; Roldan, E.",
         "date": "2026-02-18T00:00:00+00:00"
     },
     {
@@ -1257,7 +1611,7 @@
         "doi": "10.64898/2026.02.17.705556",
         "title": "Finite Element Modeling of the Scaphoid Shift Maneuver: Implications for Scapholunate Ligament injuries",
         "link": "https://www.biorxiv.org/content/10.64898/2026.02.17.705556v1",
-        "abstract": "Background: Computational modeling is a tool being deployed for orthopaedic solutions but its use in the hand and wrist remains limited. This work used a model to simulate a clinically relevant provocative scaphoid shift maneuver (SSM) with different levels of scapholunate interosseous ligament (SLIL) injuries to observe the effect on different metrics. Methods: A personalized model simulated the full SSM motion cycle from ulnar deviation with extension to radial deviation with flexion informed by the participant's motion obtained from dynamic computed tomography. Models repeated the SSM under different levels of SLIL injury and reported changes in joint kinematics, contact mechanics, and ligament forces. Results: The fully injured model increased scaphoid dorsal translation, flexion, and radial deviation compared to the intact condition and caused a subluxation of the scaphoid. Radioscaphoid contact areas were approximately 200% greater in the fully injured model compared with all others and the fully injured model was the only condition where contact force decreased across the motion cycle. Ligament forces in the intact condition were on average 33.0 N and 54.2 N for the volar and dorsal SLIL, respectively. Lastly, the long radiolunate, an extrinsic stabilizer, had forces that increased following SLIL injury. Conclusions: Computational models can successfully recreate clinically observed behaviors of an SSM, including scaphoid subluxation, while providing new insights via quantification of contact mechanics and ligament forces. Contact mechanics metrics may be important for understanding the long-term progression of untreated SLIL injuries to osteoarthritis. Additionally, ligament force metrics may explain the progression of SLIL injuries from volar SLIL to dorsal SLIL and highlight the importance of repairing extrinsic stabilizers of the joint, due to increased force sharing following SLIL injury. This work provides a pathway to future studies investigating the effects of SLIL injury and repair, both acutely and chronically.",
+        "abstract": "BackgroundComputational modeling is a tool being deployed for orthopaedic solutions but its use in the hand and wrist remains limited. This work used a model to simulate a clinically relevant provocative scaphoid shift maneuver (SSM) with different levels of scapholunate interosseous ligament (SLIL) injuries to observe the effect on different metrics.  MethodsA personalized model simulated the full SSM motion cycle from ulnar deviation with extension to radial deviation with flexion informed by the participants motion obtained from dynamic computed tomography. Models repeated the SSM under different levels of SLIL injury and reported changes in joint kinematics, contact mechanics, and ligament forces.  ResultsThe fully injured model increased scaphoid dorsal translation, flexion, and radial deviation compared to the intact condition and caused a subluxation of the scaphoid. Radioscaphoid contact areas were approximately 200% greater in the fully injured model compared with all others and the fully injured model was the only condition where contact force decreased across the motion cycle. Ligament forces in the intact condition were on average 33.0 N and 54.2 N for the volar and dorsal SLIL, respectively. Lastly, the long radiolunate, an extrinsic stabilizer, had forces that increased following SLIL injury.  ConclusionsComputational models can successfully recreate clinically observed behaviors of an SSM, including scaphoid subluxation, while providing new insights via quantification of contact mechanics and ligament forces. Contact mechanics metrics may be important for understanding the long-term progression of untreated SLIL injuries to osteoarthritis. Additionally, ligament force metrics may explain the progression of SLIL injuries from volar SLIL to dorsal SLIL and highlight the importance of repairing extrinsic stabilizers of the joint, due to increased force sharing following SLIL injury. This work provides a pathway to future studies investigating the effects of SLIL injury and repair, both acutely and chronically.",
         "authors": "Andreassen, T. E.; Trentadue, T. P.; Thoreson, A. R.; Parunyu, V.; An, K.-N.; Kakar, S.; Zhao, K. D.",
         "date": "2026-02-18T00:00:00+00:00"
     },
@@ -1271,6 +1625,116 @@
         "abstract": "Microbial rhodopsins represent a diverse superfamily of light-sensitive proteins composed of seven transmembrane helices with expanding phylogenetic diversity driven by advances in metagenomics. Among these, schizorhodopsins constitute a divergent family originally identified as inward proton pumps from Promethearchaeota (Asgard archaea). Here, we report that in addition to archaeal schizorhodopsins, many members of the family originate from bacteria and detail a comprehensive biophysical characterization of two schizorhodopsins from uncultured Antarctic bacteria: paSzR from Minisyncoccota (Patescibacteria) and psSzR from a Pseudanabaenacea cyanobacterium.",
         "authors": "María del Carmen Marín, Masae Konno, Andrey Rozenberg, Oded Béjà, Keiichi Inoue",
         "date": "2026-02-18T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Evaporation-Induced Pattern Formation and Wetting in Active Microtubule-Kinesin Droplets",
+        "link": "http://arxiv.org/abs/2602.16084v1",
+        "abstract": "Active networks composed of biopolymers and motor proteins provide versatile biomimetic systems that have advanced active matter physics and deepened our understanding of cytoskeletal dynamics and self-organization under diverse stimuli. In these systems, activity arises in aqueous solutions where motor proteins cross-link biopolymers and generate active stress driving the emergent network behavior. Here, we establish the active network in the form of a sessile, multi-component droplet on a substrate and investigate how evaporation influences its dynamics. We focus on how mass loss and compositional changes in the droplet reshape the behavior of the active suspension. We show that capillary and Marangoni flows drive the self-organization of microtubules into a distinctive radial arrangement within the droplet. The cross-linking ability of motor proteins gives rise to a striking non-monotonic wetting behavior, where the extensile stresses generated by the motor proteins strongly affect the characteristic timescale of the contact-line retracting and subsequent expansion. Using a combined experimental and theoretical approach, we demonstrate the crucial role of crosslinking in evaporating microtubule networks, and explain how active stresses together with evaporation-induced flows govern the dynamics of reconstituted microtubule systems and their wetting behavior. Evaporating droplets have recently attracted significant attention in the scientific community, and the findings of the setup presented in this study can have broad implications, ranging from self-organization and mechanical pattern formation in biological systems to questions about the origin of life.",
+        "authors": "Vahid Nasirimarekani, Mehrana R. Nejad, Olinka Ramírez-Soto, Susan Ali, Stefan Karpitschka, L. Mahadevan, Isabella Guido",
+        "date": "2026-02-17T23:15:57+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Non-local physics-informed neural networks for forward and inverse solutions of granular flows",
+        "link": "http://arxiv.org/abs/2602.16081v1",
+        "abstract": "Dense granular flows exhibit nonlocal effects due to stress transmission in microplastic events, especially in quasi-static or slowly sheared regions. Hence, traditional local rheological models fail to capture spatial cooperativity effects that are prominent in many granular systems. The nonlocal granular fluidity (NGF) model addresses this limitation by introducing a diffusive-like partial differential equation for a fluidity field, governed by a key material-dependent parameter: the nonlocal amplitude A. However, determining A from experiments or simulations is known to be difficult and typically requires extensive calibration across multiple geometries. In this work, we present a data-driven platform based on Physics-Informed Neural Networks (PINNs) embedded with the NGF model, capable of solving granular flows in a forward or inverse manner. We show that once trained on transient flow fields, these non-local PINNs can readily infer the material parameters, as well as the pressure and stress fields. These data-driven frameworks allow for accurate recovery of small variations in the nonlocal amplitude, A, which lead to sharp bifurcation-like transitions in the flow field. This approach demonstrates the feasibility of data-driven parameter inference in complex nonlocal models and opens up new possibilities for characterizing granular materials from sparse experimental observations.",
+        "authors": "Saghar Zolfaghari, Safa Jamali",
+        "date": "2026-02-17T23:13:54+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Melting Coulomb clusters through nonreciprocity-enhanced parametric pumping",
+        "link": "http://arxiv.org/abs/2602.16074v1",
+        "abstract": "Complex systems out of equilibrium often experience intermittent oscillations between quiescent and highly dynamic states. The type of intermittency depends on how energy is pumped into the system, and how it is dissipated. While intermittency is usually driven by stochastic noise or external forcing, energy can also be sourced from field-mediated interactions between particles, which are often nonreciprocal and effectively violate Newton's 3rd law. Here we demonstrate how nonreciprocal interactions produce intermittency in clusters of charged micron-sized particles confined in a plasma sheath. Through three-dimensional particle tracking, we observe that vertical oscillations, induced by fluctuations of the plasma environment, can be parametrically coupled to the horizontal modes. Experiments and simulations show that nonreciprocal interactions strongly amplify this parametric coupling, creating a positive feedback loop that drives explosive growth of both the horizontal and vertical modes. This mechanism triggers abrupt melting transitions from an ordered cluster to an ergodic gas-like state, and leads to intermittent switching between states over long time scales. Overall, our work identifies nonreciprocal interactions as a key mechanism through which strongly coupled finite systems transform interaction-mediated activity into dynamical nonequilibrium states.",
+        "authors": "Zhicheng Shu, Wei-Chih Li, Wentao Yu, Justin C. Burton",
+        "date": "2026-02-17T22:57:46+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "The Beauty of Mathematics in Helfrich's Biomembrane Theory",
+        "link": "http://arxiv.org/abs/2602.16002v1",
+        "abstract": "It is with great regret that Prof. Wolfgang Helfrich passed away on 28 September 2025 in Berlin. As the founder of the membrane liquid crystal model, Prof. Helfrich made outstanding contributions to membrane physics and liquid crystal display technology. This review article is written in his memory. Biomembranes, primarily composed of lipid bilayers, are not merely passive barriers but dynamic and complex materials whose shapes are governed by the principles of soft matter physics. This review explores the shape problem in biomembranes through the lens of material science and liquid crystal theory. Beginning with classical analogies to crystals and soap bubbles, it details the application of the Helfrich elastic model to explain the biconcave shape of red blood cells. The discussion extends to multi-layer systems, drawing parallels between the focal conic structures of smectic liquid crystals, the geometries of fullerenes and carbon nanotubes, and the reversible transitions in peptide assemblies. Furthermore, it examines icosahedral self-assemblies and shape formation in two-dimensional lipid monolayers at air/water interfaces. At the end of the paper, we find that the shapes such as cylinders, spheres, tori, bicocave discoids and Delaunay surfaces form a group. This result is merely an intrinsic geometric feature of these shapes and is independent of the biomembrane equation. When the pressure on the membrane, surface tension, and bending modules meet certain conditions, the biomembrane will take on these shapes. The review concludes by highlighting the unifying power of continuum elastic theories in describing a vast array of membrane morphologies across biological and synthetic systems.",
+        "authors": "Tao Xu, Zhong-Can Ou-Yang",
+        "date": "2026-02-17T20:47:27+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Surface Block Identity Controls Transport of Symmetric Diblock Copolymer Through Nanopores",
+        "link": "http://arxiv.org/abs/2602.15795v1",
+        "abstract": "Understanding how polymer architecture governs transport through nanopores is essential for nanocomposite fabrication, membrane design, and polymer upcycling. However, the effect of the nanoscale structure of copolymers on chain transport through nanoporous media remains poorly understood. In this study, we demonstrate that simply inverting the surface orientation of lamellar poly(styrene-block-2-vinylpyridine) (PS-b-P2VP) diblock copolymers, composed of two monomers with strongly contrasting affinities for SiO2, at the entrance of nanoporous silica significantly alters the kinetics of capillary rise infiltration. Using in situ spectroscopic ellipsometry, we find that infiltration of symmetric PS-b-P2VP into silica nanoparticle (SiO2 NP) packings is significantly faster when the P2VP domain is the top layer of the film and first contacts the nanoparticles, compared to when the PS domain is the top layer. Coarse-grained molecular dynamics simulations reveal that this difference originates from block-specific adsorption pathways that reorganize the nanophase structure around nanoparticles: P2VP-first infiltration forms thin adsorbed layers that drive PS into the pore interiors, generating continuous interfacial pathways that enable rapid, interface-mediated transport. In contrast, PS-first infiltration produces thicker P2VP layers that isolate PS domains and disrupt pathway connectivity, forcing chains to rely on a slower, connectivity-limited transport mechanism through P2VP-rich interstitial regions. Above the order-disorder transition, or upon silanizing nanoparticles to neutralize surface affinity, the rate difference disappears. These findings demonstrate how the interplay between nanoscale domain configuration and polymer-surface affinity governs infiltration dynamics, providing mechanistic insight into tuning transport in nanostructured block copolymers.",
+        "authors": "Sang Yup Lee, Tae-Young Heo, Uiseok Hwang, Theophile Ienn, Julien Bernard, Robert A Riggleman, Daeyeon Lee",
+        "date": "2026-02-17T18:34:21+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "A sequence of elastic patterns in a sheared bent sheet",
+        "link": "http://arxiv.org/abs/2602.15732v1",
+        "abstract": "We document a sequence of bifurcations and elastic patterns in sheared bent sheets of intermediate aspect ratio. The sheets undergo inversion of curvature through the passage of localized features, often in S-shaped pairs. Nested force-displacement hysteresis loops provide experimental evidence for snaking. Several mechanisms for coarsening and refinement of the patterns are observed, including splitting, merging, and escape through open boundaries. While most forces, including that required for full snap-through, scale with the length of the sheet, the initial drop in force upon pattern nucleation decreases rapidly with length.",
+        "authors": "D. Gimeno, B. K. Meghwar, G. Fisher, R. S. Hutton, E. Hamm, J. A. Hanna",
+        "date": "2026-02-17T17:09:38+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Flexoelectricity-driven softening of bend elasticity leads to spontaneous chiral symmetry breaking in a polar fluid",
+        "link": "http://arxiv.org/abs/2602.15687v2",
+        "abstract": "The origin of recently observed spontaneous chiral symmetry breaking in polar fluids is an unsolved problem, and poses fundamental questions as to how heliconical structures emerge in systems composed of achiral molecules. We report on the softening of bend elasticity close to such phase transition, showing that flexoelectric coupling between the electric polarization and the bend deformation is the responsible mechanism, presumably arising from the bent shape of the constituent highly polar molecules.",
+        "authors": "Aitor Erkoreka, Josu Martinez-Perdiguero, Luka Cmok, Ema Hanžel, Jordan Hobbs, Calum J. Gibb, Richard J. Mandle, Nerea Sebastián, Alenka Mertelj",
+        "date": "2026-02-17T16:11:56+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Fastest first-passage time for multiple searchers with finite speed",
+        "link": "http://arxiv.org/abs/2602.15627v1",
+        "abstract": "We study analytically and numerically the mean fastest first-passage time (fFPT) to an immobile target for an ensemble of $N$ independent finite-speed random searchers driven by dichotomous noise and described by the telegrapher's equation. In stark contrast to the well-studied case of Brownian particles -- for which the mean fFPT vanishes logarithmically with $N$ -- we uncover that the mean fFPT is bounded from below by the minimal ballistic travel time, with an exponentially fast convergence to this bound as $N \\to \\infty$. This behavior reveals a dramatic efficiency advantage of physically realistic, finite-speed searchers over Brownian ones and illustrates how diffusive macroscopic models may be conceptually misleading in predicting the short-time behavior of a physical system. We extend our analysis to anomalous diffusion generated by Riemann-Liouville-type dichotomous noises and find that target detection is more efficient in the superdiffusive regime, followed by normal and then subdiffusive regimes, in agreement with physical intuition and contrary to earlier predictions.",
+        "authors": "Denis S. Grebenkov, Ralf Metzler, Gleb Oshanin",
+        "date": "2026-02-17T14:52:55+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Deformation and orientation of a capsule with viscosity contrast in linear flows: a theoretical study",
+        "link": "http://arxiv.org/abs/2602.15626v1",
+        "abstract": "We develop a perturbation theory to study the shape and the orientation of an initially spherical capsule of radius R with a viscosity contrast, a surface tension σ and a bending rigidity $κ$ in linear flows. The elastic mechanical response of membrane to deformations is described by three elastic constitutive law which are either Hookean, Neohookean or Skalak type leading to the introduction of a surface shear elastic modulus $G_s$ and the Poisson ratio (or analog quantities). At the leading order, the deformation, i.e. the so-called Taylor parameter is proportional to the elastic capillary number Ca which evaluates the ratio between the external viscous stress and the elastic membrane response. In this linear regime, the results do not depend on the elastic constitutive law as expected. Without surface tension and bending rigidity, we recover the results of Barthes-Biesel & Rallison (1981) and notably the fact that the Taylor parameter does not depend on the viscosity contrast $λ$ contrary to the case of a viscous droplet. In our more general model, the deformation does no longer depend on $λ$ at the upper order. Now, the Taylor parameter also depends on two other dimensionless numbers: the surface elastocapillary ratio $σ/G_s$ and the dimensionless bending rigidity $B= κ/G_sR^2$. At the further order, the angle of inclination of the capsule with the direction of the shear flow, the analog of the Chaffey and Brenner equation for droplets is determined in each case. The results are in excellent agreement with the numerical ones performed with a code based on the boundary integral method providing an useful method to valid numerical developments.",
+        "authors": "Paul Regazzi, Marc Leonetti",
+        "date": "2026-02-17T14:51:31+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "The physics of crêpes: Elasto-gravity control of soft folding",
+        "link": "http://arxiv.org/abs/2602.15574v1",
+        "abstract": "Like a crêpe resting on a plate, a thin elastic sheet can fold smoothly under its own weight, forming reversible shapes without creases or imposed hinges. Such soft folds arise from a balance between elastic bending and gravity, yet their stability, packing limits, and dynamics remain poorly understood. Here we show that these behaviors are governed by a single physical length scale, the elasto-gravity length $\\ell_{eg}$. Using experiments and heavy-elastica theory, we demonstrate that $\\ell_{eg}$ sets the characteristic fold geometry, determines when a fold becomes unstable and unfolds, and limits how many reversible folds can be stacked in rectangular and circular sheets. In particular, when lengths are rescaled by $\\ell_{eg}$, fold shapes and stability thresholds collapse across materials and thicknesses. We further show that unfolding follows a universal speed scaling $v \\sim \\sqrt{g\\,\\ell_{eg}}$, revealing a gravity-controlled time scale for the release of stored bending energy. Together, these results establish a unified physical framework for reversible folding, compact storage, and gravity-assisted deployment of thin elastic sheets.",
+        "authors": "Tom Marzin, Barath Venkateswaran, Yuchen Xi, Sunghwan Jung, P. -T. Brun",
+        "date": "2026-02-17T13:38:55+00:00"
     },
     {
         "images": [
@@ -1410,6 +1874,28 @@
     {
         "images": [
         ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Virtual ultrasound machine operating in a GHz to MHz frequency range for particle-based biomedical simulations",
+        "link": "http://arxiv.org/abs/2602.15442v1",
+        "abstract": "Ultrasound-matter interactions underpin numerous biomedical and soft-matter applications, yet simulating these phenomena is challenging due to the large separation of viscous and sonic time scales. Continuum methods capture large-scale wave propagation but cannot resolve microscale interactions, while particle-based approaches offer molecular resolution but struggle with efficiency and stability at larger scales. We introduce a particle-based virtual ultrasound machine that uses a novel smoothed dissipative particle dynamics variant with an implicit pressure solver and a negative-pressure stabilization scheme, required to mimic acoustic propagation across MHz-GHz frequencies. We demonstrate its capabilities by modeling the acoustophoresis of encapsulated microbubbles, a key mechanism in ultrasound-mediated drug delivery. Beyond this application, the approach establishes a generalizable platform for simulating wave-matter interactions in soft and biological materials, opening new directions for computational studies of acoustics-driven phenomena in science and engineering.",
+        "authors": "Urban Čoko, Tilen Potisk, Matej Praprotnik",
+        "date": "2026-02-17T09:06:22+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "A Robust Truncated-Domain Approach for Cone--Jet Simulations in Electrospinning and Electrospraying",
+        "link": "http://arxiv.org/abs/2602.15416v1",
+        "abstract": "Direct numerical simulations of electrospinning and electrospraying are computationally demanding due to large-scale separation between the needle and the tip-to-collector distance. The cone-jet mode that occurs in the vicinity of the needle arises from a delicate balance between surface tension, viscous stresses, inertia, and electric stresses. This mode has a central role in determining the subsequent instabilities of the jet and the eventual outcomes on the collector. Truncated-domain simulations offer a viable alternative but depend critically on the accuracy of far-field electrostatic boundary conditions. Existing truncated-domain approaches based on analytical expressions for the electric potential systematically underestimate the electric field near the needle tip and require empirical tuning informed by prior experiments or full-domain simulations, thereby limiting their predictive capability. Here, we present a general truncated-domain framework for electrohydrodynamic (EHD) simulations of the cone-jet mode that avoids these limitations. Our approach exploits inexpensive full-domain electrostatic simulations to obtain the exact electric field and potential distributions near the needle, which are then imposed as boundary conditions in an EHD simulation carried out on a truncated domain. Comparisons with full-domain EHD simulations and experimental data demonstrate that the proposed approach accurately reproduces cone-jet shapes as well as key physical quantities, including electric currents, charge distributions, velocity fields, and Maxwell stresses, while converging at substantially smaller domain sizes. The formulation eliminates tunable parameters, does not require prior knowledge of the cone-jet configuration, and significantly reduces computational cost, providing a reliable and predictive framework for studying electrohydrodynamic cone-jet flows.",
+        "authors": "Ghanashyam K. C., Satyavrata Samavedi, Harish N Dixit",
+        "date": "2026-02-17T08:17:32+00:00"
+    },
+    {
+        "images": [
+        ],
         "source": "PNAS",
         "doi": null,
         "title": "Conformational ensembles of the magnesium channel CorA reveal structural basis for channel gating",
@@ -1483,6 +1969,17 @@
         "abstract": "Molecular Biology of the Cell, Volume 37, Issue 3, March 01, 2026. <br/>  Apoptosis is essential for tissue homeostasis and is associated with the generation of apoptotic vesicles. Le et al. describe the role of lipid scrambling in vesicle generation. Scrambling is associated with generation of inhomogeneity in the membrane, which in turn induces membrane curvature. Vesicle detachment is key to early recognition and disposal of apoptotic cells and may signal anti-inflammatory pathways. The findings of the study therefore provide underlying mechanisms of membrane remodelling by scramblases, and highlight implications to tissue-wide responses.",
         "authors": "Trieu Le, Maria Eugenia Perez Collado, Yu Meng Li, Amra Saric, Joost C.M. Holthuis, Sergio Grinstein, Spencer A. Freeman",
         "date": "2026-02-17T04:36:22+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Hidden Structural Control of Solvent Transport under Soft Jamming",
+        "link": "http://arxiv.org/abs/2602.15348v1",
+        "abstract": "Transport in soft jammed materials is often described as fluid motion through a fixed structure, leading naturally to capillary based descriptions. This picture appears particularly appropriate in strongly jammed systems, where structural rearrangements are suppressed and little visible motion is observed. Here we investigate solvent transport in foam and show that this intuition fails to capture key aspects of the transport process. By directly observing both liquid penetration and bubble motion under controlled boundary conditions, we demonstrate that solvent transport is strongly influenced by the mechanical response of the foam structure, even though the intrinsic imbibition relative to the foam matrix remains purely capillary-driven. In closed systems, the jammed structure resists penetration and leads to a pronounced slowdown that cannot be accounted for by purely capillary descriptions. In contrast, in open systems, collective bubble motion accompanies solvent invasion, resulting in an apparent acceleration of transport. These results indicate that the lack of structural motion does not guarantee a purely capillary description of transport. Our findings reveal a boundary controlled coupling between flow and structure, and highlight the need to reconsider transport processes in soft jammed systems, including foams, dense colloids, and biological tissues.",
+        "authors": "Kento Tamaki, Naoya Yanagisawa, Rei Kurita",
+        "date": "2026-02-17T04:27:06+00:00"
     },
     {
         "images": [
@@ -1784,6 +2281,83 @@
     {
         "images": [
         ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Global phase-space geometry of three-dimensional gliding: terminal velocity manifolds, separatrices, and stability structure",
+        "link": "http://arxiv.org/abs/2602.15234v1",
+        "abstract": "We develop a three-dimensional dynamical-systems framework for passive gliding and identify the global phase-space structures that organize its motion. Extending previous two-dimensional models of non-equilibrium gliding, we show that the 3D velocity dynamics possess an attracting, normally hyperbolic invariant surface, the terminal velocity manifold (TVM), onto which all trajectories rapidly collapse before evolving slowly toward a glide equilibrium. There is also a separatrix surface associated with an invariant manifold of an unstable equilibrium within the TVM, which partitions initial conditions into qualitatively distinct descent behaviors: efficient shallow glides versus steep, drag-dominated descent. Using lift-drag data from three representative airfoils--a snake-inspired bluff body, the Zimmerman planform characteristic of Draco lizards, and the classical NACA 0012--we compute the full equilibrium surfaces, analyze their pitch-roll bifurcations, and reconstruct the TVM and separatrix geometry in three dimensions. The results reveal that (i) equilibrium stability changes with both pitch and roll, rather than pitch alone; (ii) separatrix geometry determines the dynamic accessibility of shallow glides; and (iii) bio-inspired airfoils possess compact separatrix regions that make efficient gliding robust across a wide range of initial jump conditions. This work unifies biological and engineered gliders within a single global geometric framework and establishes separatrix geometry on the TVM as a principled diagnostic for glide robustness.",
+        "authors": "Mohamed Zakaria, Shane D. Ross",
+        "date": "2026-02-16T22:26:01+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Bringing calorimetry (back) to life",
+        "link": "http://arxiv.org/abs/2602.15127v1",
+        "abstract": "Micro-calorimetry offers significant potential as a quantitative method for studying the structure and function of biological systems, for instance, by probing the excess heat released by cellular or sub-cellular structures, isothermal or not, when external parameters change. We present the conceptual framework of nonequilibrium calorimetry, and as illustrations, we compute the heat capacity of biophysical models with few degrees of freedom related to ciliar motion (rowing model) and molecular motor motion (flashing ratchets). Our quantitative predictions reveal intriguing dependencies of the (nonequilibrium) heat capacity as a function of relevant biophysical parameters, which can even take negative values as a result of biological activity.",
+        "authors": "Faezeh Khodabandehlou, Christian Maes, Édgar Roldán",
+        "date": "2026-02-16T19:06:29+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Stick-slip dynamics in an interleaved system with self-amplified friction",
+        "link": "http://arxiv.org/abs/2602.14935v1",
+        "abstract": "Understanding how stick-slip dynamics manifests in diverse physical conditions is a crucial topic in tribology. Although it has been extensively studied in simple frictional configurations, the characterization of stick-slip behavior in complex assemblies is challenging. This work presents the first systematic investigation of stick-slip dynamics in a system with multiple contact surfaces undergoing friction amplification through conversion of traction forces into normal compression. Using interleaved paper blocks as a model system, we combine force measurements and image processing to characterize stick-slip events occurring when the two blocks are pulled apart at different detachment velocities. We find that both the peak force and the amplitude of the stick-slip events decrease along with the system's detachment. By combining a previously designed model for friction amplification and the stick-slip dynamics predicted by a simple frictional spring-block system, we link the observed behavior to the evolving normal compression within the assembly. Through force measurements and imaging, we extract the effective stiffness of the system from stick-slip events at low velocities and relate it to the system's normal compression. We then predict the observed decrease of the global stiffness as function of the detachment by considering the spatial distribution of normal forces within the assembly, which determines an effective number of sheets contributing to the system's mechanical response. Our findings reveal a non-trivial interplay between internal stress distribution and mechanical response mediated by frictional forces, with implications for granular materials, textiles, fibrous systems, and mechanical metamaterials.",
+        "authors": "A. Plati, F. Restagno, C. Poulard",
+        "date": "2026-02-16T17:17:53+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Self-Viscophoresis: Autonomous Motion by Biasing Thermal Fluctuations via Self-Generated Viscosity Asymmetry",
+        "link": "http://arxiv.org/abs/2602.14475v1",
+        "abstract": "Microscale transport often relies on ubiquitous yet intrinsically random thermal fluctuations. Understanding how such fluctuations can be biased into directed motion has long been a central theme of nonequilibrium physics. Here, we introduce self-viscophoresis, a mechanism of autonomous motion based on the rectification of thermal fluctuations in a self-generated nonequilibrium viscosity field. Asymmetric colloidal particles dispersed in a thermoresponsive polymer solution induce local heating under uniform illumination, producing a spatially asymmetric viscosity profile around the particle and resulting in persistent directed motion. To elucidate the physical origin of this behavior, we develop a minimal Langevin model coupling isotropic thermal fluctuations to a dynamically updating temperature-viscosity field. The model shows that viscosity asymmetry anisotropically damps stochastic dynamics, effectively biasing thermal fluctuations into a net drift. It thus reproduces the observed directed motion without invoking deterministic propulsion terms associated with effective potentials or environmental fluid flows. Our results distinguish self-viscophoresis from conventional self-propulsion mechanisms and establish it as a general framework enabling reversible control of both the direction and dimensionality of motion.",
+        "authors": "Bokusui Nakayama, Yusuke Takagi, Ryoya Hirose, Masatoshi Ichikawa, Marie Tani, Ibuki Kawamata, Eiji Yamamoto, Akira Kakugo",
+        "date": "2026-02-16T05:25:57+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Convergent-Beam X-ray Crystallography",
+        "link": "http://arxiv.org/abs/2602.14402v1",
+        "abstract": "Molecular and polymeric crystals show a wide range of functional properties that arise from the interplay between the atomic-scale structure of their constituent molecules and the organization of these molecules within the crystal lattice at macroscopic length scales. X-ray diffraction can provide structural information at these disparate length scales, but usually only through experiments that address one or the other of molecular (or unit-cell) structure versus crystal structure. Consequently, the accuracy of determined molecular or polymer structures may be limited by unaccounted crystal inhomogeneities of the crystal lattice and the characterization of crystalline materials might not reveal the underlying causes of crystal morphology. Here we introduce X-ray convergent-beam diffraction to obtain spatially-resolved structural information from crystals by projection topographic imaging. Using highly focusing X-ray multilayer Laue lenses, we show that Bragg reflections can be mapped into tomographic images of the crystal, for the characterization of strain and defects at high resolution. We demonstrate how the crystal morphology obtained this way can be accounted for when determining structure factors as a function of position in the crystal. The approach may assist in studies such as diffusion and binding in MOFS, protein-drug binding, crystal growth, and the mechanical responses of photo-reactive or thermally driven dynamic crystals.",
+        "authors": "Chufeng Li, Margarita Zakharova, Mauro Prasciolu, Jia Chyi Wong, Holger Fleckenstein, Nikolay Ivanov, Wenhui Zhang, Mansi Butola, J. Lukas Dresselhaus, Ivan De Gennaro Aquino, Dmitry Egorov, Philipp Middendorf, Alessa Henkel, Bjarne Klopprogge, Lars Klemeyer, Tobias Beck, Oleksandr Yefanov, Miriam Barthelmess, Janina Sprenger, Dominik Oberthuer, Saša Bajt, Henry N. Chapman",
+        "date": "2026-02-16T02:18:39+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Programming active-molecule dynamics via intramolecular nonreciprocity",
+        "link": "http://arxiv.org/abs/2602.14400v1",
+        "abstract": "The dynamics of a self-propelled particle are typically hard-wired by its microscopic construction, limiting the range of behaviors accessible without redesigning the particle itself. Here we show that intramolecular nonreciprocity provides a minimal and versatile mechanism to overcome this constraint. We construct active molecules from short chains of two species of self-propelled particles whose propulsion directions are coupled nonreciprocally according to a prescribed internal sequence. At the single-molecule level, homogeneous sequences exhibit standard persistent random-walk dynamics, whereas heterogeneous sequences produce distinct trajectories inaccessible to either constituent species alone. At the collective level, using motility-induced phase separation (MIPS) as a representative example, we find that modifying the internal sequence shifts the MIPS onset by multiple orders of magnitude in propulsion strength, without altering particle-level interactions. These results demonstrate that intramolecular nonreciprocity among a small set of active components enables sequence-level programmability from single-molecule dynamics to emergent collective behavior, providing a minimal mechanism to encode and control active-matter dynamics across scales.",
+        "authors": "Ye Zhang, Meng Xiao, Duanduan Wan",
+        "date": "2026-02-16T02:16:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Polymer Brushes and Grafted Polymers: AI/ML-Driven Synthesis, Simulation, and Characterization towards autonomous SDL",
+        "link": "http://arxiv.org/abs/2602.14362v1",
+        "abstract": "Polymer brushes and grafted polymers have attracted significant interest at the intersection of polymers, interfacial chemistry, colloidal science, and nanostructuring. The confinement of high-density grafted polymers and differences in swelling regimes govern the synthetic challenges and the interesting physics underlying their macromolecular dynamics. In this article, we focus on another intersection, artificial intelligence and machine learning (AI/ML), and how workflows will enhance the microstructure and composition of these systems. It will also accelerate potential applications through high-throughput experimentation (HTE) and data-driven intelligence, enabling scientific discovery and optimization. Applications in microfluidics, sensors, bioimplants, drug delivery, and related areas may yet offer more opportunities for ML-driven optimization. There is also interest in applying these studies with self-driving laboratories (SDLs) that can leverage autonomous systems for synthesis screening, characterization, and application evaluation.",
+        "authors": "Rigoberto C. Advincula, Jihua Chen",
+        "date": "2026-02-16T00:28:46+00:00"
+    },
+    {
+        "images": [
+        ],
         "source": "Nature",
         "doi": null,
         "title": "PARP1-HPF1 structure and dynamics on nicked DNA suggest a mechanism for acute and localized ADP-ribosylation",
@@ -2055,6 +2629,17 @@
         "abstract": "The doubly knotted motif is one of the least expected features in proteins, occurring in both globular and transmembrane forms. Here, we focus on globular protein members of the methyltransferase family: the TrmD-Tm1570 protein, which contains two deep 31 knots, and the single-knotted proteins TrmD and Tm1570, all from Calditerrivibrio nitroreducens. Using various biophysical experimental techniques and computer simulations with AI-based methods, we studied their thermal and thermodynamic stability, as well as their mechanical unfolding. Based on molecular dynamics (MD) simulations, with the Structure-Based C Model (SBM-C) and UNRES (coarse-grained), we show that native contacts alone are not sufficient to fold double-knotted proteins. However, native contacts are sufficient to fold the single-knotted proteins TrmD and Tm1570 into their native conformations. Using the same model, we identified four possible unfolding and untying pathways, in which each domain can self-tie independently at some stage of the process. Optical tweezers (OT) experiments show that this process is also reversible, although the stretched state remains knotted. In addition, we observed higher thermal and mechanical stability in Tm1570 compared with TrmD, which is partly attributable to the position of the knot core. Overall, our results suggest that double-knotted protein from the SPOUT family can only partially self-fold, and that full knotting may require the assistance of a chaperone.",
         "authors": "Bruno da Silva, F.; Niewieczerzal, S.; Lewandowska, I.; Fortunka, M.; Sikora, M.; Silbermann, L.-M.; Tych, K. M.; Sulkowska, J. I.",
         "date": "2026-02-16T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "arXiv",
+        "doi": null,
+        "title": "Dislocation dynamics on deformable surfaces",
+        "link": "http://arxiv.org/abs/2602.14348v1",
+        "abstract": "We develop a fully coupled theoretical description of dislocation dynamics on deformable crystalline surfaces, using continuum modeling and the amplitude-phase-field crystal (APFC) framework extended to curved geometries. We derive a general kinematic expression for dislocation velocity directly from the complex-amplitude evolution equations, which is also applicable to deformed surfaces through curvature-modified differential operators. From numerical simulations, we show that even small out-of-plane deformations reshape the phenomenology of defect motion through curvature-induced self-propulsion, modified glide directions, and non-classical defect-defect interactions. Our results show how surface geometry profoundly influences defect dynamics and establish the surface-APFC model as a powerful framework for predicting and interpreting curvature-defect coupling across a wide range of systems, from stiff but deformable layers to soft matter surfaces and membranes that retain crystalline order.",
+        "authors": "Marcello De Donno, Luiza Angheluta, Marco Salvalaglio",
+        "date": "2026-02-15T23:32:39+00:00"
     },
     {
         "images": [

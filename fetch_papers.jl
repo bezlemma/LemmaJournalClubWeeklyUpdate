@@ -17,6 +17,14 @@ const ARXIV_MIN_REQUEST_INTERVAL_SECS = 3.5
 const ARXIV_DEBUG = get(ENV, "ARXIV_DEBUG", "0") == "1"
 const ARXIV_MAX_BACKOFF_SECS = something(tryparse(Int, get(ENV, "ARXIV_MAX_BACKOFF_SECS", "20")), 20)
 const ARXIV_MODE = lowercase(strip(get(ENV, "ARXIV_MODE", "auto")))
+const BIORXIV_MODE = lowercase(strip(get(ENV, "BIORXIV_MODE", "auto")))
+const BIORXIV_MAX_BACKOFF_SECS = something(tryparse(Int, get(ENV, "BIORXIV_MAX_BACKOFF_SECS", "20")), 20)
+const BIORXIV_DEBUG = get(ENV, "BIORXIV_DEBUG", "0") == "1"
+const BIORXIV_CONNECT_TIMEOUT_SECS = something(tryparse(Int, get(ENV, "BIORXIV_CONNECT_TIMEOUT_SECS", "10")), 10)
+const BIORXIV_MAX_TOTAL_SECS = something(tryparse(Float64, get(ENV, "BIORXIV_MAX_TOTAL_SECS", "120")), 120.0)
+const BIORXIV_MAX_PAGES = something(tryparse(Int, get(ENV, "BIORXIV_MAX_PAGES", "100")), 100)
+const API_READ_TIMEOUT_SECS = something(tryparse(Int, get(ENV, "API_READ_TIMEOUT_SECS", "30")), 30)
+const MIN_ABSTRACT_CHARS = something(tryparse(Int, get(ENV, "MIN_ABSTRACT_CHARS", "80")), 80)
 
 # Journal Feed Configuration
 # group: :include_all / :section_filter / :green_filter
@@ -30,7 +38,7 @@ const JOURNAL_FEEDS = [
     (url="https://feeds.aps.org/rss/recent/prresearch.xml", name="PRR", group=:include_all, section_filter=nothing),
     (url="https://www.nature.com/subjects/biophysics.rss", name="Nature", group=:include_all, section_filter=nothing),
     (url="https://www.pnas.org/action/showFeed?type=searchTopic&taxonomyCode=topic&tagCodeOr=biophys-bio&tagCodeOr=biophys-phys", name="PNAS", group=:include_all, section_filter=nothing),
-    (url="https://academic.oup.com/rss/site_6448/4114.xml", name="PNAS NEXUS", group=:include_all, section_filter=nothing),
+    (url="https://academic.oup.com/rss/site_6448/4114.xml", name="PNAS NEXUS", group=:section_filter, section_filter="Biophysics"),
     (url="https://journals.plos.org/plosone/search/feed/atom?sortOrder=DATE_NEWEST_FIRST&filterJournals=PLoSONE&unformattedQuery=subject%3A%22biophysics%22", name="PLOS ONE", group=:include_all, section_filter=nothing),
     (url="https://www.science.org/rss/express.xml", name="Science", group=:section_filter, section_filter="Biophysics"),
     (url="https://www.cell.com/cell/current.rss", name="Cell", group=:green_filter, section_filter=nothing),
@@ -404,6 +412,38 @@ function fetch_crossref_metadata(doi::AbstractString)
     end
 end
 
+function crossref_date_candidates(item)::Vector{ZonedDateTime}
+    candidates = ZonedDateTime[]
+    for key in [:published, Symbol("published-online"), Symbol("published-print"),
+                :posted, :issued, :created, :deposited, :indexed]
+        block = get(item, key, nothing)
+        block === nothing && continue
+        date_parts = get(block, Symbol("date-parts"), nothing)
+        date_parts === nothing && continue
+        isempty(date_parts) && continue
+        parts = first(date_parts)
+        isempty(parts) && continue
+        yr = Int(parts[1])
+        mo = length(parts) >= 2 ? Int(parts[2]) : 1
+        dy = length(parts) >= 3 ? Int(parts[3]) : 1
+        try
+            push!(candidates, ZonedDateTime(DateTime(yr, mo, dy), tz"UTC"))
+        catch
+        end
+    end
+    return candidates
+end
+
+function crossref_effective_date(item)
+    candidates = crossref_date_candidates(item)
+    isempty(candidates) && return nothing
+
+    now_utc = now(tz"UTC")
+    non_future = filter(dt -> dt <= now_utc, candidates)
+    isempty(non_future) && return nothing
+    return minimum(non_future)
+end
+
 # ─── XML helper: get text content of a child element ────────────────────────
 
 function xml_child_text(node::EzXML.Node, tag::String; ns::Union{String,Nothing}=nothing)
@@ -444,6 +484,25 @@ function getattr_xml(node::EzXML.Node, attr::String, default::String="")
     catch
         return default
     end
+end
+
+function clean_author_name(raw::AbstractString)::String
+    s = strip(raw)
+    isempty(s) && return ""
+
+    # Common eLife RSS pattern: "email@domain (Author Name)".
+    m = match(r"^[^@\s]+@[^@\s]+\s+\((.+)\)$", s)
+    if m !== nothing
+        s = strip(m.captures[1])
+    end
+
+    # Remove any residual email addresses.
+    s = replace(s, r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}" => "")
+
+    # Remove extra wrappers/spaces left after cleanup.
+    s = strip(replace(s, r"^\((.+)\)$" => s"\1"))
+    s = replace(s, r"\s+" => " ")
+    return strip(s)
 end
 
 # ─── RSS Feed Fetching ───────────────────────────────────────────────────────
@@ -570,17 +629,31 @@ function get_entry_authors(entry::EzXML.Node)
             # Atom: <author><name>...</name></author>
             name_text = xml_child_text(child, "name")
             if !isempty(name_text)
-                push!(authors, name_text)
+                cleaned = clean_author_name(name_text)
+                !isempty(cleaned) && push!(authors, cleaned)
             else
                 t = strip(nodecontent(child))
-                !isempty(t) && push!(authors, t)
+                cleaned = clean_author_name(t)
+                !isempty(cleaned) && push!(authors, cleaned)
             end
         elseif endswith(cname, "creator")  # dc:creator
             t = strip(nodecontent(child))
-            !isempty(t) && push!(authors, t)
+            cleaned = clean_author_name(t)
+            !isempty(cleaned) && push!(authors, cleaned)
         end
     end
-    return authors
+
+    # Preserve order while removing duplicates.
+    deduped = String[]
+    seen = Set{String}()
+    for a in authors
+        key = lowercase(a)
+        if !(key in seen)
+            push!(seen, key)
+            push!(deduped, a)
+        end
+    end
+    return deduped
 end
 
 function fetch_rss(url::AbstractString, source_name::AbstractString, group_type::Symbol;
@@ -699,6 +772,15 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
                         scraped_abstract === nothing && cr_abstract !== nothing && (abstract_text = cr_abstract)
                     end
                 end
+            end
+
+            # Final metadata quality gate.
+            has_authors = !isempty(strip(join(authors, ", ")))
+            has_abstract = length(strip(abstract_text)) >= MIN_ABSTRACT_CHARS
+            if isempty(strip(title)) || isempty(strip(link)) || !(has_authors || has_abstract)
+                short_title = isempty(title) ? "(untitled)" : title[1:min(end, 60)]
+                println("    - Skipping low-metadata entry from $source_name: $short_title")
+                continue
             end
 
             push!(papers, Paper(
@@ -852,7 +934,7 @@ function fetch_arxiv_papers()
                 resp = HTTP.get(
                     url;
                     headers=["User-Agent" => ARXIV_USER_AGENT],
-                    readtimeout=60,
+                    readtimeout=API_READ_TIMEOUT_SECS,
                     status_exception=false
                 )
                 if ARXIV_DEBUG
@@ -983,35 +1065,126 @@ end
 
 # ─── bioRxiv Fetching ────────────────────────────────────────────────────────
 
+function biorxiv_retry_wait_seconds(attempt::Int)::Int
+    return min(3 * (2 ^ (attempt - 1)), BIORXIV_MAX_BACKOFF_SECS)
+end
+
+function biorxiv_doi_from_link(link::AbstractString)::Union{String,Nothing}
+    m = match(r"10\.\d{4,9}/[-._;()/:A-Za-z0-9]+", link)
+    return m === nothing ? nothing : m.match
+end
+
+function fetch_biorxiv_papers_rss()
+    println("  Falling back to bioRxiv RSS feeds...")
+
+    urls = [
+        "https://connect.biorxiv.org/biorxiv_xml.php?subject=$(HTTP.escapeuri(BIORXIV_COLLECTION))",
+        "https://www.biorxiv.org/rss/recent.xml",
+    ]
+
+    rss_papers = Paper[]
+    for (i, url) in enumerate(urls)
+        if i == 1
+            append!(rss_papers, fetch_rss(url, "bioRxiv", :include_all))
+        else
+            append!(rss_papers, fetch_rss(url, "bioRxiv", :section_filter; section_filter=BIORXIV_COLLECTION))
+        end
+        !isempty(rss_papers) && break
+    end
+
+    papers = Paper[]
+    for p in rss_papers
+        doi = biorxiv_doi_from_link(p.link)
+        push!(papers, Paper(
+            source="bioRxiv",
+            title=p.title,
+            authors=p.authors,
+            link=p.link,
+            abstract_text=clean_biorxiv_abstract(p.abstract),
+            images=String[],
+            date=p.date,
+            doi=doi,
+        ))
+    end
+
+    unique_papers = Dict{String, Paper}()
+    for p in papers
+        key = something(p.doi, lowercase(p.title))
+        if !haskey(unique_papers, key) || p.date < unique_papers[key].date
+            unique_papers[key] = p
+        end
+    end
+
+    final = collect(values(unique_papers))
+    println("  bioRxiv RSS fallback found $(length(final)) papers.")
+    return final
+end
+
 function fetch_biorxiv_papers()
     println("Fetching bioRxiv papers...")
+    if BIORXIV_MODE == "rss"
+        papers = fetch_biorxiv_papers_rss()
+        println("  Found $(length(papers)) bioRxiv papers (biophysics).")
+        return papers
+    elseif BIORXIV_MODE != "auto"
+        println("  Warning: Unknown BIORXIV_MODE='$BIORXIV_MODE'. Using 'auto'.")
+    end
+
     start_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
     end_date = Dates.format(now(UTC), "yyyy-mm-dd")
 
     papers = Paper[]
     cursor = 0
+    max_retries = something(tryparse(Int, get(ENV, "BIORXIV_MAX_RETRIES", "3")), 3)
+    pages_fetched = 0
+    api_failed_before_first_page = false
+    t0 = time()
 
     while true
+        if time() - t0 > BIORXIV_MAX_TOTAL_SECS
+            println("  bioRxiv fetch time budget exceeded ($(BIORXIV_MAX_TOTAL_SECS)s). Stopping API pagination.")
+            break
+        end
+        if pages_fetched >= BIORXIV_MAX_PAGES
+            println("  bioRxiv page budget exceeded ($(BIORXIV_MAX_PAGES)). Stopping API pagination.")
+            break
+        end
+
         url = "https://api.biorxiv.org/details/biorxiv/$start_date/$end_date/$cursor/json"
 
-        max_retries = 4
         data = nothing
         for attempt in 1:max_retries
             try
-                resp = HTTP.get(url; readtimeout=30, status_exception=false)
-                if resp.status == 429
-                    wait_secs = 10 * attempt
-                    println("  bioRxiv rate limit (429) at cursor $cursor. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
-                    sleep(wait_secs)
-                    continue
+                req_t0 = time()
+                resp = HTTP.get(url; connect_timeout=BIORXIV_CONNECT_TIMEOUT_SECS, readtimeout=API_READ_TIMEOUT_SECS, status_exception=false)
+                if BIORXIV_DEBUG
+                    elapsed = round(time() - req_t0; digits=3)
+                    println("  [bioRxiv debug] cursor=$cursor attempt=$attempt status=$(resp.status) elapsed=$(elapsed)s")
+                end
+                if resp.status == 429 || resp.status == 502 || resp.status == 503 || resp.status == 504
+                    wait_secs = biorxiv_retry_wait_seconds(attempt)
+                    if attempt < max_retries
+                        println("  bioRxiv temporary error ($(resp.status)) at cursor $cursor. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
+                        sleep(wait_secs)
+                        continue
+                    else
+                        println("  ❌ bioRxiv temporary errors persisted after $max_retries attempts.")
+                        api_failed_before_first_page = (pages_fetched == 0)
+                        break
+                    end
                 end
                 resp.status >= 400 && error("HTTP $(resp.status)")
                 data = JSON3.read(String(resp.body))
                 break
             catch e
-                wait_secs = 5 * attempt
-                println("  bioRxiv error at cursor $cursor: $e. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
-                sleep(wait_secs)
+                wait_secs = biorxiv_retry_wait_seconds(attempt)
+                if attempt < max_retries
+                    println("  bioRxiv error at cursor $cursor: $e. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
+                    sleep(wait_secs)
+                else
+                    println("  ❌ bioRxiv failed after $max_retries attempts at cursor $cursor: $e")
+                    api_failed_before_first_page = (pages_fetched == 0)
+                end
             end
         end
 
@@ -1049,9 +1222,18 @@ function fetch_biorxiv_papers()
         msg = isempty(messages) ? Dict() : first(messages)
         count = parse(Int, string(get(msg, :count, "0")))
         total = parse(Int, string(get(msg, :total, "0")))
-        new_cursor = parse(Int, string(get(msg, :cursor, "0"))) + count
+        msg_cursor = parse(Int, string(get(msg, :cursor, string(cursor))))
+        new_cursor = cursor + count
+        if BIORXIV_DEBUG
+            println("  [bioRxiv debug] msg_cursor=$msg_cursor count=$count total=$total next_cursor=$new_cursor")
+        end
 
+        pages_fetched += 1
         (new_cursor >= total || count == 0) && break
+        if new_cursor <= cursor
+            println("  bioRxiv cursor did not advance (cursor=$cursor next=$new_cursor). Breaking to avoid hang.")
+            break
+        end
         cursor = new_cursor
         sleep(0.5)
     end
@@ -1066,6 +1248,10 @@ function fetch_biorxiv_papers()
     end
 
     final = collect(values(unique_papers))
+    if api_failed_before_first_page && isempty(final)
+        final = fetch_biorxiv_papers_rss()
+    end
+
     println("  Found $(length(final)) bioRxiv papers (biophysics).")
     return final
 end
@@ -1123,18 +1309,9 @@ function _query_crossref_orcid(orcid::String, author_name::String, from_date::St
                     end
                     isempty(abstract_text) && (abstract_text = "Abstract not available via CrossRef API.")
 
-                    # Publication date
-                    pub_date = try
-                        published = get(item, :published, Dict())
-                        date_parts = get(published, Symbol("date-parts"), [[]])
-                        parts = isempty(date_parts) ? [] : first(date_parts)
-                        yr = length(parts) >= 1 ? Int(parts[1]) : year(now())
-                        mo = length(parts) >= 2 ? Int(parts[2]) : 1
-                        dy = length(parts) >= 3 ? Int(parts[3]) : 1
-                        ZonedDateTime(DateTime(yr, mo, dy), tz"UTC")
-                    catch
-                        now(tz"UTC")
-                    end
+                    # Effective date: earliest non-future date (online/posted/created/etc.)
+                    pub_date = crossref_effective_date(item)
+                    pub_date === nothing && continue
 
                     push!(papers, Paper(
                         source="CrossRef/Featured",
