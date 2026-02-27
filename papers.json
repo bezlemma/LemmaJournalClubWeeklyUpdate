@@ -2,6 +2,17 @@
     {
         "images": [
         ],
+        "source": "bioRxiv",
+        "doi": "10.64898/2026.02.25.707299",
+        "title": "Allosteric Inhibition of NDM-1 by Thanatin Preserves the Di-Zinc Center While Restricting Dynamics",
+        "link": "https://www.biorxiv.org/content/10.64898/2026.02.25.707299v1",
+        "abstract": "The New Delhi metallo- {beta} -lactamase 1 (NDM1) is a major driver of carbapenem resistance in Gram- negative pathogens, yet the molecular basis by which antimicrobial peptides inhibit this enzyme has remained unresolved. Thanatin, a disulfide- stabilized {beta} -hairpin peptide, was previously proposed to inactivate NDM1 by displacing catalytic Zn-ions, but this model lacked direct structural support. Here, we combine high-resolution NMR spectroscopy, intermolecular NOE mapping, HADDOCK-guided docking, and molecular dynamics simulations to reveal a distinct zinc-retaining dynamic allosteric mechanism. Thanatin binds adjacent to the catalytic groove, preserving the native di-zinc coordination environment while simultaneously rigidifying the L3 catalytic loop, as confirmed by Zn-bound spectral fingerprints and EDTA titration experiments. This conformational restriction explains how the peptide inhibits the enzyme while maintaining a zinc-bound but catalytically compromised state, a finding that contrasts with zinc-displacement hypotheses and reconciles prior biochemical observations with structural data. In bacterial assays, this allosteric inhibition translates to a moderate restoration of carbapenem sensitivity, resulting in a 50% reduction in viable cell output even under high-level enzyme expression. Our findings establish a mechanistic framework for designing next-generation peptide inhibitors that target the dynamic vulnerabilities of metallo- {beta} -lactamase.",
+        "authors": "Riviere, G.; Kumar, P.; Cummins, T.; Hsiao, A.; Mueller, L. J.",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
         "source": "Nature",
         "doi": null,
         "title": "Hidden Markov model analysis of fluorescence blinking in fluorescently labeled DNA",
@@ -15,10 +26,65 @@
         ],
         "source": "Nature",
         "doi": null,
+        "title": "NEDAMSS syndrome-related truncating and missense mutations are associated with aberrant liquid-liquid phase separation of IRF2BPL",
+        "link": "https://www.nature.com/articles/s41467-026-69781-7",
+        "abstract": "This article shows how mutations causing the neurodevelopmental syndrome NEDAMSS and related disorders are associated with the aberrant intracellular condensation of the IRF2BPL protein, which triggers cellular and molecular disease mechanisms.",
+        "authors": "Dell’Oca, Marco, Boggio Bozzo, Stefania, Vaglietti, Serena, Marchetti, Chiara, Di Luca, Chiara, Munarin, Pietro, Nicoli, Michael, Indellicato, Rossella, Ravanelli, Davide, Falanga, Giorgia, Iannielli, Angelo, Luoni, Mirko, Loffreda, Alessia, Berno, Valeria, Bianchini, Paolo, Sertic, Sarah, Conforti, Antonio, Rashidiani, Shima, Aimaretti, Eleonora, Collino, Massimo, Cecere, Ilaria, Gallo, Angelo, Santoro, Federica, Brancaccio, Diego, Rosso, Samuele, Di Nardo, Giovanna, Pertusio, Raffaele, Cesano, Federico, Monje Quiroga, Francisco J., Ghirardi, Mirella, Roatta, Silvestro, Colnaghi, Luca, Fiumara, Ferdinando",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "Biophysical Journal",
+        "doi": null,
+        "title": "Adhesion-driven invasion: disentangling the interplay between cell-cell and cell-matrix interactions in cancer cell migration",
+        "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00146-3?rss=yes",
+        "abstract": "Metastasis proceeds through the dissemination of cells from the primary tumor into the surrounding extracellular matrix (ECM), initiating further spread throughout the body. The invasion of cancer cells into the ECM is significantly influenced by cell-cell adhesion, cell-matrix adhesion, and the generation of traction forces. However, the complex interplay between these different aspects makes it difficult to disentangle their roles in the invasive process, hampering our mechanistic understanding of collective cell invasion.",
+        "authors": "Quirine J.S. Braat, Klara Beslmüller, Cornelis Storm, Erik H.J. Danen, Liesbeth M.C. Janssen",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "Nature",
+        "doi": null,
+        "title": "A universal membrane-centric mechanotransduction mechanism for vibrationally stimulated cells",
+        "link": "https://www.nature.com/articles/s44222-026-00420-y",
+        "abstract": "Cells can respond to vibrational frequencies beyond physiological frequency ranges, including those&nbsp;in the ultrasonic domain. Independent, standardized experiments that probe mechanotransduction across frequencies and vibration modalities could clarify the underlying mechanisms that enable this broadband responsiveness.",
+        "authors": "Ambattu, Lizebona August, Moroni, Lorenzo, Yeo, Leslie Y.",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "Nature",
+        "doi": null,
         "title": "Allosteric activation of the glutamate receptor mGlu2 by the serotonin receptor 5-HT2A",
         "link": "https://www.nature.com/articles/s41467-026-69939-3",
         "abstract": "The interaction between different GPCRs is important in integrating their intracellular signaling. Here, the authors provide insight into the mechanisms of allosteric activation of the mGlu2 receptor induced by 5-HT2A or other GPCRs in their heteromeric complexes.",
         "authors": "Gai, Siyu, Lin, Li, Meng, Jiyong, Wu, Yichen, Xue, Li, Xu, Chanjuan, Sun, Qian, Ricarte, Adrià, Dalton, James, Renault, Pedro, Giraldo, Jesús, Pin, Jean-Philippe, Rondard, Philippe, Liu, Jianfeng",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "Nature",
+        "doi": null,
+        "title": "Condensation and intracellular interaction of membrane-anchored receptors and ligands capable of forming catch and slip bonds",
+        "link": "https://www.nature.com/articles/s42005-026-02567-x",
+        "abstract": "Studying the condensation and intracellular interaction of membrane-anchored receptors and ligands is important for understanding physiological processes and stimulating therapeutic strategies. This study demonstrates that applied force affects protein condensation and interactions in a manner dependent on bond type and force distribution.",
+        "authors": "Li, Long, Li, Zhenyuan, Du, Ruotian, Shao, Yingfeng, Luo, Meiying, Ji, Jing, Song, Fan",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "Nature",
+        "doi": null,
+        "title": "Synthesis of 3-desoxycollinoketone B and its ability to reduce Alzheimer-associated misfolded proteins",
+        "link": "https://www.nature.com/articles/s41467-026-69662-z",
+        "abstract": "This study describes the synthesis of 3-desoxycollinoketone B, a small molecule that targets amyloid-β and tau aggregates. In mouse models, it crosses the blood-brain barrier, reduces plaques, and ameliorates learning and memory impairments.",
+        "authors": "Heo, Seongrok, Cha, Minhae, Zhung, Wonho, Kim, JiMin, Keereewan, Sirisuk, Cho, Illhwan, Park, MinSeol, Seo, Wonbin, Shin, Heewon, Yoon, Soljee, Ye, Suhyun, Heo, Jae-Kyung, Hwang, Hayoung, Kim, Woo Youn, Kim, YoungSoo, Han, Sunkyu",
         "date": "2026-02-27T00:00:00+00:00"
     },
     {
@@ -53,6 +119,72 @@
         "link": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01144B",
         "abstract": "<div><p><img align=\"center\"  src=\"/services/images/RSCpubs.ePlatform.Service.FreeContent.ImageService.svc/ImageService/image/GA?id=D5SM01144B\" /></p></div><div><i><b>Soft Matter</b></i>, 2026, Advance Article<br/><b>DOI</b>: 10.1039/D5SM01144B, Paper</div><div><img  alt='Open Access' src='http://sod-a.rsc-cdn.org/pubs.rsc-uat.org/content/NewImages/open_access_blue.png' /> Open Access</div><div><a rel='license' href='http://creativecommons.org/licenses/by/3.0/' target='_blank' title='This link will open in a new browser window'> <img src='http://sod-a.rsc-cdn.org/pubs.rsc-uat.org/content/NewImages/CCBY.png' alt='Creative Commons Licence' border='none' /></a>&nbsp This article is licensed under a <a text-decoration=none rel='license' href='http://creativecommons.org/licenses/by/3.0/' target='_blank' title='This link will open in a new browser window' >Creative Commons Attribution 3.0 Unported Licence.</a></div><div>Alice Pelosse, Heinrich M. Jaeger<br/>Addition of very large particles softens the shear-thickening response. The magnitude of this softening increases systematically with particle size.<br/>To cite this article before page numbers are assigned, use the DOI form of citation above.<br/>The content of this RSS Feed (c) The Royal Society of Chemistry</div>",
         "authors": "Alice Pelosse, Heinrich M. Jaeger",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "bioRxiv",
+        "doi": "10.64898/2026.02.25.708105",
+        "title": "Integrating Segmental Deuteration iCM-SANS with SAXS and MD for Dynamical Analysis of Multi-domain Proteins",
+        "link": "https://www.biorxiv.org/content/10.64898/2026.02.25.708105v1",
+        "abstract": "Abstract Multi-domain proteins (MDPs) adopt diverse conformations arising from cooperative inter-domain motions, and such dynamics are intimately coupled to their biological functions. Quantitative characterization of these motions is crucial for elucidating their functional mechanisms. Although small-angle X-ray scattering (SAXS) provides information on overall domain arrangement, the limited experimental constraints hinder reliable discrimination of conformational ensembles derived from molecular dynamics (MD) simulations. To address this limitation, complementary experimental constraints that enable to observe domain-selective structural information are required. Inverse contrast-matching small-angle neutron scattering (iCM-SANS), combined with segmental deuteration, enables selective visualization of individual domains and thus provides such complementary information. However, practical strategies for preparing segmentally deuterated MDPs with arbitrary domain labelling have yet to be established. Here, we develop an experimental protocol that integrates controlled protein deuteration with high-efficiency multi-step protein ligation to generate a segmentally deuterated MDP in high yield. The combined use of SAXS and iCM-SANS yields complementary structural constraints that enhance discrimination of MD-derived conformational ensembles. This protocol expands the applicability of segment-selective visualization and also provides an opportunity for high-precision analysis of dynamics in complex MDPs.",
+        "authors": "Okuda, A.; Inoue, R.; Kurokawa, M.; Martel, A.; Porcar, L.; Osaki, R.; Fukuzawa, K.; Weiss, K. L.; Pingali, S. V.; Urade, R.; Sugiyama, M.",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "Biophysical Journal",
+        "doi": null,
+        "title": "Quantifying activation delay and the Cole-Moore shift via current derivatives",
+        "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00142-6?rss=yes",
+        "abstract": "(Biophysical Journal 125, 688–696; February 3, 2026).",
+        "authors": "Bernardo I. Pinto-Anwandter, Francisco Bezanilla",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "Nature",
+        "doi": null,
+        "title": "Single-cell structural biology with intracellular electron crystallography",
+        "link": "https://www.nature.com/articles/s41467-026-69205-6",
+        "abstract": "IncelluloED combines intracellular crystallization with 3D electron diffraction, enabling high-resolution structural studies of a single protein crystal inside a cell using cryo-EM tools, and paving the way toward a single-cell structural laboratory.",
+        "authors": "Bílá, Štěpánka, Pinkas, Dominik, Khakurel, Krishna, Boger, Juliane, Bílý, Tomáš, Hajdu, Janos, Franta, Zdeněk, de Diego Martinez, Iñaki, Tuma, Roman, Redecke, Lars, Polovinkin, Vitaly",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "bioRxiv",
+        "doi": "10.64898/2026.02.25.708076",
+        "title": "Computational Analysis of Microtubule-Mediated Saltatory Neuroelectrical Transmission",
+        "link": "https://www.biorxiv.org/content/10.64898/2026.02.25.708076v1",
+        "abstract": "It was recently postulated that neural microtubules (neuro-MTs), which are densely packed inside axons and dendrites, are vacuum cylindrical nanotubes that can mediate neuroelectrical transmission with a unique form of quasi-superconductivity. In this work, the behaviors of free electrons inside a theoretical neuro-MT are modeled using computational analysis and calculations. We reveal that neuro-MTs can function as nanosized physiological devices that mediate neuroelectrical transmission with a super-high energy efficiency. Under physiological conditions, the binding of cytosolic cations (e.g., K+ and Na+) to the surface residues of a neuro-MT triggers its transition from the resting state to an active state, and the rapid dissociation of these cations triggers the opposite. The dipole ring structures of a neuro-MT will help terminate the free electron conduction inside with high efficiency. The proposed neuro-MT-mediated electrical transmission offers a novel mechanistic explanation for the saltatory conduction of the action potentials along an axon. This study also provides insights into the design of novel biomimicking room-temperature superconducting materials, such as the quasi-superconducting carbon or silicone nanotubes.",
+        "authors": "Yang, Y. X.; Zhu, B. T.",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "eLife",
+        "doi": null,
+        "title": "Rift Valley fever virus dynamics in a transhumant cattle system in The Gambia",
+        "link": "https://elifesciences.org/articles/107346",
+        "abstract": "Rift Valley fever (RVF) is a zoonotic disease of global concern, driven by environmental conditions, vector activity, and livestock mobility. Although RVF has been reported in The Gambia, its epidemiology remains poorly understood. This study developed a compartmental model to study RVF dynamics in the cattle population of the country. The model incorporated seasonally dynamic transmission parameters reflecting transhumant movement and ecological differences between two distinct ecoclimatic regions: the Sahelian area and the Gambia river. Parameterised using serological data linked to household survey data, the model predicted endemic RVF virus (RVFV) circulation within The Gambia and captured temporal infection trends that closely match empirical data. Weak decay rates of seropositivity were required to match predicted and observed age-seroprevalence. Results indicated sustained RVFV transmission during the dry season in the Gambia river eco-region, with a high risk of seasonal virus introductions to the Sahelian eco-region at the start of the wet season via the returning transhumant cattle. Our study highlighted the role of livestock mobility in RVFV epidemiology in The Gambia and the need for targeted control strategies that might include, for example, targeted cattle vaccination or application of topical insecticide treatments for transhumant herds.",
+        "authors": "Daniel T Haydon, Divine Ekwem, Essa Jarra, Sarah Cleaveland",
+        "date": "2026-02-27T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "bioRxiv",
+        "doi": "10.64898/2026.02.25.707951",
+        "title": "Time-Resolved Single-Molecule FRET Reveals Length-Dependent Nucleosome Decompaction by Poly(ADP-ribose)",
+        "link": "https://www.biorxiv.org/content/10.64898/2026.02.25.707951v1",
+        "abstract": "Highly charged chains of poly(ADP-ribose) (PAR) are synthesized in the cell as part of their central role in DNA damage response. However, the effects of PAR on nucleosome structure and dynamics remain incompletely understood. Here we combine droplet-based microfluidic mixing with single-molecule Forster resonance energy transfer spectroscopy to resolve the kinetics of PAR-induced nucleosome decompaction in non-equilibrium measurements with millisecond time resolution. This approach avoids surface-adhesion and enables the tether-free observation of nucleosome remodeling. We find that PAR triggers nucleosome decompaction via a length-dependent kinetic threshold: Chains with less than ten ADP-ribose units act slowly and weakly, whereas longer PAR polymers induce efficient and rapid nucleosome opening. The extent and reversibility of decompaction further depend on PAR concentration and ionic strength, reflecting a mechanism dominated by electrostatic interactions. Enzymatic PAR digestion demonstrates that PAR can promote both reversible linker DNA opening and irreversible nucleosome disassembly. Coarse-grained molecular simulations suggest that these effects arise from a competition between PAR and DNA for histone tail binding. Altogether, our results establish PAR length as a key factor controlling chromatin accessibility during DNA repair and highlight droplet-based microfluidics as a powerful platform for studying such biomolecular interactions.",
+        "authors": "Yang, T.; Gopi, S. R.; Pinet, L.; Simoni, S.; Imhof, R.; Nettels, D.; Altmeyer, M.; Best, R. B.; Schuler, B.",
         "date": "2026-02-27T00:00:00+00:00"
     },
     {
@@ -779,6 +911,17 @@
     {
         "images": [
         ],
+        "source": "CrossRef/Featured",
+        "doi": "https://doi.org/10.1038/s41563-026-02493-x",
+        "title": "Topological control of spontaneous failure in active nematic solids",
+        "link": "https://doi.org/10.1038/s41563-026-02493-x",
+        "abstract": "Abstract not available via CrossRef API.",
+        "authors": "Sheng Chen, Matthew Ricci, A. Pasha Tabatabai, Zachary Gao Sun, Sven Witthaus, Suraj Shankar, Mor Nitzan, Michael P. Murrell",
+        "date": "2026-02-25T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
         "source": "Soft Matter",
         "doi": null,
         "title": "Water droplet attraction and coalescence on liquid-crystal-infused textured and porous surfaces",
@@ -984,6 +1127,17 @@
         "link": "https://www.nature.com/articles/s41526-025-00553-1",
         "abstract": "Space missions require sustainable life support systems capable of producing oxygen and biomass under microgravity. We report the use of acoustic levitation to trap and manipulate the filamentous cyanobacterium Limnospira indica PCC 8005 during parabolic flights. Within a millimeter-scale fluidic chamber, this helical microorganism rapidly assembles into thin layers under a standing ultrasonic wave. Stable trapping in microgravity requires substantially less acoustic power (0.42 mW) than on Earth (1.4 mW), highlighting the potential for energy-efficient bioprocessing in space. Monte Carlo simulations and light attenuation modeling show that layered structuring enhances light penetration, potentially overcoming the “compensation point\" limitation in bulk cultures. These findings open new perspectives for photobioreactors using acoustic manipulation to boost photosynthetic efficiency and reduce energy demands for oxygen and biomass production in space.",
         "authors": "Dupont, Bérénice, Benoit-Gonin, Xavier, Vincent-Bonnieu, Sébastien, Aider, Jean-Luc, Ardré, Maxime",
+        "date": "2026-02-25T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "CrossRef/Featured",
+        "doi": "https://doi.org/10.1038/s41586-026-10132-3",
+        "title": "Squeaking at soft–rigid frictional interfaces",
+        "link": "https://doi.org/10.1038/s41586-026-10132-3",
+        "abstract": "Abstract not available via CrossRef API.",
+        "authors": "Adel Djellouli, Gabriele Albertini, Jackson Wilt, Vincent Tournat, David Weitz, Shmuel Rubinstein, Katia Bertoldi",
         "date": "2026-02-25T00:00:00+00:00"
     },
     {
@@ -1858,12 +2012,13 @@
     },
     {
         "images": [
+            "/services/images/RSCpubs.ePlatform.Service.FreeContent.ImageService.svc/ImageService/image/GA?id=D5SM01268F"
         ],
         "source": "Soft Matter",
         "doi": null,
-        "title": "Generalized Model for Static Contact Angles and Hysteresis on Micro/Nanostructured Surfaces",
+        "title": "Generalized model for static contact angles and hysteresis on micro/nanostructured surfaces",
         "link": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01268F",
-        "abstract": "<div><i><b>Soft Matter</b></i>, 2026, Accepted Manuscript<br/><b>DOI</b>: 10.1039/D5SM01268F, Paper</div><div>Carlos E. Colosqui<br/>This work presents a compact, general model that predicts static contact angles and upper bounds on contact angle hysteresis for random or periodic local surface topography by accounting for arbitrary...<br/>The content of this RSS Feed (c) The Royal Society of Chemistry</div>",
+        "abstract": "<div><p><img align=\"center\"  src=\"/services/images/RSCpubs.ePlatform.Service.FreeContent.ImageService.svc/ImageService/image/GA?id=D5SM01268F\" /></p></div><div><i><b>Soft Matter</b></i>, 2026, Advance Article<br/><b>DOI</b>: 10.1039/D5SM01268F, Paper</div><div>Carlos E. Colosqui<br/>Compact general model predicts static contact angles and upper bounds on hysteresis for random or periodic surface topography by accounting for arbitrary local air entrapment and liquid infiltration in micro/nanofeatures near the contact line.<br/>To cite this article before page numbers are assigned, use the DOI form of citation above.<br/>The content of this RSS Feed (c) The Royal Society of Chemistry</div>",
         "authors": "Carlos E. Colosqui",
         "date": "2026-02-23T00:00:00+00:00"
     },
@@ -2244,28 +2399,6 @@
     {
         "images": [
         ],
-        "source": "arXiv",
-        "doi": null,
-        "title": "Feasibility as a moving target: Fluctuating species interactions lead to universal power law in equilibrium abundances",
-        "link": "http://arxiv.org/abs/2602.18942v1",
-        "abstract": "Theoretical ecology has traditionally equated persistence with the stability of a fixed equilibrium point. Here we argue that the primary threat to ecosystem persistence need not be the loss of stability, but instead the escape of the stable equilibrium to a negative orthant. In a realistic setting, fluctuations in interactions do not merely disturb abundances about an equilibrium but can displace the equilibrium point itself. We theoretically and empirically analyze such displacements of the equilibrium point in a complex community. Theoretically, we find that light-tailed fluctuations in species interactions, no matter how small, lead to a heavy-tailed power law $P(y)=1/y^α$ for the equilibrium abundance $y$ of a species. Remarkably, the exponent $α=2$ is a universal value independent of interaction structure, community size, and species. Empirically, our analysis of 34 species reveals a power law signal for most, with a median exponent $α\\sim2.56$. Next, we derive a formula for the critical noise, $σ_c$, beyond which the community experiences feasibility loss ``with near certainty''. We find that $σ_c(N)\\sim N^{-1}$, implying that larger communities are significantly more fragile to noise induced feasibility loss. Lastly, we define and calculate biologically measurable analytical metrics for both global and species-specific feasibility escape rates, and implement these metrics in dynamic simulations of 98 real world mutualistic and food web networks, to successfully predict their fragility.",
-        "authors": "Cagatay Eskin, Vu Nguyen, Dervis Can Vural",
-        "date": "2026-02-21T19:29:13+00:00"
-    },
-    {
-        "images": [
-        ],
-        "source": "arXiv",
-        "doi": null,
-        "title": "Geometric Limits of Mitotic Pressure Under Confinement",
-        "link": "http://arxiv.org/abs/2602.18909v1",
-        "abstract": "Cells often divide under mechanical confinement, where surrounding structures restrict shape changes during cytokinesis. Although forces generated during confined division have been measured experimentally, it remains unclear how confinement geometry and mechanics determine the transmitted force. Here we develop a minimal mechanical theory of cell division under confinement. Modeling the cell as an incompressible volume bounded by an interface with effective isotropic tension, we show that confinement restricts the set of mechanically admissible furrow shapes. As the furrow radius decreases, it reaches it reaches a confinement-induced minimum. Beyond this point, further ingression does not alter the interface shape, and both pressure and axial force saturate. We analyze force and pressure in rigid, soft, and strong three-dimensional confinement and demonstrate that a single geometric mechanism underlies these distinct cases. After rescaling force and length by the appropriate geometric scale, cells of different size and surface tension collapse onto a single universal curve. The relevant length scale is the cell size for rigid and soft confinement, and the confinement size in fully enclosing three-dimensional confinement. In soft confinement, environmental stiffness and spindle-generated axial forces determine the operating force and pressure, while the geometric constraint fixes the maximal attainable levels. In summary, our results show that mitotic force transmission and mitotic pressure during cytokinesis are bounded by confinement geometry, with material properties and active forces selecting the operating point within these geometry-imposed limits.",
-        "authors": "Amit Singh Vishen",
-        "date": "2026-02-21T17:23:46+00:00"
-    },
-    {
-        "images": [
-        ],
         "source": "bioRxiv",
         "doi": "10.64898/2026.02.21.707152",
         "title": "Fine-Tuning α-Synuclein Phase Separation through Sequence-Optimized Peptide Modulators",
@@ -2366,11 +2499,33 @@
         "images": [
         ],
         "source": "CrossRef/Featured",
+        "doi": "https://doi.org/10.1119/5.0324450",
+        "title": "Soft matter: Concepts, Phenomena, and Applications",
+        "link": "https://doi.org/10.1119/5.0324450",
+        "abstract": "Abstract not available via CrossRef API.",
+        "authors": "Suraj Shankar",
+        "date": "2026-02-19T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "CrossRef/Featured",
         "doi": "https://doi.org/10.1161/circresaha.125.326739",
         "title": "<i>CLIPPER</i>                     Regulates LPIN1-Mediated Mitochondrial Biogenesis and Heart Regeneration",
         "link": "https://doi.org/10.1161/circresaha.125.326739",
         "abstract": "BACKGROUND:\n                    The adult mammalian heart lacks the significant regenerative potential needed to cope with the massive loss of cardiomyocytes following myocardial infarction. Ultimately, irreversible cardiac damage leads to heart failure, which is associated with a poor prognosis. Given this, reactivating dormant regenerative processes in the injured heart represents an attractive therapeutic approach. When regeneration does occur, newly formed cardiomyocytes are derived from preexisting ones.\n                  \n                  \n                    METHODS:\n                    \n                      We aimed to identify novel regulators of cardiomyocyte proliferation. In this context, the genome is transcribed for a large part into RNAs with little or no protein-coding potential. Among noncoding RNAs, long noncoding RNAs represent the most diverse class of molecules and are implicated in numerous epigenetic mechanisms, making them ideal targets for controlling cell identity and behavior. In this project, we developed a high-throughput screening assay to identify long noncoding RNAs that promote cardiomyocyte proliferation upon knockdown. Using a stringent selection pipeline, we identified\n                      Clipper\n                      , an enhancer-associated long noncoding RNA regulating the expression of its cognate protein-coding gene\n                      Lpin1\n                      in cis.\n                    \n                  \n                  \n                    RESULTS:\n                    \n                      Clipper\n                      was found to control mitochondrial biogenesis via LPIN1 (Lipin1). Specifically, productive mitochondrial division, characterized by fission site positioning at the midzone of the mitochondrion, was stimulated by\n                      Clipper\n                      or\n                      Lpin1\n                      silencing. The process was associated with a change in mitochondrial bioenergetics, particularly decreased oxidative metabolism, reduced production of reactive oxygen species, and dampened DNA damage, creating favorable conditions for cardiomyocyte proliferation.\n                      Clipper\n                      knockdown in vivo following myocardial infarction stimulated cardiac regeneration in the damaged myocardium, leading to the restoration of heart function. Importantly,\n                      CLIPPER\n                      is positionally and functionally conserved in humans.\n                    \n                  \n                  \n                    CONCLUSIONS:\n                    \n                      Our data identify\n                      CLIPPER\n                      as a promising therapeutic target for heart regeneration, acting through control of LPIN1-dependent mitochondrial biogenesis and cardiomyocyte proliferation.",
         "authors": "Francesco Paolo Ruberto, Daniel Maric, Tatjana Kleele, Mohamed Nemir, Isabelle Plaisance, Luca Braga, Hashim Ali, Chang Jie Mick Lee, Thong Beng Lu, Alexandre Sarre, Parisa Aghagolzadeh, Roger S.-Y. Foo, Suliana Manley, Mauro Giacca, Thierry Pedrazzini",
         "date": "2026-02-05T00:00:00+00:00"
+    },
+    {
+        "images": [
+        ],
+        "source": "CrossRef/Featured",
+        "doi": "https://doi.org/10.1364/optica.570761",
+        "title": "Non-inertial scan angle multiplier for expanded fields-of-view",
+        "link": "https://doi.org/10.1364/optica.570761",
+        "abstract": "In many laser scan engines, mechanical inertia imposes a tradeoff\n\t\t\t\t\tbetween mirror diameter (mass) and scan speed (cycle time) and/or scan\n\t\t\t\t\tangle amplitude. Ultimately, this limits the field-of-view and/or scan\n\t\t\t\t\tspeed in multiphoton and confocal imaging, laser-based manufacturing,\n\t\t\t\t\tand other applications. To push parameters past this inertia limit, we\n\t\t\t\t\tpresent a non-inertial (stationary) add-on unit that doubles the scan\n\t\t\t\t\tangle amplitude while preserving both the beam size and cycle time,\n\t\t\t\t\tthus doubling the étendue (optical invariant) and overall system\n\t\t\t\t\tthroughput. We demonstrate its use in two-photon calcium imaging of\n\t\t\t\t\tneural activity in living mice. We also adapt the approach to present\n\t\t\t\t\ta phase-doubling unit that doubles the maximum range of phase\n\t\t\t\t\tmodulators. Finally, we describe further variants, including\n\t\t\t\t\tgeneralizing the approach to Nx scan angle multiplication (N=2,3,4,…) with diffraction-limited performance\n\t\t\t\t\tacross a wide scan angle range and over a broad wavelength bandwidth.\n\t\t\t\t\tThese non-inertial scan angle multipliers (called Nisam2x, 3x,…) fundamentally break the\n\t\t\t\t\tinertia-imposed tether between scan speed and scan angle amplitude,\n\t\t\t\t\tenabling expanded capabilities of a range of technologies, including\n\t\t\t\t\timaging, adaptive optics, sensing, marking, and manufacturing.",
+        "authors": "Che-Hang Yu, Yiyi Yu, Joseph S. Canzano, Yuandong Fei, Filip Tomaska, Spencer LaVere Smith",
+        "date": "2026-02-02T00:00:00+00:00"
     }
 ]
