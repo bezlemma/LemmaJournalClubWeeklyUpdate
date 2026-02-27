@@ -88,7 +88,7 @@
 0000-0002-6105-9087 - Sebastian J Streichan
 0000-0001-9527-4802 - L. Mahadevan
 0000-0002-7503-5721 - Aastha Garde
-0000-0001-5052-8282 - Eric R. Dufresne
+0000-0002-3091-5039 - Eric R. Dufresne
 0000-0003-2866-5963 - Oliver Mueller-Cajar
 0000-0002-6314-3565 - Omar Saleh
 0000-0001-5615-2888 - Daniel S. Seara

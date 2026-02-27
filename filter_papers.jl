@@ -5,84 +5,10 @@ using JSON3, HTTP, Dates
 const GEMINI_API_KEY = get(ENV, "GEMINI_API_KEY", "")
 const INPUT_FILE = "papers.json"
 const OUTPUT_FILE = "papers_final.md"
-const GREEN_AUTHORS_FILE = "greenauthors.txt"
 const GEMINI_MODEL = "gemini-3-flash-preview"
 const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
 
-# ─── Author matching ────────────────────────────────────────────────────────
-
-"""
-Normalize author name to (last_name, first_initial) for matching.
-Handles: "First Last", "Last, First", "Last, F.", "F. Last".
-"""
-function normalize_author_identifier(name_str::AbstractString)
-    name_str = strip(name_str)
-    isempty(name_str) && return nothing
-
-    clean_name = replace(name_str, "." => " ")
-    parts = split(replace(clean_name, "," => " "))
-    parts = filter(!isempty, parts)
-    isempty(parts) && return nothing
-
-    if occursin(",", name_str)
-        # "Last, First" format
-        before_comma = strip(split(name_str, ",")[1])
-        last = split(before_comma)[end]
-        after_comma = strip(split(name_str, ",")[2])
-        first_initial = isempty(after_comma) ? "" : string(after_comma[1])
-    else
-        # "First Last" or "F Last"
-        last = parts[end]
-        first_initial = string(parts[1][1])
-    end
-
-    return (lowercase(last), lowercase(first_initial))
-end
-
-const ORCID_LINE_PATTERN = r"^\d{4}-\d{4}-\d{4}-[\dX]{4}\s*-\s*(.+)$"
-
-"""
-Load green authors as a set of (last_name, first_initial) tuples.
-"""
-function load_green_authors_identifiers(filename::String)
-    identifiers = Set{Tuple{String,String}}()
-    isfile(filename) || (println("Warning: $filename not found."); return identifiers)
-
-    for line in readlines(filename)
-        line = strip(line)
-        isempty(line) && continue
-        m = match(ORCID_LINE_PATTERN, line)
-        name = m !== nothing ? strip(m.captures[1]) : line
-        ident = normalize_author_identifier(name)
-        ident !== nothing && push!(identifiers, ident)
-    end
-    return identifiers
-end
-
-const GREEN_AUTHORS_IDENTIFIERS = load_green_authors_identifiers(GREEN_AUTHORS_FILE)
-
-"""Check if any author in the paper matches a green author."""
-function matches_green_author(authors_str::String)::Bool
-    isempty(authors_str) && return false
-
-    # Strategy 1: Full string as single author
-    full_ident = normalize_author_identifier(authors_str)
-    full_ident !== nothing && full_ident in GREEN_AUTHORS_IDENTIFIERS && return true
-
-    # Strategy 2: Split and check
-    if occursin(";", authors_str)
-        raw_list = split(authors_str, ";")
-    else
-        raw_list = split(authors_str, r",|\s+and\s+")
-    end
-
-    for raw_auth in raw_list
-        paper_ident = normalize_author_identifier(String(strip(raw_auth)))
-        paper_ident !== nothing && paper_ident in GREEN_AUTHORS_IDENTIFIERS && return true
-    end
-
-    return false
-end
+const FEATURED_SOURCE = "CrossRef/Featured"
 
 # ─── Gemini API calls ───────────────────────────────────────────────────────
 
@@ -228,17 +154,17 @@ Returns: (paper_dict, category) where category is :featured, :regular, or nothin
 """
 function process_one_paper(paper)
     try
-        authors = string(get(paper, :authors, ""))
         title = string(get(paper, :title, ""))
         abstract_text = string(get(paper, :abstract, ""))
+        source = string(get(paper, :source, ""))
 
-        # 1. Check Green Authors
-        if matches_green_author(authors)
+        # 1. Featured papers are identified by source tag from ORCID-based fetch
+        if source == FEATURED_SOURCE
             summary = summarize_paper(title, abstract_text)
             return (paper, summary, :featured)
         end
 
-        # 2. AI Classification
+        # 2. AI Classification for all other papers
         is_biophysics, reason = classify_paper(title, abstract_text)
         if is_biophysics
             summary = summarize_paper(title, abstract_text)
@@ -330,6 +256,10 @@ function main()
         end
     end
 
+    # Deduplicate: remove regular papers that also appear in featured list
+    featured_titles = Set(lowercase(string(get(item.paper, :title, ""))) for item in featured_papers)
+    filter!(item -> lowercase(string(get(item.paper, :title, ""))) ∉ featured_titles, regular_papers)
+
     # Generate output
     all_final = vcat(featured_papers, regular_papers)
     total_kept = length(all_final)
@@ -365,7 +295,7 @@ function main()
                 authors = escape_markdown_text(string(get(item.paper, :authors, "")))
                 link = markdown_link_target(string(get(item.paper, :link, "")))
                 println(f, "::: {.g-col-12 .g-col-md-6}")
-                println(f, "#### [$title]($link)")
+                println(f, "#### [$title]\n($link)")
                 println(f, "*$authors* <br>")
                 println(f, item.summary)
                 println(f, ":::\n")
@@ -380,7 +310,7 @@ function main()
                 title = escape_markdown_text(string(get(item.paper, :title, "")))
                 authors = escape_markdown_text(string(get(item.paper, :authors, "")))
                 link = markdown_link_target(string(get(item.paper, :link, "")))
-                println(f, "#### [$title]($link)")
+                println(f, "#### [$title]\n($link)")
                 println(f, "*$authors* <br>")
                 println(f, "$(item.summary)\n")
             end
