@@ -1,5 +1,5 @@
 ---
-title: "Weekly Update Feb 27 '26"
+title: "Weekly Update Mar 6 '26"
 format:
   html:
     toc: false
@@ -10,730 +10,554 @@ format:
 ::: {.grid}
 
 ::: {.g-col-12 .g-col-md-6}
-#### [Topological control of spontaneous failure in active nematic solids]
-(<https://doi.org/10.1038/s41563-026-02493-x>)
-*Sheng Chen, Matthew Ricci, A. Pasha Tabatabai, Zachary Gao Sun, Sven Witthaus, Suraj Shankar, Mor Nitzan, Michael P. Murrell* <br>
-Tailored defect patterns guide the initiation and propagation of fractures by localizing internally generated stresses within the material's elastic matrix.
+#### [The coarsening of biomimetic condensates in an active fluid is non-self-similar](<https://doi.org/10.1038/s41567-026-03191-w>)
+*Jeremy Laprade, Layne B. Frechette, Christopher Amey, Adrielle T. Cusi, Aparna Baskaran, W. Benjamin Rogers, Guillaume Duclos* <br>
+Active fluctuations disrupt the scale-invariant growth typical of passive systems, forcing the droplet size distribution to evolve through distinct morphological regimes over time.
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-#### [A tunable autonomous RNA-fueled micro-engine]
-(<https://doi.org/10.1038/s41467-026-69521-x>)
-*Kun Wang, Wenjun Chen, Buming Guo, Qiuyan Huang, Guolong Zhu, Heng Ni, Lei Zhang, Melanie Perez, Ruojie Sha, Nadrian C. Seeman, Paul M. Chaikin* <br>
-RNase H-mediated enzymatic cleavage and sequence-specific RNA binding drive autonomous, reversible conformational cycles that power the movement of 500 nm particles at programmable speeds.
-:::
-
-::: {.g-col-12 .g-col-md-6}
-#### [Squeaking at soft–rigid frictional interfaces]
-(<https://doi.org/10.1038/s41586-026-10132-3>)
-*Adel Djellouli, Gabriele Albertini, Jackson Wilt, Vincent Tournat, David Weitz, Shmuel Rubinstein, Katia Bertoldi* <br>
-High-frequency stick-slip oscillations driven by nonlinear friction generate audible acoustic emissions when elastomeric materials slide against rigid surfaces.
-:::
-
-::: {.g-col-12 .g-col-md-6}
-#### [Smart microscopy: current implementations and a roadmap for interoperability]
-(<https://doi.org/10.1515/mim-2025-0029>)
-*Lucien Hinderling, Hannah S. Heil, Alfredo Rates, Philipp Seidel, P.S. Kesavan, Manuel Gunkel, Benedict Diederich, Thomas Guilbert, Rémy Torro, Otmane Bouchareb, Claire Demeautis, Célia Martin, Scott Brooks, Evangelos Sisamakis, Erwan Grandgirard, Jerome Mutterer, Harrison Oatman, Jared Toettcher, Andrii Rogov, Nelda Antonovaite, Karl Johansson, Johannes K. Ahnlinde, Oscar André, Philip Nordenfelt, Pontus Nordenfelt, Claudia Pfander, Jürgen Reymann, Talley Lambert, Marco R. Cosenza, Jan O. Korbel, Rainer Pepperkok, Lukas C. Kapitein, Olivier Pertz, Nils Norlin, Aliaksandr Halavatyi, Rafael Camacho* <br>
-Shared standards and modular software designs provide a community-driven foundation to overcome technical fragmentation and improve the reproducibility of automated imaging workflows.
-:::
-
-::: {.g-col-12 .g-col-md-6}
-#### [Soft matter: Concepts, Phenomena, and Applications]
-(<https://doi.org/10.1119/5.0324450>)
-*Suraj Shankar* <br>
-Entropy-driven self-assembly and structural sensitivity to thermal energy govern the behavior of materials ranging from biological membranes to industrial polymers.
-:::
-
-::: {.g-col-12 .g-col-md-6}
-#### [<i>CLIPPER</i>                     Regulates LPIN1-Mediated Mitochondrial Biogenesis and Heart Regeneration]
-(<https://doi.org/10.1161/circresaha.125.326739>)
-*Francesco Paolo Ruberto, Daniel Maric, Tatjana Kleele, Mohamed Nemir, Isabelle Plaisance, Luca Braga, Hashim Ali, Chang Jie Mick Lee, Thong Beng Lu, Alexandre Sarre, Parisa Aghagolzadeh, Roger S.-Y. Foo, Suliana Manley, Mauro Giacca, Thierry Pedrazzini* <br>
-Silencing this conserved long noncoding RNA triggers midzone mitochondrial fission and metabolic shifts that reduce oxidative DNA damage, thereby enabling cardiomyocyte proliferation and functional recovery after myocardial infarction.
-:::
-
-::: {.g-col-12 .g-col-md-6}
-#### [Non-inertial scan angle multiplier for expanded fields-of-view]
-(<https://doi.org/10.1364/optica.570761>)
-*Che-Hang Yu, Yiyi Yu, Joseph S. Canzano, Yuandong Fei, Filip Tomaska, Spencer LaVere Smith* <br>
-Decoupling scan speed from mirror inertia increases system étendue and throughput while maintaining diffraction-limited performance and beam quality across a broad wavelength range.
+#### [RNA-specific local translation is patterned by condensates for multinucleate cell growth](<https://doi.org/10.1038/s41556-026-01887-y>)
+*Zachary M. Geisterfer, Ameya P. Jalihal, Sierra J. Cole, Amy S. Gladfelter* <br>
+Immiscible liquid droplets sort distinct transcript species to prevent their diffusion and maintain spatial autonomy within a shared cytosol.
 :::
 
 :::
 
 ## More Papers
 
-#### [Allosteric Inhibition of NDM-1 by Thanatin Preserves the Di-Zinc Center While Restricting Dynamics]
-(<https://www.biorxiv.org/content/10.64898/2026.02.25.707299v1>)
-*Riviere, G.; Kumar, P.; Cummins, T.; Hsiao, A.; Mueller, L. J.* <br>
-Thanatin binds adjacent to the catalytic groove to rigidify the L3 loop, establishing a structural mechanism for restoring carbapenem sensitivity by targeting the enzyme’s dynamic vulnerabilities rather than displacing its catalytic metal ions.
-
-#### [Hidden Markov model analysis of fluorescence blinking in fluorescently labeled DNA]
-(<https://www.nature.com/articles/s41598-026-40876-x>)
-*Furuta, Tatsuhiro, Fan, Shuya, Takada, Tadao, Kondo, Yohei, Fujitsuka, Mamoru, Maruyama, Atsushi, Kawai, Kiyohiko, Nakamura, Kazuma* <br>
-Forward-filtered backward-blocking Gibbs sampling identifies relaxation times of 17.6 ms and 7.8 ms for the ON and OFF states, respectively, revealing that the DNA-ATTO655 system maintains a stable charge-separated configuration through suppressed recombination.
-
-#### [NEDAMSS syndrome-related truncating and missense mutations are associated with aberrant liquid-liquid phase separation of IRF2BPL]
-(<https://www.nature.com/articles/s41467-026-69781-7>)
-*Dell’Oca, Marco, Boggio Bozzo, Stefania, Vaglietti, Serena, Marchetti, Chiara, Di Luca, Chiara, Munarin, Pietro, Nicoli, Michael, Indellicato, Rossella, Ravanelli, Davide, Falanga, Giorgia, Iannielli, Angelo, Luoni, Mirko, Loffreda, Alessia, Berno, Valeria, Bianchini, Paolo, Sertic, Sarah, Conforti, Antonio, Rashidiani, Shima, Aimaretti, Eleonora, Collino, Massimo, Cecere, Ilaria, Gallo, Angelo, Santoro, Federica, Brancaccio, Diego, Rosso, Samuele, Di Nardo, Giovanna, Pertusio, Raffaele, Cesano, Federico, Monje Quiroga, Francisco J., Ghirardi, Mirella, Roatta, Silvestro, Colnaghi, Luca, Fiumara, Ferdinando* <br>
-Pathogenic protein condensation acts as the primary trigger for the molecular and cellular pathways that drive neurodevelopmental dysfunction.
-
-#### [Adhesion-driven invasion: disentangling the interplay between cell-cell and cell-matrix interactions in cancer cell migration]
-(<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00146-3?rss=yes>)
-*Quirine J.S. Braat, Klara Beslmüller, Cornelis Storm, Erik H.J. Danen, Liesbeth M.C. Janssen* <br>
-Mechanical traction forces coordinate with adhesive signaling to drive the collective infiltration of tumor cells into the surrounding extracellular environment.
-
-#### [A universal membrane-centric mechanotransduction mechanism for vibrationally stimulated cells]
-(<https://www.nature.com/articles/s44222-026-00420-y>)
-*Ambattu, Lizebona August, Moroni, Lorenzo, Yeo, Leslie Y.* <br>
-Standardized experimental protocols across diverse frequencies clarify the processes enabling cellular responsiveness to stimuli extending into the ultrasonic range.
-
-#### [Allosteric activation of the glutamate receptor mGlu2 by the serotonin receptor 5-HT2A]
-(<https://www.nature.com/articles/s41467-026-69939-3>)
-*Gai, Siyu, Lin, Li, Meng, Jiyong, Wu, Yichen, Xue, Li, Xu, Chanjuan, Sun, Qian, Ricarte, Adrià, Dalton, James, Renault, Pedro, Giraldo, Jesús, Pin, Jean-Philippe, Rondard, Philippe, Liu, Jianfeng* <br>
-Molecular mechanisms within heteromeric complexes facilitate the integration and coordination of intracellular signaling pathways across diverse G protein-coupled receptors.
-
-#### [Condensation and intracellular interaction of membrane-anchored receptors and ligands capable of forming catch and slip bonds]
-(<https://www.nature.com/articles/s42005-026-02567-x>)
-*Li, Long, Li, Zhenyuan, Du, Ruotian, Shao, Yingfeng, Luo, Meiying, Ji, Jing, Song, Fan* <br>
-Mechanical force modulates protein clustering and signaling dynamics through mechanisms governed by specific bond types and the spatial distribution of the applied load.
-
-#### [Quantum-augmented graph differential geometry enhances accuracy in protein-protein interaction prediction]
-(<https://www.nature.com/articles/s41598-026-41325-5>)
-*Karthick, V., Alshammari, Fahad Sameer, Jayasimman, I. Paulraj, Besi, P. Roselyn, Akgul, Ali* <br>
-QGDM integrates quantum state representations and temporal differential operators to identify 1,247 novel human protein interactions with a 91.8% experimental validation rate, outperforming existing benchmarks by over 15%.
-
-#### [Spatiotemporal mapping of microscale stiffness during collagen polymerization and crosslinking by optical multifrequency time-harmonic elastography]
-(<http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01259G>)
-*Frank Sauer, Jakob Jordan, Tom Meyer, Pedro Dantas de Moraes, Guillaume Flé, Josef Alfons Käs, Ingolf Sack* <br>
-Point-wise shear wave excitation enables rapid, micrometer-resolution mechanical characterization of extracellular matrix-derived networks.
-
-#### [Quantifying activation delay and the Cole-Moore shift via current derivatives]
-(<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00142-6?rss=yes>)
-*Bernardo I. Pinto-Anwandter, Francisco Bezanilla* <br>
-Differentiating ionic signals provides an objective, model-independent method for determining the duration of the non-conducting transitions that occur before the onset of measurable conductance.
-
-#### [Computational Analysis of Microtubule-Mediated Saltatory Neuroelectrical Transmission]
-(<https://www.biorxiv.org/content/10.64898/2026.02.25.708076v1>)
-*Yang, Y. X.; Zhu, B. T.* <br>
-Cation-triggered transitions between active and resting states modulate quasi-superconducting electron transport within vacuum-like cylindrical interiors to facilitate high-efficiency signal propagation and termination.
-
-#### [Time-Resolved Single-Molecule FRET Reveals Length-Dependent Nucleosome Decompaction by Poly(ADP-ribose)]
-(<https://www.biorxiv.org/content/10.64898/2026.02.25.707951v1>)
-*Yang, T.; Gopi, S. R.; Pinet, L.; Simoni, S.; Imhof, R.; Nettels, D.; Altmeyer, M.; Best, R. B.; Schuler, B.* <br>
-Polymers exceeding ten ADP-ribose units rapidly drive nucleosome opening and disassembly by electrostatically outcompeting DNA for histone tail binding.
-
-#### [Discrete turn strategies emerge in information-limited navigation]
-(<http://arxiv.org/abs/2602.23324v1>)
-*Jose M. Betancourt, Matthew P. Leighton, Thierry Emonet, Benjamin B. Machta, Michael C. Abbott* <br>
-Sudden re-orientations maximize up-gradient speed more effectively than gradual steering, with optimal behaviors transitioning from simple reversals to complex multi-angle tumbles as available sensory data increases.
-
-#### [Persistence-Driven Void Formation in Active-Passive Mixtures]
-(<http://arxiv.org/abs/2602.23178v1>)
-*Giulia Janzen, Liesbeth M. C. Janssen, Nuno A. M. Araújo, Rastko Sknepnek, D. A. Matoz-Fernandez* <br>
-Increasing active forcing persistence transitions the fluidization of amorphous solids from a homogeneous process to a localized mechanical instability where stress accumulation concentrates particle rearrangements and generates "mosh pit" dynamics.
-
-#### [Coupling between Phase Separation and Geometry on a Closed Elastic Curve: Free Energy Minimization and Dynamics]
-(<http://arxiv.org/abs/2602.22977v1>)
-*Hanchun Wang, Ronojoy Adhikari, Michael E. Cates* <br>
-Reciprocal interactions between local concentration and filament mechanics stabilize metastable multi-interface configurations and can suppress phase separation entirely through curvature and stretching energies.
-
-#### [Non-linear visco-elasto-plastic rheology of a viscous vertex model]
-(<http://arxiv.org/abs/2602.22855v1>)
-*Shalabh Kumar Anand, Matthias Merkel* <br>
-Mean-field constitutive relations bridge cell- and tissue-scale mechanics by integrating cell shape, explicit viscous friction, and active anisotropic stresses across non-linear elastic and visco-plastic regimes.
-
-#### [HOP2–MND1 chaperones a diffusing DMC1–ssDNA complex to survey dsDNA for homology recognition during meiotic recombination]
-(<https://www.pnas.org/doi/abs/10.1073/pnas.2529249123?af=R>)
-*Bingkai Cheng, Yanan Li, Yi Zhao, Yuting Zhang, Xia Zhang, Lishuang Chen, Hao Yang, Xiaoxuan Song, Zhiyun Ren, Cong Liu, Jingdong Xue, Bing Li, Chao Liu, Wei Li, Bo Sun* <br>
-Clamping of ssDNA–dsDNA junctions by the HOP2–MND1 cofactor maintains an expanded DNA bubble that facilitates sequence alignment in the absence of free DMC1 protein.
-
-#### [Chiral gliding: Right-handed navigation of filamentous cyanobacteria]
-(<https://www.pnas.org/doi/abs/10.1073/pnas.2534547123?af=R>)
-*Andrej Vilfan, Leila Abbaspour, Stefano Villa, Vahid Nasirimarekani* <br>
-Velocity disparities between the ends of an axially rotating filament generate a macroscopic curvature that enables navigation on dry surfaces by translating structural chirality into directional movement.
-
-#### [Chaos in Liquid Crystal Directrons]
-(<http://arxiv.org/abs/2602.22664v1>)
-*Praveen Kumar Singh, Salman Ahmad Khan, Soumik Das* <br>
-Collective interactions above a critical electric field drive a transition from directed motion to intrinsic chaos, enabling biomimetic behaviors such as spontaneous fission and dynamic assembly that replicate the phenotypic diversity of biological groups.
-
-#### [Activated kinesin-1 assembles into a dimer-of-dimers]
-(<https://www.biorxiv.org/content/10.64898/2025.12.23.696152v2>)
-*Chiba, K.* <br>
-KIF5C undergoes a C-terminal-mediated transition to a tetrameric state upon activation, significantly increasing microtubule affinity and processivity to regulate neuronal transport.
-
-#### [An information theory approach to quantifying the sequence-dependent response of nucleic acid motors with applications to nanopore DNA sequencing]
-(<https://www.nature.com/articles/s41467-026-69867-2>)
-*Craig, Jonathan M., Laszlo, Andrew H., Brinkerhoff, Henry, Thomas, Christopher A., Marx, Sinduja K., Lebo, Eric F., Abell, Sarah J., Franzi, Michaela C., Huang, Jesse R., Kim, Hwanhee C., Carrasco, Jessica D., Gundlach, Jens H.* <br>
-Mutual information analysis of helicase kinetics improves the identification accuracy of all standard DNA bases.
-
-#### [Spatial resource dynamics control resistance escape]
-(<https://www.biorxiv.org/content/10.64898/2025.12.22.695823v2>)
-*Appold, N.; Citak, T.; Palm, A.; Kayser, J.* <br>
-Intermittent treatment pulses reconfigure growth zones and resource landscapes to define a phase transition in dosing schedules that optimally balances population suppression with the physical confinement of emergent resistant mutants.
-
-#### [The influence of cell morphology on the dynamics and stability of model bacterial communities]
-(<https://www.biorxiv.org/content/10.64898/2026.02.25.707998v1>)
-*Lim, I. X.; Halabeya, F.; Milstein, J.* <br>
-Spherical coccus cells possess a competitive advantage in confined microchannels by more effectively invading population boundaries, while rod-shaped bacillus cells maintain quasi-stable coexistence through mechanical alignment into lanes.
-
-#### [Structure and polydispersity of single lipid vesicles by small-angle X-ray scattering at European XFEL]
-(<https://www.nature.com/articles/s42005-026-02551-5>)
-*Neuhaus, Charlotte, Stammer, Moritz L., Alfken, Jette, Osterhoff, Markus, Komorowski, Karlo, Major, András, Bielecki, Johan, Rafie-Zinedine, Safi, de Wijn, Raphael, Letrun, Romain, E, Juncheng, Bean, Richard, Salditt, Tim* <br>
-Sequential injection and analysis of individual diffraction patterns yield radial electron density profiles at a resolution sufficient to resolve the bilayer architecture while circumventing radiation damage and ensemble averaging.
-
-#### [Counteraction of HMGB1 at ss-dsDNA junctions maintains liquidity of protamine-DNA co-condensates]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707832v1>)
-*Ahlawat, V.; Kota, D.; Zhou, H.-X.* <br>
-HMGB1’s acidic C-terminal tail prevents the formation of rigid, irreversible tangles to ensure the recruitment of DNA repair machinery during the histone-to-protamine transition in sperm.
-
-#### [Estimation of Absolute Protein-DNA Binding Free Energy using Streamlined Geometric Formalism]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707754v1>)
-*Mukherjee, S.; Srivastava, D.; Patra, N.* <br>
-Chemically accurate calculations for three complexes demonstrate high precision and modest computational requirements by accounting for diverse molecular interactions such as hydrogen bonds and electrostatic forces.
-
-#### [Dynamic control of IDP interaction network via diverse binding pathways]
-(<https://www.nature.com/articles/s41467-026-69946-4>)
-*Kim, Jae-Yeol, Chung, Hoi Sung* <br>
-Three-color single-molecule FRET reveals the structural mechanisms of heterogeneous partner exchange that underpin protein binding promiscuity.
-
-#### [Oligo DNA-based quantum dot (QD) single-particle tracking for multicolor single-molecule imaging]
-(<https://www.biorxiv.org/content/10.1101/2025.10.06.680600v2>)
-*Sakuragi, S.; Kato, N.; Uchida, T.; Zhao, B.; Katagiri, T.; Enomoto, M.; Kato, R.; Yoshimura, H.; Oyama, C.; Katayama, I.; Chikuma, A.; Teramura, Y.; Bannai, H.* <br>
-Sequence-specific DNA hybridization facilitates the stable conjugation of quantum dots to multiple membrane targets, enabling simultaneous tracking of lipid and protein diffusion dynamics in living cells through high-fidelity multicolor imaging.
-
-#### [Synaptic spine head morphodynamics from graph grammar rules for actin dynamics]
-(<https://www.biorxiv.org/content/10.1101/2025.04.18.649558v2>)
-*Hur, M.; Bartol, T.; Rangamani, P.; Sejnowski, T.; Mjolsness, E.* <br>
-Stochastic simulations of local membrane-cytoskeleton interactions delineate the epistatic relationships between four actin-binding proteins that drive the structural transformations of dendritic spines.
-
-#### [Exploring Conformational Transitions of RNA Dimers via Machine Learning Potentials]
-(<https://www.biorxiv.org/content/10.64898/2026.02.25.707885v1>)
-*Medrano Sandonas, L.; Tolmos Nehme, M.; Cofas-Vargas, L. F.; Olivos-Ramirez, G. E.; Cuniberti, G.; Poblete, S.; Poma, A. B.* <br>
-Equivariant MACE potentials trained on a comprehensive quantum-mechanical dataset outperform general-purpose models in capturing the intricate base stacking, sugar puckering, and backbone flexibility of the adenine-adenine dinucleoside monophosphate system.
-
-#### [Decoding the Allosteric Paradox: A Dual Framework Integrating AI Cofolding Models with Landscape-Guided Interpretable AI Framework of Ligand-Protein Binding]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707829v1>)
-*Parikh, V.; Foley, B.; Gatlin, W.; Ludwick, M.; Turano, L.; Verkhivker, G.* <br>
-Universal failures in AI prediction of allosteric binding stem from the neutral frustration and evolutionary plasticity of allosteric sites, which lack the clear energetic funnels and frustration-quenching patterns found in orthosteric pockets.
-
-#### [Self-consistent automatic retrieval of single cell rotation enables highly reliable holo-tomographic flow cytometry]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707756v1>)
-*Pirone, D.; Miccio, L.; Bianco, V.; Ferraro, P.; Memmolo, P.* <br>
-An iterative reprojection-based optimization algorithm determines unknown orientation sequences to improve the scalability and reconstruction quality of label-free 3D refractive index imaging.
-
-#### [Calcium activation mechanism of a noncanonical aromatic L-amino acid decarboxylase from psilocybin mushroom Psilocybe cubensis]
-(<https://www.nature.com/articles/s42003-026-09756-y>)
-*Li, Tianjie, Reynolds, Erin E., Wang, Ziqi, Torrens-Spence, Michael P., Weng, Jing-Ke, Wang, Yi* <br>
-Molecular dynamics simulations and biochemical assays characterize the structural transitions and binding site dynamics that facilitate the enzyme's transition into an active catalytic state.
-
-#### [An Information-theoretic Collective Variable for Configurational Entropy]
-(<http://arxiv.org/abs/2602.22440v1>)
-*Ashley Z. Guo, Kaelyn Chang, Nicholas J. Corrente* <br>
-Computable information density (CID) utilizes data compression to quantify structural organization across diverse molecular systems without requiring a priori knowledge of relevant features.
-
-#### [Field-induced phase transitions in ferro-antiferromagnetic diblock copolymers]
-(<http://arxiv.org/abs/2602.22382v1>)
-*Alberto Raiola, Emanuele Locatelli, Davide Marenduzzo, Enzo Orlandini* <br>
-Frustration between magnetic ordering and spatial organization generates distinct structural configurations, such as intertwined and "tadpole" globules, that can be precisely manipulated for applications in self-assembly and chromatin modeling.
-
-#### [Spatiotemporal Thermal Modulation and Patterning using a Programmable 1024 Element Microheater Array]
-(<http://arxiv.org/abs/2602.22138v1>)
-*Rahul Goyal, Jang-Hwan Han, Sadaf Pashapour, Peer Fischer* <br>
-Row-column addressing and high-voltage multiplexed electronics enable the independent operation of platinum heating elements to generate high-resolution thermal images and fabricate structures from liquid gallium.
-
-#### [Universal Persistent Brownian Motions in Confluent Tissues]
-(<http://arxiv.org/abs/2602.21922v1>)
-*Alessandro Rizzi, Sangwoo Kim* <br>
-Traction forces and junctional tension fluctuations generate distinct structural and rearrangement signatures that allow for the identification of dominant active mechanisms despite their shared long-term dynamical convergence.
-
-#### [Spectral entropy of the discrete Hasimoto effective potential exposes sub-residue geometric transitions in protein secondary structure]
-(<http://arxiv.org/abs/2602.21787v1>)
-*Yiquan Wang* <br>
-Abrupt, step-like structural boundaries exhibit a median width of 0.145 residues, establishing a spatial counterpart to the cooperative Zimm–Bragg model and facilitating a dual-probe framework for mapping functional dynamics from backbone coordinates.
-
-#### [Limits of optimal decoding under synaptic coarse-tuning]
-(<http://arxiv.org/abs/2602.21758v1>)
-*Ori Hendler, Ronen Segev, Maoz Shamir* <br>
-Optimal decoders reach a performance saturation point equivalent to naive population averaging as population size increases under strong synaptic volatility, indicating that robust neural readout is constrained to invariant, low-dimensional manifolds.
-
-#### [Temporal stimulus segmentation by reinforcement learning in populations of spiking neurons]
-(<http://link.aps.org/doi/10.1103/4mwt-2yb2>)
-*Luisa Le Donne, Lik Chun Chan, Robert Urbanczik, Walter Senn, and Giancarlo La Camera* <br>
-Biologically plausible synaptic plasticity rules solve the temporal credit assignment problem to extract task-relevant information from continuous, high-dimensional sensory streams.
-
-#### [XY Model with Persistent Noise]
-(<http://link.aps.org/doi/10.1103/1zk4-gx9x>)
-*Xia-qing Shi, Hugues Chaté, and Benoît Mahault* <br>
-Time-correlated fluctuations enable the system to maintain quasi-order and resist melting under large deformations, providing a theoretical basis for the structural stability observed in active crystals.
-
-#### [Hydrodynamic Interactions Destroy Motility-Induced Phase Separation in Active Suspensions]
-(<http://link.aps.org/doi/10.1103/jhhk-j5g9>)
-*Tingtao Zhou and John F. Brady* <br>
-Biological and artificial swimmers generate fluid-mediated forces that actively suppress clustering, overturning prior theoretical assumptions about the stability of active systems.
-
-#### [Self-avoiding tethered surfaces are always flat]
-(<http://arxiv.org/abs/2602.21714v1>)
-*A. D. Chen, M. C. Gandikota, M. J. Kim, A. Cacciuto* <br>
-Fully flexible elastic systems with tunable self-avoidance and lattice perforations consistently exhibit a size exponent of $\nu=1$ in the thermodynamic limit.
-
-#### [Geometrical preference of anchoring sites in the unicellular organism Stentor coeruleus]
-(<https://www.pnas.org/doi/abs/10.1073/pnas.2518816123?af=R>)
-*Syun Echigoya, Takuya Ohmura, Katsuhiko Sato, Toshiyuki Nakagaki, Yukinori Nishigami* <br>
-Calcium-induced body deformations create asymmetric propulsive forces that guide the organism along boundary walls, facilitating the selection of optimal micro-niches through purely physical interactions.
-
-#### [Analyses of bent spindles reveal the mechanics of anaphase B in fission yeast]
-(<https://www.molbiolcell.org/doi/abs/10.1091/mbc.E25-11-0556?af=R>)
-*Paula Real-Calderón, Thomas G. Fai, Rafael R. Daga, Joël Lemière, Fred Chang* <br>
-Constant pushing forces generated by kinesin-6 motors overcome the velocity-dependent resistance of microtubule crosslinkers and the nuclear envelope to drive pole separation.
-
-#### [Solo regulates the localization and activity of LARG for actin cytoskeletal remodeling in cell-substrate adhesions]
-(<https://www.molbiolcell.org/doi/abs/10.1091/mbc.E25-04-0156?af=R>)
-*Aoi Kunitomi, Yusuke Toyofuku, Chikaya Fujimori, Shuhei Chiba, Nahoko Higashitani, Atsushi Higashitani, Shinichi Sato, Kensaku Mizuno, Kazumasa Ohashi* <br>
-Mechanical tension triggers the direct physical association of these exchange factors to initiate RhoA-dependent contractility and stress fiber maturation.
-
-#### [Confinement-Induced Symmetry Breaking of Active Surfaces]
-(<http://arxiv.org/abs/2602.21519v1>)
-*Da Gao, Alexander Mietke, Rui Ma* <br>
-Ellipsoidal boundaries redirect internal stresses to destabilize symmetric division, triggering a transition to polarized geometries once a critical threshold of physical constraint is met.
-
-#### [Measuring elastic properties of granular hydrogels: Effects of capillary interaction and ionic conditions]
-(<http://arxiv.org/abs/2602.21457v1>)
-*Jiayin Zhao, Haiyi Zhong, Yixiang Gan* <br>
-Neglecting capillary-induced liquid bridges and salinity levels leads to a systematic underestimation of Young’s modulus that intensifies as sample size or material stiffness decreases.
-
-#### [In silico conformational dynamics of the α-actinin-2 actin-binding domain upon phosphorylation]
-(<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00155-4?rss=yes>)
-*Helene Tigro, Matthew C. Childers, Michael Regnier, Christopher Solís* <br>
-Altered F-actin binding affinity and sarcomere assembly dynamics facilitate cardiomyocyte adaptation to varying mechanical forces.
-
-#### [A Cryptic Binding Pocket Regulates the Metal-Dependent Activity of Cas9]
-(<https://www.biorxiv.org/content/10.1101/2025.08.25.672025v2>)
-*Ahsan, M.; Saha, A.; Ramos, D.; Strohkendl, I.; Knight, A. L.; Skeens, E.; Lisi, G. P.; Taylor, D. W.; Palermo, G.* <br>
-Divalent cations bind at the HNH-RuvC interface to trigger the enzyme’s conformational activation and synchronize the catalytic activities of its two nuclease domains.
-
-#### [Mechanism of MEK1 activation by phosphorylation]
-(<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00154-2?rss=yes>)
-*Everett Jin, Levent Sari, Milo M. Lin* <br>
-Molecular dynamics simulations of S218 and S222 phosphorylation reveal the structural and dynamical transitions that drive the enzyme's cooperative activation.
-
-#### [Ligand Binding Free Energy Landscapes at the Tubulin Colchicine Site from Coarse-Grained Metadynamics]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707696v1>)
-*Grazzi, A.; Brown, C. M.; Sironi, M.; Marrink, S.-J.; Pieraccini, S.* <br>
-The Martini 3 force field enables computationally efficient modeling of ligand recognition at deeply buried protein sites with improved statistical convergence and accuracy relative to all-atom simulations.
-
-#### [Liquid–liquid phase separation by caged coacervating peptides]
-(<https://www.nature.com/articles/s41598-026-40774-2>)
-*Bando, Akinari, Kitamatsu, Mizuki, Kanazaki, Yuuki, Tojo, Rika, Watanabe, Kazunori, Ohtsuki, Takashi* <br>
-Histidine-rich protein sequences functionalized with photodeprotectable groups enable the light-triggered disassembly of coacervates for the controlled encapsulation and release of biomolecular cargo.
-
-#### [Engineering the mechanosensitivity of single DNA molecules via high-throughput microfluidic force spectroscopy]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707783v1>)
-*DeJong, M. P.; Bian, Y.; Ortiz-Cardenas, J. E.; Figueroa, B.; Pant, A.; Posadas-Barrera, E.; Brixi, L.; Bauer, M. S.; Dunn, A. R.; Fordyce, P. M.* <br>
-SM3FS parallelizes the measurement of hundreds of molecular variants to reveal how multivalent architectures can exhibit extreme mechanical fragility despite high kinetic stability.
-
-#### [Machine Learning Approaches to Quantify Nanoscale Variations in the Mechanical Properties of Soft Nanoparticles]
-(<http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM00943J>)
-*Benjamin Baylis, John Dutcher* <br>
-Atomic force microscopy-force spectroscopy (AFM-FS) measurements of samples on a rigid substrate facilitate a comparative analysis of two different computational frameworks.
-
-#### [Cryogenic electron tomography reveals herpesvirus capsid assembly intermediates inside the cell nucleus]
-(<https://www.nature.com/articles/s41467-026-69811-4>)
-*Oliver, Stefan L., Chen, Muyuan, Engel, Leeya, Hecksel, Corey W., Zhou, Xueting, Schmid, Michael F., Arvin, Ann M., Chiu, Wah* <br>
-Distinct vertex configurations in genome-filled versus empty particles reveal the maturation mechanisms of these structures within their native cellular environment.
-
-#### [Conformational ensembles of flexible multidomain proteins: How close are we to accurate and reliable predictions?]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707687v1>)
-*Rodriguez, S.; Fournet, A.; Bartels, S.; Pajkos, M.; Clerc, I.; Carriere, L.; Thureau, A.; Montanier, C.; Dumon, C.; Allemand, F.; Cortes, J.; Bernado, P.* <br>
-Systematic evaluation of five ensemble-generation strategies across eighteen domain-linker-domain proteins reveals significant structural biases and underscores that the accuracy of refined models depends critically on the quality of the initial conformational pool.
-
-#### [AI-BioMech: Deep Learning Prediction of Mechanical Behavior in Aperiodic Biological Cellular Materials]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707699v1>)
-*Sadia, H.; Dias, M. A.; Alam, P.* <br>
-Pixel-level semantic segmentation maps 2D images directly to stress and strain distributions, bypassing computationally intensive finite element simulations to provide high-speed mechanical analysis with 99% accuracy.
-
-#### [Rational design of disordered proteins for systematic sequence-to-function investigation]
-(<https://www.biorxiv.org/content/10.1101/2023.10.29.564547v3>)
-*Hunter, K.; Brandt, T.; Guadalupe, K.; Kolamunna, K. C.; Lotthammer, J. M.; Shamoon, N. M.; Nicholson, B.; Day, L.; Martinez, A.; Holehouse, A. S.; Sukenik, S.; Emenecker, R. J.* <br>
-GOOSE enables the high-throughput engineering of disordered regions with diverse biological functions, such as environmental sensing and desiccation protection, by mapping the complex relationships between sequence, ensemble, and function.
-
-#### [How brain pulsations drive solute transport in thecranial subarachnoid space: insights from a toymodel]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707684v1>)
-*Neff, A.; Vallet, A.; Dvoriashyna, M.* <br>
-Lagrangian mean velocities, incorporating steady streaming and Stokes drift, govern long-term solute dispersion and clearance efficiency while producing distinct physiological transport regimes in humans compared to mice.
-
-#### [A gated hydrophobic funnel within BAX binds bioactive lipids to potentiate pro-apoptotic function]
-(<https://www.nature.com/articles/s41467-026-69836-9>)
-*Gelles, Jesse D., Chen, Yiyang, Luna-Vargas, Mark P. A., Viacava Follis, Ariele, Al Noman, Md Abdullah, Kabir, Md, Bayiokos, Stella G., Mohammed, Jarvier N., Sebastian, Tara M., Pham, Ngoc Dung, Shi, Yi, Jin, Jian, Kriwacki, Richard W., Chipuk, Jerry Edward* <br>
-Cooperation between 2-trans-hexadecenal and BIM at a specific cavity allosterically activates BAX before its insertion into the mitochondrial membrane.
-
-#### [Illumination optimization and low-power trapping of Limnospira indica PCC 8005 using bulk acoustic waves in microgravity]
-(<https://www.nature.com/articles/s41526-025-00553-1>)
-*Dupont, Bérénice, Benoit-Gonin, Xavier, Vincent-Bonnieu, Sébastien, Aider, Jean-Luc, Ardré, Maxime* <br>
-Acoustically induced layered assembly of the helical cyanobacteria optimizes light penetration and significantly reduces the energy required for stable trapping in microgravity compared to terrestrial environments.
-
-#### [Non-uniform filament turnover, contractility, and bundle formation in disordered actomyosin networks]
-(<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00153-0?rss=yes>)
-*Alexander K.Y. Tam, Alex Mogilner, Dietmar B. Oelz* <br>
-Agent-based simulations of uniform, biased, branching, and treadmilling mechanisms demonstrate that continuous filament recycling is essential to prevent networks from evolving into stationary, non-contracting configurations.
-
-#### [Exploring the Energy Landscape of Hairpin Folding using the TIS-DNA model]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707746v1>)
-*Baratam, K.; Chakraborty, D.* <br>
-Quantitative thermodynamics and kinetic pathway multiplicity characterize a single-funnel process initiated by non-specific chain collapse and finalized by downhill native-contact nucleation.
-
-#### [Chapman-Enskog expansion for chirally colliding disks]
-(<http://arxiv.org/abs/2602.21367v1>)
-*Ruben Lier, Paweł Matus* <br>
-The H-theorem governs relaxation to equilibrium despite broken time-reversal symmetry, allowing for the analytical derivation of transport coefficients such as odd viscosity and thermal conductivity that are confirmed by molecular dynamics simulations.
-
-#### [From Global Flocking to Local Clustering: Interplay between Velocity Alignment and Visual Perception of Active Particles]
-(<http://arxiv.org/abs/2602.21338v1>)
-*Mohit Gaur, Arnab Saha, Subhajit Paul* <br>
-Restricting interactions to a finite vision cone triggers a transition from global flocking to locally ordered clusters, where density-field inhomogeneities emerge as a direct consequence of short-range velocity-field coherence.
-
-#### [Controlling inertial active Brownian motion via stochastic resetting]
-(<http://arxiv.org/abs/2602.21134v1>)
-*Manish Patel, Amir Shee* <br>
-Competition between momentum relaxation and the restart frequency enhances spatial localization while generating non-Gaussian steady states characterized by heavy-tailed distributions and rare, long-range excursions.
-
-#### [Lost in Projection? Gaussian Filtering Recovers Hidden Conformational States]
-(<http://arxiv.org/abs/2602.21006v1>)
-*Sofia Sartore, Daniel Nagel, Georg Diez, Gerhard Stock* <br>
-Gaussian low-pass filtering of high-dimensional trajectory data mitigates projection artifacts to reveal previously hidden conformational states and significantly improve the structural definition and lifetimes of metastable states.
-
-#### [A constitutive model for discontinuous shear thickening in epithelial tissues]
-(<http://arxiv.org/abs/2602.20886v1>)
-*Tanmoy Ghosh, Kabir Ramola, Saroj Kumar Nandi* <br>
-Finite yield stress and non-zero fluctuations drive the transitions between discontinuous shear thickening, continuous shear thickening, and Newtonian behavior across varying cell shape indices and temperatures.
-
-#### [The Jammed Phase of Infinitely Persistent Active Matter]
-(<http://arxiv.org/abs/2602.20776v1>)
-*M. C. Gandikota, Rituparno Mandal, Pinaki Chaudhuri, Bulbul Chakraborty, Chandan Dasgupta* <br>
-Critical yielding thresholds follow a power-law scaling with virial pressure, while internal force distributions maintain characteristics of passive systems despite the presence of activity-driven plastic events.
-
-#### [Landscape of Target State Directed Processes in Living Systems]
-(<http://link.aps.org/doi/10.1103/cx3h-q6d2>)
-*Nicolas Lenner, Matthias Häring, Stephan Eule, Jörg Großhans, and Fred Wolf* <br>
-Reverse-time stochastic dynamics provide a fundamental framework for understanding goal-oriented behaviors by distinguishing them from the forward-time models typically used in stochastic thermodynamics.
-
-#### [Programming Shapes with Competing Layered Patterns]
-(<http://arxiv.org/abs/2602.20655v1>)
-*Wan Yee Yau, Carl D. Modes* <br>
-Incompatible growth gradients and geometric aspect ratios in bilayer systems govern the transformation of thick surfaces into complex three-dimensional forms, ranging from localized curvatures to biomimetic structures.
-
-#### [Rapid pronucleus assembly using cytoplasmic RNAs in fertilized eggs of Xenopus laevis]
-(<https://www.molbiolcell.org/doi/abs/10.1091/mbc.E25-09-0440?af=R>)
-*Mizuki Ikeda, Yuto Tanaka, Tatsuya Shohoji, Yuki Hara* <br>
-Negatively charged polymers facilitate the removal of positively charged proteins to drive sperm chromatin decompaction through electrical interactions at rates determined by molecular length and concentration.
-
-#### [Binding properties of marine sulfated glycans to coagulation (co)-factors using surface plasmon resonance spectroscopy]
-(<https://www.nature.com/articles/s41598-026-41079-0>)
-*Al. Ahmed, Hoda, Pomin, Vitor H.* <br>
-Fucosylated chondroitin sulfates and sulfated fucans from echinoderms demonstrate antithrombin-independent anticoagulant activity through metal-ion-enhanced interactions with heparin cofactor II and factor Xa.
-
-#### [Collective fate decisions and cell rearrangements underlie gastruloid symmetry breaking]
-(<https://www.biorxiv.org/content/10.1101/2024.12.16.628776v2>)
-*Oriola, D.; Torregrosa-Cortes, G.; Samatas, S.; Arato, K.; Fernandez-Munuera, D.; Hahn, E. M.; Anlas, K.; Garcia-Ojalvo, J.; Trivedi, V.* <br>
-Differential surface tension between distinct cell types and a pluripotent population that regulates differentiation timing constitute a mechanochemical mechanism for axis formation in the absence of external signaling cues.
-
-#### [Deviations in whole body angular momentum are largely corrected before foot placement]
-(<https://www.biorxiv.org/content/10.64898/2025.12.03.692080v4>)
-*Berkelmans, S.; Bruijn, S. M.; Afschrift, M.* <br>
-Mediolateral foot placement control relies primarily on linear momentum dynamics, as angular momentum deviations are resolved early in the swing phase and provide negligible predictive benefit for step location.
-
-#### [All-optical mapping of cAMP transport reveals rules of sub-cellular localization]
-(<https://www.biorxiv.org/content/10.1101/2023.06.27.546633v2>)
-*Xiang, K. M.; Park, P.; Koren, S. A.; Hayward, R. F.; Cohen, A. E.* <br>
-A diffusion coefficient of ~130 µm²/s and enzymatic degradation establish signaling domains spanning tens of micrometers, refuting the existence of nanoscale compartments or distinct cytoplasmic pools.
-
-#### [Transsaccadic working memory in healthy ageing and neurodegenerative disease]
-(<https://elifesciences.org/articles/109581>)
-*Anna Scholcz, Gabriel Davis Jones, Masud Husain, Rob Udale, Sanjay G Manohar, Sijia Zhao, Sofia Toniolo, Thomas Parr, Verena Klar* <br>
-Dual eye-centered spatial representations are actively updated across saccades, with deficits in Alzheimer’s and Parkinson’s disease stemming from impaired encoding and memory decay rather than a failure of the updating mechanism itself.
-
-#### [Size tuning of neural response variability in laminar circuits of macaque primary visual cortex]
-(<https://elifesciences.org/articles/86334>)
-*Alessandra Angelucci, Lauri Nurminen, Maryam Bijanzadeh* <br>
-Distinct neural circuits decouple individual and shared fluctuations from surround suppression, as large stimuli increase noise in supragranular layers while near-surround stimulation further quenches it in deeper layers.
-
-#### [Effects of sodium chloride on circadian period and temperature compensation of KaiC phosphorylation]
-(<https://www.nature.com/articles/s41598-026-40224-z>)
-*Kim, Eugene, Adams, Makayla, Tyree, Soren, Kim, Yongick* <br>
-Increasing salt concentrations shorten the oscillator's period and degrade temperature compensation by perturbing the conformational and oligomeric states of the KaiB protein.
-
-#### [Unique protein dynamics distinguish the highly homologous LXR alpha and beta isotypes]
-(<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00157-8?rss=yes>)
-*Kesaban Roy Sankar Choudhuri, Denise Okafor* <br>
-Differences in internal conformational fluctuations enable ligands to discriminate between the nearly identical binding pockets of these receptors, facilitating the development of isoform-selective modulators.
-
-#### [Hypoxia-Driven Changes in Nuclear Morphology as a Determinant of Cell Migration]
-(<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00151-7?rss=yes>)
-*Prema Kumari Agarwala, Rohit Joshi, Abhijit Majumder, Shobhna Kapoor* <br>
-Cobalt chloride-induced reductions in cell spread area and actin anisotropy, coupled with increased filopodia formation, facilitate an invasive phenotype in pancreatic cancer cells.
-
-#### [COMPUTATIONAL STUDIES OF CARGO TRANSPORT THROUGH THE NUCLEAR PORE COMPLEX]
-(<https://www.biorxiv.org/content/10.64898/2026.02.23.707554v1>)
-*Gautam, S. K.; Laghaei, R.; Nasrabad, A. E.; Coalson, R. D.* <br>
-Karyopherins facilitate the passage of other transport receptors by directing them into the nucleoporin meshwork and along specific spatial lanes to maximize translocation efficiency.
-
-#### [Stochastic Mechanism of Dominant Follicle Selection: Selection of One Suppresses Selection of Others]
-(<https://www.biorxiv.org/content/10.64898/2026.02.23.707552v1>)
-*Lyu, Z.; Kolomeisky, A.* <br>
-A negative feedback loop between follicle-stimulating hormone and estradiol restricts the ovulation window by lowering hormone levels below a critical threshold immediately after the first follicle is chosen.
-
-#### [The N-Myc MB0-MBI region interacts specifically and dynamically with the N-lobe of Aurora kinase A]
-(<https://www.nature.com/articles/s41467-026-69725-1>)
-*Hultman, Johanna, Morad, Vivian, Tanner, Eliane, Kenney, Tristan M. G., Pietras, Zuzanna, Khare, Lalit Pramod, Derbyshire, Dean, Resetca, Diana, Arrowsmith, Cheryl H., Aili, Daniel, Ekström, Simon, Penn, Linda Z., Wallner, Björn, Ahlner, Alexandra, Sunnerhagen, Maria* <br>
-Allosteric activation of the kinase through this inhibitable binding mode provides a targetable mechanism to restrict neuroendocrine tumor growth.
-
-#### [Synthetic gene circuits that selectively target RAS-driven cancers]
-(<https://elifesciences.org/articles/104320>)
-*Gabriel Valentin Senn, Leon Nissen, Yaakov Benenson* <br>
-Integrating multiple sensors into a modular, model-guided framework achieves the high selectivity required to express therapeutic proteins that induce cell death in cells harboring various oncogenic mutations.
-
-#### [Autonomous Chemo-mechanical Oscillations in Crosslinked Filamentous-Actin Gels]
-(<http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01205H>)
-*Ken-Ichi Sano, Ryuzo Kawamura, Yoshihito Osada* <br>
-Artificial cytoskeletal networks emulate the fundamental motility and signaling functions of biological cells through engineered structural regulation.
-
-#### [Characterizing MINFLUX imaging performance with DNA origami]
-(<https://www.biorxiv.org/content/10.64898/2026.02.24.707670v1>)
-*Clowsley, A. H.; Bokhobza, A. F. E.; Janicek, R.; Kołataj, K.; Bleuer, G.; Di Michele, L.; Acuna, G. P.; Soeller, C.* <br>
-Repeat-domain docking strands and a time-correlated drift-correction algorithm maintain approximately 2 nm 3D localization precision during multi-hour acquisitions, facilitating the high-resolution mapping of protein targets in complex tissue environments.
-
-#### [Hyperuniformity in active fluids reshape nucleation and capillary-wave dynamics]
-(<http://arxiv.org/abs/2602.20308v1>)
-*Raphaël Maire* <br>
-A nonequilibrium quasi-potential replaces reversible work as the governing force for phase transitions, causing nucleation probabilities to lose their standard surface-volume separation and driving nonreciprocal capillary-wave dynamics that violate detailed balance.
-
-#### [Breakdown and Restoration of Hydrodynamics in Dipole-conserving Active Fluids]
-(<http://arxiv.org/abs/2602.20259v1>)
-*Anish Chaudhuri, Lokrshi Prawar Dadhichi, Arijit Haldar* <br>
-Activity enables linear hydrodynamics in dimensions $d \geq 2$ and establishes novel universality classes in $d < 2$, making these systems significantly more experimentally accessible than their passive counterparts.
-
-#### [Chemotaxis of cell aggregates: morphology and dynamics of migrating active droplets]
-(<http://arxiv.org/abs/2602.20088v1>)
-*Giulia L. Celora, Benjamin J. Walker, Mohit P. Dalwadi, Philip Pearce* <br>
-Internal stress balance and chemical field coupling determine whether proliferation-driven transitions between travelling wave solutions occur through continuous or discontinuous bifurcations.
-
-#### [Arc-length characterization of finite, radial growth patterns]
-(<http://arxiv.org/abs/2602.20026v1>)
-*Andreas A. Hennig, Ilaria Beechey-Newman, Natalya Kizilova, Erika Eiser* <br>
-Identification of pattern centers and differentiation between diverse growth mechanisms, such as diffusion-limited aggregation and colloid drying, are achieved without requiring full connectivity or relying on conventional linear chord methods.
-
-#### [Guiding Peptide Kinetics via Collective-Variable Tuning of Free-Energy Barriers]
-(<http://arxiv.org/abs/2602.19936v1>)
-*Alexander Zhilkin, Muralika Medaparambath, Dan Mendels* <br>
-Residue-level scores derived from Harmonic Linear Discriminant Analysis of short molecular dynamics trajectories predict how point mutations alter conformational transition rates, facilitating the rational engineering of protein kinetics without exhaustive sampling.
-
-#### [Collective Variable-Guided Engineering of the Free-Energy Surface of a Small Peptide]
-(<http://arxiv.org/abs/2602.19906v1>)
-*Muralika Medaparambath, Alexander Zhilkin, Dan Mendels* <br>
-Harmonic Linear Discriminant Analysis (HLDA) of short, unbiased molecular dynamics trajectories identifies residues critical to thermodynamic stability and predicts mutation-induced shifts in melting temperatures by measuring changes in conformational separability.
-
-#### [Dielectric response in proteins: The proteotronics approach]
-(<http://arxiv.org/abs/2602.19899v1>)
-*E. Alfinito, M. Beccaria* <br>
-A simplified calculation method for relative permittivity produces results consistent with classical macroscopic techniques and facilitates streamlined integration into computational modeling workflows.
-
-#### [A label-free method to quantify early-stage amyloid aggregation under flow via intrinsic phenylalanine fluorescence]
-(<http://arxiv.org/abs/2602.19817v1>)
-*Gaëlle Audéoud, Louis Moine, Laura Bonnecaze, Maxime Lavaud, Lucie Khemtemourian, Yacine Amarouchene, Thomas Salez, Marion Mathelié-Guinlet* <br>
-Flow induced dispersion analysis (FIDA) quantifies the transition of monomers into transient, low-molecular-weight oligomers ranging from 2 to 10 nm for tryptophan-free peptides such as PSM$\alpha$3 and hIAPP.
-
-#### [Exploring transition pathways in the Landau-Brazovskii model]
-(<http://link.aps.org/doi/10.1103/q4gq-dkkp>)
-*Zhiyi Zhang, Gang Cui, Kai Jiang, An-Chang Shi, Pingwen Zhang, Jianyuan Yin, and Lei Zhang* <br>
-Numerical simulations reveal the minimum energy paths and structural intermediates that govern the kinetics of transformations between diverse ordered symmetries in three dimensions.
-
-#### [Clogging of Cohesive Particles in a Two-Dimensional Hopper]
-(<http://link.aps.org/doi/10.1103/n68l-9b38>)
-*Johnathan Hoggarth, Pablo E. Illing, Eric R. Weeks, and Kari Dalnoki-Veress* <br>
-The cohesive length scale, rather than individual particle size, dictates the transition threshold for flow cessation.
-
-#### [Effects of near-field hydrodynamic interactions on bacterial dynamics near a solid surface]
-(<http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01103E>)
-*Baopi Liu, Lu Chen, Haiqin Wang* <br>
-Curvature radius, translational and rotational velocities, and surface residence time are dictated by the specific forces acting during stable circular motion.
-
-#### [Centromeres and Telomeres as Rheological Probes of the Human Cell Nucleus]
-(<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00144-X?rss=yes>)
-*Alexis S. Clavijo, Steven Ionov, Alexandra Zidovska* <br>
-Tracking these chromosomal regions elucidates the physical principles and polymeric properties governing the genome's dynamical self-organization in live cells.
-
-#### [Mechanochemical feedback between confinement and actin crosslinking drives the shape dynamics of liquid-like droplets]
-(<https://www.nature.com/articles/s41467-026-69803-4>)
-*Mansour, Daniel, Jordan, Dominique, Walker, Caleb, Chandrasekaran, Aravind, Lee, Christopher T., Graham, Kristin, Stachowiak, Jeanne C., Rangamani, Padmini* <br>
-Multivalent crosslinkers modulate internal filament architecture to regulate the mechanical forces that drive condensate remodeling.
-
-#### [A Comprehensive Atlas and Machine-Learning Framework for Predicting IDR-Protein Binding Affinity]
-(<https://www.biorxiv.org/content/10.64898/2026.02.21.707165v1>)
-*Adhikari, S.; Choudhuri, S.; Mondal, J.* <br>
-IDRBindNet integrates graph-transformer architectures with protein language embeddings to identify interfacial shape complementarity and electrostatic asymmetry as universal determinants of affinity across a diverse dataset of 1,785 disordered protein complexes.
-
-#### [Nanoscale imaging of expanded cells and proteins with spontaneously blinking dyes]
-(<https://www.biorxiv.org/content/10.64898/2026.02.23.707413v1>)
-*Sauer, M.; Taban, D.; Jungblut, M.; Budiarta, M.; Helmerich, D. A.; Kiesel, C.; Doose, S.; Kollmannsberger, P.; Plutkiss, S.; Lavis, L.; Rizzoli, S.; Shaib, A. H.; Krah, D.; Beliu, G.* <br>
-A single-step expansion protocol enables single-molecule localization microscopy without re-embedding to resolve the organization of the nuclear pore complex and the molecular structure of individual proteins.
-
-#### [Functionally Relevant Protein Dynamics Monitored by Time-Resolved Quasielastic Neutron Scattering]
-(<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00149-9?rss=yes>)
-*Tatsiana Burankova, Thomas Hauß, Jacques Ollivier, Ruep E. Lechner, Norbert A. Dencher, Jörg Pieper* <br>
-Bacteriorhodopsin’s picosecond flexibility is modulated in real time during its light-triggered functional cycle, establishing a direct link between atomic-scale motion and biological activity.
-
-#### [Quantifying the effects of cell death and agar density on yeast colony biofilms using an extensional-flow mathematical model]
-(<http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01051A>)
-*Alexander Tam, Jennifer M. Gardner, Jin Zhang, Vladimir Jiranek, Daniel Netherwood, Campbell Gourlay, Benjamin Binder, Edward Green* <br>
-*Saccharomyces cerevisiae* growth experiments and parameter estimation characterize how substrate resistance modulates the radial expansion and internal population viability of the microbial community.
-
-#### [Diverse regulation of functional dimerization of a sugar transporter by different interfacial lipids]
-(<https://www.nature.com/articles/s41467-026-69804-3>)
-*Zhang, Yan, Zhao, Weijing, Duan, Mojie, Shen, Yang, Li, Jianping, Xie, Huayong, Tong, Qiong, Zhao, Yongxiang, Yang, Jun* <br>
-Solid-state NMR, biochemical assays, and molecular dynamics simulations reveal the specific molecular mechanisms through which varying lipid environments modulate protein architecture and activity within bilayers.
-
-#### [Bound or unbound: Mapping and monitoring receptor oligomerization using time-resolved fluorescence]
-(<https://www.biorxiv.org/content/10.64898/2026.02.21.707147v1>)
-*Greife, A.; Liu, R.; Koehler, P. S.; Heinze, K. G.; Hemmen, K.; Peulen, T.-O.* <br>
-An open-source framework integrating fluorescence spectroscopy and high-content imaging determines protein association constants and assembly distributions in living cells with the precision of in vitro biochemical assays.
-
-#### [Partition Coefficients Reveal Changes in Properties of Low-Contrast Biomolecular Condensates]
-(<https://www.biorxiv.org/content/10.64898/2026.02.20.707107v1>)
-*Varma, K.; Matthias, D.; Shapiro, C. B.; Bailey-Darland, S.; Matsuzawa, T.; Lorenz, C.; Bate, T.; Thornton, S. J.; Duraivel, S.; Style, R. W.; Sethna, J. P.; Dufresne, E. R.* <br>
-Incorporating small molecules into model systems reduces biochemical contrast to physiological levels, inducing a shift toward critical behavior and altered material properties that more accurately mimic the sensitivity of condensates within living cells.
-
-#### [A Unifying Thermodynamic Model for Phase Separation and Aging of Biopolymers]
-(<https://www.biorxiv.org/content/10.64898/2026.02.21.707146v1>)
-*Michels, J. J.; Caria, J.; Lemke, E. A.* <br>
-Local, reversible folding within an extended associating polymer theory dictates how time-dependent changes in binding valency drive the transition of protein condensates into hardened, viscoelastic solids.
-
-#### [A protein adaptor mediating Ap4A-dependent control of protein acetylation]
-(<https://www.nature.com/articles/s41467-026-70006-0>)
-*Zheng, Liujuan, Young, Megan K. M., Steinchen, Wieland, Guo, Zhiyong, Jalomo-Khayrova, Ekaterina, Liu, Bobby Xuanyu, Burchert, Fabiana, Bedrunka, Patricia, Mais, Christopher-Nils, Pané-Farré, Jan, Girbig, Mathias, Linne, Uwe, Trinquier, Aude, Li, Aitao, Hochberg, Georg, Freitag, Johannes, Wang, Jue D., Bange, Gert* <br>
-AcuB suppresses the activity of the bacterial deacetylase AcuC through an interaction potentiated by the alarmone diadenosine tetraphosphate, directly linking metabolic regulation to cellular stress levels.
-
-#### [Nanopore-based massively parallel sensing for peptide profiling and protein identification]
-(<https://www.nature.com/articles/s41467-026-69628-1>)
-*Wang, Ji, Chen, Junyi, Pan, Hailin, Luo, Fengqin, Qin, Wenbing, Zeng, Huixian, Yuan, Xilong, Qiao, Yuchen, Zhang, Yunfeng, Zhang, Yishuo, Wang, Dapeng, Shen, Liang, Zhai, Zhiwei, Zhu, Qianhua, Deng, Yuqing, Sheng, Xiaojing, Xie, Qingqing, Zhang, Yuning, Yan, Xu, Zeng, Tao, Shen, Mengzhe, Bai, Yinqi, Teng, Bo, LI, Yuxiang, Liu, Chuanyu, Wang, Ou, Dong, Yuliang, Liu, Siqi, Xu, Xun* <br>
-Integrated library preparation and AI analysis facilitate high-throughput, accurate peptide identification for applications such as antibody validation.
-
-#### [Coarse-Grained Simulations of Mycobacterial Outer Membranes Reveal Fluidity-Dependent PDIM Redistribution Across Different Lipid Environments]
-(<https://www.biorxiv.org/content/10.64898/2026.02.18.706594v2>)
-*Acharya, B.; Lammichane, S.; Brown, T. P.; Chavent, M.; Im, W.* <br>
-MARTINI 3 models parameterized against atomistic data demonstrate that PDIM translocation and clustering are significantly enhanced within liquid disordered lipid environments.
-
-#### [Protein-induced membrane strain drives supercomplex formation]
-(<https://elifesciences.org/articles/102104>)
-*Alexander Jussupow, Hyunho Kim, Maximilian C Pöverlein, Ville RI Kaila* <br>
-Localized changes in bilayer thickness and the recruitment of cardiolipin and quinone create a thermodynamic environment that stabilizes these assemblies, modulating protein dynamics and potentially enhancing respiratory flux under crowded conditions.
-
-#### [Squirmers with arbitrary shape and slip: modeling, simulation, and optimization]
-(<http://arxiv.org/abs/2602.19336v1>)
-*Kausik Das, Hai Zhu, Marc Bonnet, Shravan Veerapaneni* <br>
-Helmholtz decomposition of boundary slip velocity characterizes microswimmer trajectories as circular helices and identifies power-minimizing motion profiles determined by the body’s geometric symmetries.
-
-#### [On the Statistical Mechanics of Active Membranes: Some Selected Results]
-(<http://arxiv.org/abs/2602.19249v1>)
-*Sreekanth Ramesh, Prashant K. Purohit, Yashashree Kulkarni* <br>
-Analytical expressions for the tension-area relation, fluctuation amplitudes, normal vector correlations, and persistence length provide a theoretical framework for interpreting experimental assays of biological interfaces driven by energy-consuming protein activity.
-
-#### [Microgel Translocation Through Narrow Capillaries]
-(<http://arxiv.org/abs/2602.19205v1>)
-*Subhadip Biswas, Buddhapriya Chakrabarti* <br>
-Internal network connectivity and elasticity determine a critical threshold diameter below which microgels mechanically stall regardless of the applied driving force.
-
-#### [Training overdamped dynamics]
-(<http://arxiv.org/abs/2602.19122v1>)
-*Marc Berneman, Daniel Hexner* <br>
-A Rayleighian-based framework for locally adapting viscous damping parameters enables disordered soft-matter systems to acquire targeted rate-dependent mechanical responses and flow behaviors.
-
-#### [Critical Scaling and Metabolic Regulation in a Ginzburg--Landau Theory of Cognitive Dynamics]
-(<http://arxiv.org/abs/2602.19023v1>)
-*Gunn Kim* <br>
-Biological intelligence emerges as a metabolically-sustained macroscopic order parameter that predicts universal cortical avalanche exponents and characterizes cognitive decline as a transition away from a regulated critical regime.
-
-#### [Process for Standardizing and Assessing the Parameters Governing MS2 Virus-Like Particle Reassembly around Nucleic Acid Cargo]
-(<https://www.biorxiv.org/content/10.64898/2025.12.02.691839v3>)
-*de Castro Assumpcao, D.; Vinokour, E. S.; Mills, M. M.; Liang, S.; Mills, C. E.; Carvalho da Costa, A.; Kennedy, N. W.; Tullman-Ercek, D.* <br>
-Factorial experimental design identifies protein concentration and ionic strength as the primary drivers of reassembly yield, establishing a predictive statistical model and standardized guidelines for reproducible nanoparticle construction.
-
-#### [Entropy Quantum Computing for Fixed-Backbone Protein Design]
-(<https://www.biorxiv.org/content/10.64898/2026.02.20.706589v1>)
-*Emami, B.; Dyk, W.; Haycraft, D.; Robinson, J.; Nguyen, L.; Miri, M.-A.; Huggins, D. J.* <br>
-The Dirac-3 photonic platform identifies solutions within 2.47% of optimal energies while demonstrating near-linear runtime scaling that offers a practical alternative to the super-polynomial growth of exact classical solvers for large-scale instances.
-
-#### [Sampling Mismatch and Correction for Ptychographic Single-Particle Analysis]
-(<https://www.biorxiv.org/content/10.64898/2026.02.21.707235v1>)
-*Li, T.; Li, S.; Yan, Z.; Shen, Y.; Li, X.* <br>
-Errors in scanning step and diffraction pixel sizes induce phase-reversing signal modulations that limit image resolution, but a targeted correction strategy resolves these distortions to achieve sub-2 Å structural details in biological reconstructions.
-
-#### [Serum modulates the aggregation - toxicity landscape of the staphylococcal toxin PSMα3]
-(<https://www.biorxiv.org/content/10.64898/2026.02.22.707246v1>)
-*Bonnecaze, L.; Duchalet, A.; Moine, L.; Vial, A.; Cardenas, M.; Martin, C.; Molinari, M.; Marsaudon, S.; Mathelie-Guinlet, M.* <br>
-Soluble oligomeric intermediates, rather than mature fibrils, drive membrane-mediated cell death through a mechanism inhibited by the action of serum lipoproteins on the aggregation process.
-
-#### [Interactions of Phototropism and Gravitropism in Cyanobacteria]
-(<https://www.biorxiv.org/content/10.64898/2026.02.21.707229v1>)
-*Gates, C.; Mundoor, H.; Smalyukh, I.; Cameron, J. C.* <br>
-Polyphosphate bodies within *Synechococcus sp. PCC 7002* function as mechanical sensors that regulate the spatial distribution of chlorophyll and phycobilins and colonial morphology in response to external force.
-
-#### [The Untangle Challenge for accurate ensemble models]
-(<https://www.biorxiv.org/content/10.64898/2026.02.21.706873v1>)
-*Hopkins, M. S.; Terwilliger, T. C.; Afonine, P.; Ginn, H. M.; HOLTON, J. M.* <br>
-Topological local minima known as density misfit barrier traps prevent macromolecular models from achieving simultaneous agreement with electron density and chemical geometry, necessitating new refinement algorithms that can escape these obstacles to reach accurate ensemble states.
-
-#### [E. coli extracellular matrix: a tunable composite with hierarchical structure]
-(<https://www.biorxiv.org/content/10.64898/2026.02.22.707275v1>)
-*Siri, M.; Mangiarotti, A.; Seewald, A.; Rosenthal, N.; Amini, S.; Raguin, E.; Fratzl, P.; Bidan, C. M.* <br>
-Synergistic interactions between rigid curli amyloid fibers and phosphoethanolamine-modified cellulose form a sub-micron hybrid material that governs biofilm mechanics by constraining cellulose swelling.
-
-#### [Tensile Expansion Microscopy Applies Mechanical Force to Super-resolve Fixed and Image Live Cellular Samples]
-(<https://www.biorxiv.org/content/10.64898/2026.02.20.707066v1>)
-*Kisley, L.; Venkataramani, V.; Latham, D. R.; Arampongpun, R.; Zammali, M.; Shrikanth, T.; Mohapatra, A.; Guerrero, J. A.; Andresen Eguiluz, R. C.; Mathur, D.; Sanchez, L.* <br>
-Stretchable double-network hydrogels and an electromechanical iris device facilitate the continuous, real-time observation of biological dynamics by providing precise temporal control over expansion with minimal spatial distortion.
-
-#### [Sloppiness and Action Constraint in Cell State Transitions: Are Single Cells Sloppy?]
-(<https://www.biorxiv.org/content/10.64898/2025.12.31.697145v2>)
-*Wang, Y.; Ying, J.; Xiao, H.; Huang, M.; Zhang, L.; Wang, W.* <br>
-Stiff parameters with minimal fluctuations and low velocities dictate critical shifts, forcing cellular trajectories to follow a principle of least action.
-
-#### [Fine-Tuning α-Synuclein Phase Separation through Sequence-Optimized Peptide Modulators]
-(<https://www.biorxiv.org/content/10.64898/2026.02.21.707152v1>)
-*Ikenoue, T.; Konuma, T.; Ikegami, T.; Suga, H.* <br>
-Deep mutational scanning and biophysical analysis establish a generalizable framework for engineering de novo modulators that precisely regulate the stability and material properties of protein condensates by balancing solubility, multivalency, and cooperative interactions.
-
-#### [Formation of a swelling gel underlies a morphological transition in Bacillus subtilis biofilms]
-(<https://www.biorxiv.org/content/10.64898/2026.02.20.707077v1>)
-*Saha, A.; Jones, J. M.; Plummer, A.; Larkin, J. W.* <br>
-Poly-γ-glutamate-mediated water absorption and exopolysaccharide-driven cross-linking generate the internal swelling strain and structural elasticity required for macroscopic wrinkling.
-
-#### [A closed-loop mathematical structure of mechanics-turnover coupling for mechanical adaptation in living systems]
-(<https://www.biorxiv.org/content/10.64898/2026.02.20.707125v1>)
-*Matsumoto, E.; Deguchi, S.* <br>
-Feedback Adaptive Turnover-mediated Environment-Dependent (FATED) systems define a minimal mathematical architecture where negative-feedback loops between mechanical states and structural renewal dictate the characteristic timescale of homeostasis across biological scales.
-
-#### [Quantifying 3D Live-Cell Membrane Dynamics Using Dynamic Metal-Induced Energy Transfer Spectroscopy (dynaMIET)]
-(<https://www.biorxiv.org/content/10.1101/2024.09.27.614973v3>)
-*Gallea, J. I.; Karedla, N.; Wang, D.; Enderlein, J.; Chen, T.* <br>
-Integrating fluorescence correlation spectroscopy with metal-induced energy transfer enables the simultaneous measurement of lateral molecular mobility and vertical membrane undulations with nanometer-scale axial sensitivity across various cellular organelles.
-
-#### [Accelerated sampling of protein dynamics using BioEmu augmented molecular simulation]
-(<https://www.biorxiv.org/content/10.64898/2026.01.07.698041v2>)
-*Bhakat, S.; Strauch, E.-M.* <br>
-Markov State Models seeded with generative AI ensembles characterize mutation-driven population shifts in kinases while revealing significant limitations in capturing side-chain-dependent dynamics and cryptic pocket formation in membrane transporters and proteases.
-
-#### [Stoichiometric binding of Cyclophilin-A to the HIV-1 capsid modulates its mechanoelastic properties]
-(<https://www.biorxiv.org/content/10.64898/2026.02.20.707123v1>)
-*Rey, J. S.; Bryer, A. J.; Perilla, J. R.* <br>
-Increasing CypA occupancy progressively enhances capsid brittleness and promotes structural failure at lower deformations, suggesting a stoichiometry-dependent model where excessive binding compromises the flexibility required for successful nuclear entry.
-
-#### [Cumulative geomagnetic disturbances modulate global photosystem stoichiometry through temperature-dependent gating]
-(<https://www.biorxiv.org/content/10.64898/2026.02.17.706448v2>)
-*Kitashov, A. V.* <br>
-Terrestrial vegetation integrates planetary magnetic signals into its redox-regulatory systems, producing physiological adjustments that frequently rival the impact of major climatic drivers.
-
-#### [Discovery and dynamic pharmacology of μ-opioid receptor positive allosteric modulators]
-(<https://www.biorxiv.org/content/10.64898/2026.02.20.707058v1>)
-*O'Brien, E. S.; Wang, J.; Tanguturi, P.; Li, M.; White, E.; Shiimura, Y.; Paul, B.; Appourchaux, K.; Krishna Kumar, K.; Huang, W.; Majumdar, S.; Traynor, J. R.; Streicher, J. M.; Chen, C.; Kobilka, B.* <br>
-DNA-encoded library screening identified novel chemical scaffolds that potentiate orthosteric agonists and reveal the receptor's intracellular activation dynamics via single-molecule fluorescence resonance energy transfer.
+#### [Vesicle dynamics in synapsin-induced condensates by passive X-ray microrheology](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00178-5?rss=yes>)
+*Titus Czajka, Andras Major, Hendrik Bruns, Marco Cammarata, Christian Hoffmann, Dragomir Milovanovic, Tim Salditt* <br>
+X-ray photon correlation spectroscopy quantifies collective dispersion relations in biomolecular systems while overcoming experimental challenges such as radiation damage and low scattering signals.
+
+#### [Clathrin is an Intrinsic Driver of Membrane Fission](<https://www.biorxiv.org/content/10.64898/2026.03.05.709932v1>)
+*Bouzos, N.; Foley, S. L.; Potamianos, A.; Jacobs, C. O.; Johnson, M. E.; Zeno, W. F.* <br>
+Lattice mechanics and triskelion geometry determine clathrin’s capacity for membrane remodeling, revealing that weakened lattice assembly paradoxically facilitates fission by enabling greater curvature generation.
+
+#### [Association and dissociation of Na + between bulk, cluster and micelle sites in aqueous sodium decanoate solutions elucidated by 23Na NMR relaxation experiments and quadrupolar relaxation modelling](<http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01198A>)
+*Pär Håkansson, Pau Mayorga Delgado, Anne Selent, Ritu Ghanghas, Ilari Ainasoja, Sanna Komulainen, Jiri Mares, Perttu Lantto, Nonne L. Prisle, Ville-Veikko Telkki* <br>
+Counter-ion partitioning between various surfactant aggregate states regulates the water activity and thermodynamic properties of the aqueous system.
+
+#### [Dissecting Gap Junctional and Ephaptic Contributions to Electrical Conduction in a Novel Cardiomyocyte Pair Model](<https://www.biorxiv.org/content/10.64898/2026.03.05.709926v1>)
+*Wu, X.; Swanger, S. A.; Meier, L. E. B.; Dennison, C. L.; Weinberg, S. H.; Poelzing, S.; Gourdie, R. G.* <br>
+Physiological sodium concentrations promote ephaptic-dominated intercellular activation at the cardiac perinexus, whereas low sodium conditions favor gap junctional coupling, as demonstrated by a unique "Intercalated Disc Signature" in paired-cell sodium currents.
+
+#### [Mechanisms of gene regulation by SRCAP and H2A.Z](<https://www.nature.com/articles/s41467-026-70087-x>)
+*Tollenaere, Armelle, Ugur, Enes, Dalla Longa, Susanna, Deluz, Cédric, Assenheimer, Devin, Gebhardt, J. Christof M., Leonhardt, Heinrich, Suter, David M.* <br>
+SRCAP prevents the activation of lineage-specific genes by maintaining H2A.Z occupancy and sterically hindering pioneer transcription factor binding through a mechanism independent of its histone-exchange activity.
+
+#### [Constructing a single-objective oblique plane microscope (OPM) for fast, multi-colour, high-resolution volumetric fluorescence imaging](<https://www.biorxiv.org/content/10.64898/2026.03.04.709686v1>)
+*Zhang, Z.; Hong, W.; Wu, Y.; Dey, A.; Shevchuk, A.; Klenerman, D.* <br>
+Step-by-step instructions for assembly and characterization using off-the-shelf parts lower the technical threshold for implementing this complex remote-refocusing light-sheet technique.
+
+#### [A universal protein ladder for standardisation of diverse FRET assays](<https://www.biorxiv.org/content/10.64898/2026.03.05.709886v1>)
+*Smith, E. R.; Gelder, K. L.; Hunter-Craig, L.; Bose, D. A.; Craggs, T. D.; Twelvetrees, A. E.* <br>
+Modular repeating TPR motifs and self-labeling enzymes establish a consistent calibration curve that links molecular distances from in vitro single-molecule experiments to intracellular imaging across diverse expression systems and experimental platforms.
+
+#### [Optimizing spatial organization of FtsZ rings for large-scale constriction in synthetic cells](<https://www.nature.com/articles/s41467-026-70091-1>)
+*Panevska, Anastasija, Šakanović, Aleksandra, Paccione, Gianfranco, Rivas, Germán, Schwille, Petra* <br>
+Truncated FtsN cytosolic domains facilitate the assembly and regulation of closed equatorial protein networks on giant vesicle membranes.
+
+#### [Using Particle Shape to Control Defects in Colloidal Crystals on Spherical Interfaces](<http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01271F>)
+*Gabrielle Nicole Jones, Philipp Schoenhoefer, Sharon C. Glotzer* <br>
+Monte Carlo simulations of non-spherical hard particles demonstrate how specific geometric anisotropies can manipulate the distribution and type of topological defects that arise from geometric frustration on curved surfaces.
+
+#### [Waiting-time based entropy estimators in continuous space without Markovian events](<http://arxiv.org/abs/2603.05170v1>)
+*Jonas H. Fritz, Udo Seifert* <br>
+Measurements of the frequency and duration of particles crossing spatial manifolds provide a novel lower bound for entropy production in continuous stochastic systems.
+
+#### [Sampling the Liquid-Gas Critical Point with Boltzmann Generators](<http://arxiv.org/abs/2603.05109v1>)
+*Luigi de Santis, John Russo, Andrea Ninarello* <br>
+Boltzmann Generators demonstrate reliable extrapolation across thermodynamic states and reveal a distinct correlation between generative efficiency and phase boundaries, though their performance remains constrained by finite-size effects.
+
+#### [Transition from traveling fronts to diffusion-limited growth in expanding populations](<http://link.aps.org/doi/10.1103/p3tt-gq73>)
+*Louis Brezin, Kyle J. Shaffer, and Kirill S. Korolev* <br>
+Analytical solutions for reaction-diffusion equations reveal sublinear fronts that advance as the square root of time.
+
+#### [Theory of Rapid Behavioral Inferences Under the Pressure of Time](<http://link.aps.org/doi/10.1103/8m59-vf2m>)
+*Ann M. Hermundstad and Wiktor F. Młynarski* <br>
+Variability within random stimulus sequences serves as a mechanism for animals to improve the reliability of inferences necessary for survival-critical tasks.
+
+#### [Entropic size control of self-assembled filaments](<http://link.aps.org/doi/10.1103/68rs-3qgn>)
+*Maximilian C. Hübl and Carl P. Goodrich* <br>
+Promiscuous binding interactions between subunits enable the scalable programming of a preferred equilibrium size by balancing binding free energy against configurational entropy.
+
+#### [Extended dynamical density functional theory for nonisothermal binary systems including momentum density](<http://arxiv.org/abs/2603.04973v1>)
+*Michael te Vrugt, Hartmut Löwen, Helmut R. Brand, Raphael Wittkowski* <br>
+Mori-Zwanzig-Forster projection operator techniques provide a microscopic framework that captures both diffusive and convective transport while ensuring the accurate calculation of sound speed in the hydrodynamic limit.
+
+#### [Rotational 3D printing of active-passive filaments and lattices with programmable shape morphing](<http://arxiv.org/abs/2603.04694v1>)
+*Mustafa K. Abdelrahman, Jackson K. Wilt, Yeonsu Jung, Rodrigo Telles, Gurminder K. Paink, Natalie M. Larson, Joanna Aizenberg, L. Mahadevan, Jennifer A. Lewis* <br>
+Helical mesogen alignment and spatial material patterning provide independent control over local bending and torsion, enabling the computational design and predictable execution of complex, out-of-plane transformations.
+
+#### [Compositional memory matters for early molecular systems](<https://www.biorxiv.org/content/10.64898/2026.03.03.709225v1>)
+*Ledoux, B.; Kuwabara, R.; Ichihashi, N.; Mizuuchi, R.; Lacoste, D.* <br>
+Partial compartmentalization enables the accumulation of compositional memory across replication cycles, stabilizing the coevolutionary dynamics of early molecular replicators and parasites against the error catastrophe.
+
+#### [Absorption dipole effects on MINFLUX single molecule localization](<https://www.biorxiv.org/content/10.64898/2026.01.11.698872v2>)
+*Stallinga, S.; Wang, W.; Rieger, B.* <br>
+Fixed absorption dipoles tilted out of the imaging plane and primary optical aberrations introduce systematic localization errors that can be minimized by employing hexagonal probing patterns or iterative area reduction.
+
+#### [Linker histones consolidate heterogenous nucleosome fiber contacts by linking together multiple nucleosomes](<https://www.nature.com/articles/s41467-026-69842-x>)
+*Adhireksan, Zenita, Sharma, Deepti, Bao, Qiuye, Lee, Phoi Leng, Padavattan, Sivaraman, Davey, Gabriela E., Hansen, Jeffrey C., Davey, Curtis A.* <br>
+Different H1 variants employ diverse binding modes to support dynamic chromatin organization within crowded environments.
+
+#### [Effects of Counter Ion Protonation on the Ultrafast Excited State Dynamics in Archaerhodopsin-3](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00156-6?rss=yes>)
+*Krystyna Herasymenko, Danushka Walisinghe, Masae Konno, Vincent Ledentu, Miquel Huix-Rotllant, Xuchun Yang, Nicolas Ferré, Keiichi Inoue, Massimo Olivucci, Stefan Haacke* <br>
+Electrostatic interactions between the protein environment and the protonated Schiff base retinal create a mutation-induced energy barrier that suppresses sub-picosecond photo-isomerization and increases fluorescence quantum yield.
+
+#### [How wind and currents shape the drift velocity of macrophytes and macroplastic particles - from experiment to model](<https://www.biorxiv.org/content/10.64898/2026.03.04.709487v1>)
+*Gronwald, F.; Zhao, Z.; Karez, R.; Bouma, T. J.; Weinberger, F.* <br>
+Buoyancy and morphological traits dictate how wind-induced turbulence and current speeds influence drift velocity, allowing for the validation of existing surface transport models and the creation of a new predictive equation for negatively buoyant specimens that interact with the bottom.
+
+#### [A molecular grammar for programmable multiphase protein-RNA vesicles](<https://www.biorxiv.org/content/10.64898/2026.03.04.709570v1>)
+*Ramachandran, V.; Potoyan, D. A.* <br>
+Asymmetries in interaction strengths, chain lengths, and molecular stoichiometry dictate the spontaneous emergence of diverse internal architectures, including hollow vesicles, from well-mixed protein-RNA systems.
+
+#### [The kinetics and mobility of a ParA ATPase drive carboxysome distribution in Halothiobacillus neapolitanus](<https://www.biorxiv.org/content/10.64898/2026.03.03.709431v1>)
+*Azaldegui, C. A.; Swasthi, H. M.; Hu, L.; Pulianmackal, L. T.; Rivett-Trznadel, H.; Liu, J.; Vecchiarelli, A. G.; Biteen, J. S.* <br>
+McdA utilizes DNA-stimulated ATPase activity and McdB-mediated displacement to establish nucleoid gradients that prevent organelle aggregation via a Brownian ratchet mechanism.
+
+#### [Intrinsically disordered SERBP1 regulates translation through topology-driven G-quadruplex recognition.](<https://www.biorxiv.org/content/10.64898/2026.03.03.709370v1>)
+*Baudin, A.; Dinh, H. H.; Breunig, K.; Lei, X.; Xu, X.; Penalva, L. O.; Libich, D. S.* <br>
+An encircling RGG box mechanism stabilized by C-terminal serines functions as a phosphorylation-sensitive switch to control mTOR expression and glioblastoma cell growth.
+
+#### [Social Information Quality and Environmental Volatility Shape Collective Foraging Behavior](<https://www.biorxiv.org/content/10.1101/2025.11.14.688412v2>)
+*Chirkov, V.; Kurvers, R. H. J. M.; Deffner, D.; Romanczuk, P.* <br>
+Agents utilizing payoff-based information develop flexible strategies that adapt to shifting resource landscapes, while those relying on positional cues produce rigid behaviors that fail as instability increases.
+
+#### [Swapped and non-swapped TRAAK states co-exist in membranes at a ratio influenced by temperature](<https://www.nature.com/articles/s41467-026-70027-9>)
+*Ma, Yue, Ackermann, Katrin, Waheed, Qaiser, Postis, Vincent, Smith, Terry K., Bode, Bela E., Pliotas, Christos* <br>
+Electron paramagnetic resonance (EPR) spectroscopy quantifies the distribution of the channel’s extracellular cap conformations to define the structural equilibrium of the protein within lipid membranes.
+
+#### [Chlorpromazine inhibits EAG1 channels by altering the interdomain coupling](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00182-7?rss=yes>)
+*Kyle Kihn, Ze-Jun Wang, Xi Chen, Mahdi Ghorbani, Purushottam B. Tiwari, Jeffery B. Klauda, Tinatin I. Brelidze* <br>
+The intracellular tetrameric ring formed by interacting PAS and CNBH domains regulates the transition of the voltage sensor domain between closed and open states.
+
+#### [Arginine versus Lysine: Molecular Determinants of Cation-π Interactions in Biomolecular Condensates](<https://www.biorxiv.org/content/10.1101/2025.10.01.679751v2>)
+*Armentia, L.; Lopez, X.; De Sancho, D.* <br>
+Arginine promotes phase separation more effectively than lysine primarily due to its lower dehydration penalty and its ability to maintain consistently stronger cation-π interactions regardless of the surrounding dielectric medium.
+
+#### [Analytical Time-Dependent Dynamics of Stochastic Gene Expression with sRNA–mRNA Interactions](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00173-6?rss=yes>)
+*Zhenhua Yu, Yiling Wang, Zhenyu Wang, Zhanpeng Shu, Zhixing Cao* <br>
+A generalized probability-generating-function framework transformed via Laurent series expansion provides the time-dependent joint distribution of molecular counts, overcoming mean-field limitations in regimes of strong antagonism.
+
+#### [Spatial Triple-Correlation Spectroscopy (S3CS) Reveals Heterotrimer Dynamics in Live Cells](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00179-7?rss=yes>)
+*Julissa Sanchez-Velasquez, Tao Sun, Xiaomeng Zhang, Elizabeth Hinde* <br>
+Integration of three-channel line-scan microscopy with a spatial triple-correlation function quantifies protein assembly and transport relative to subcellular architecture while distinguishing ternary complexes from individual subunits.
+
+#### [Conformational Variability of HIV-1 Env Trimer and Viral Vulnerability](<https://www.biorxiv.org/content/10.1101/2025.10.09.681376v3>)
+*Cao, Y.; Im, W.* <br>
+A full-length, glycosylated model of the gp120-gp41 trimer reveals that MPER-mediated tilting and transmembrane domain-induced lipid perturbations facilitate receptor engagement and fusion while providing a framework for mapping antibody epitope accessibility.
+
+#### [Adhesion differentials control the rheology of biomimetic emulsions](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00176-1?rss=yes>)
+*Quentin Guigue, Marc Besse, Raphael Voituriez, Alexis M. Prevost, Elie Wandersman, Matthias Merkel, Lea-Laetitia Pontani* <br>
+Geometric analysis of imaging data collected under cyclic shear reveals how the interplay between packing and internal forces drives the large-scale tissue deformations fundamental to morphogenesis.
+
+#### [Energy-precision trade-off in mitotic oscillators revealed by ATP modulation in artificial cells](<https://www.biorxiv.org/content/10.64898/2026.03.02.709190v1>)
+*Wang, S.; Yourston, L.; Maryu, G.; Kim, Y.; Walker, D.; Kadiyala, U.; Yang, Q.* <br>
+Embryonic cell cycles operate at a metabolic optimum that balances rapid division with timing coherence, as oscillation speed peaks near physiological energy levels while precision scales monotonically with available fuel.
+
+#### [Distributional invariance and proportional scaling in axonal conduction](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00174-8?rss=yes>)
+*Laurie D. Cohen, Shimon Marom* <br>
+The ratio of terminal to initial conduction velocities follows a right-skewed distribution that remains invariant across varying branch lengths, neuronal positions, and hierarchical levels.
+
+#### [Adaptations in Plasmodium tubulin determine distinct microtubule architectures, mechanics and drug susceptibility](<https://www.nature.com/articles/s41467-026-70181-0>)
+*Bangera, Mamata, Wu, Jiangbo, Beckett, Daniel, Fachet, Dominik, Ferreira, Josie L., Voth, Gregory A., Reber, Simone, Moores, Carolyn A.* <br>
+Evolutionary divergence in the parasite’s tubulin subunits modulates the intrinsic stiffness and assembly dynamics of the resulting microtubule filaments.
+
+#### [Robust ciliary flows protect early Xenopus embryos from pathogens independent of multiciliated cell patterning](<https://www.biorxiv.org/content/10.64898/2025.12.19.694354v2>)
+*Baby, A.; Briole, A.; Yadav, A.; Cheylan, I.; Thome, V.; Boutin, C.; D'Ortona, U.; Viallat, A.; Favier, J.; Loiseau, E.; Kodjabachian, L.* <br>
+Collective ciliary beating generates a resilient liquid shield that ensures effective pathogen clearance by prioritizing functional robustness over precise spatial patterning or energy optimization.
+
+#### [Quantification of Cholesterol Incorporation in Giant Unilamellar Vesicles Produced by a Modified cDICE Method](<http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01124H>)
+*Marcos Arribas Perez, Gijsje H. Koenderink* <br>
+Precise maintenance of target molar ratios resolves the common discrepancy between initial lipid mixtures and final membrane contents typically encountered in droplet-based production techniques.
+
+#### [Validating folding energy estimates as a method for variant interpretation](<https://www.biorxiv.org/content/10.1101/2025.11.09.687451v2>)
+*Elwes, C.; Alcraft, R.; Lister, H.; Smith, P. A.; Shorthouse, D.; Hall, B. A.* <br>
+Aggregating stability estimates across multiple protein structures and filtering outlier residues significantly improves the quantitative accuracy of FoldX-based folding energy predictions for biophysical variant interpretation.
+
+#### [The Geometry of Cognitive Difficulty: A Dynamical Manifold Theory in Excitable Neural Networks](<https://www.biorxiv.org/content/10.64898/2026.03.03.709406v1>)
+*Panda, N.* <br>
+Structured reorganization of neural state space, quantified through metrics like energetic cost and geometric curvature, reveals that cognitive difficulty manifests as a multidimensional manifold rather than a simple scalar increase in activation.
+
+#### [Noninvasive Laser SCOS Monitoring of Rat Brain Hemodynamics During Intracerebral Injection](<https://www.biorxiv.org/content/10.64898/2026.03.03.709425v1>)
+*Fernandes, M.; Huang, Y. X.; Xu, I.; Noguera Saigua, C.; Li, J.; Mahler, S.* <br>
+The system's ability to distinguish between saline and flow-modulating fluid recovery profiles validates its utility for characterizing the physiological impact and clearance of cerebral therapeutic agents.
+
+#### [Quantifying the effect of magnesium ions on nucleosome stability in chromatin fibers](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00183-9?rss=yes>)
+*Luuk J.C. Daris, Lieke A. Lamers, Kes van Blitterswijk, Camila Delgado Zuvanic, Jorine M. Eeftens* <br>
+Single-molecule force spectroscopy reveals how magnesium ions modulate nucleosome stability across two distinct regimes of mechanical chromatin fiber unfolding.
+
+#### [Organization of core mitochondrial replication components into multiphasic condensates](<https://www.biorxiv.org/content/10.64898/2026.03.03.709306v1>)
+*Yao, Y.; Tangade, A. S.; Livingston, Q.; Mondal, A.; Parikh, N.; Mittal, J.; Feric, M.* <br>
+Specific binding preferences between proteins and single- or double-stranded DNA determine the internal architecture of mt-nucleoids, explaining how the replication machinery spontaneously coordinates its complex molecular environment.
+
+#### [From Prefix to Path: Learning Temporally Consistent Biomolecular Dynamics from Limited Initial Data](<https://www.biorxiv.org/content/10.64898/2026.03.02.709204v1>)
+*Choudhuri, S.; Adhikari, S.; Mondal, J.* <br>
+Transformer-based autoregressive modeling reconstructs long-range metastable transitions and accurate free-energy landscapes by extrapolating continuous trajectories from brief segments of molecular dynamics simulations.
+
+#### [Anomalous Ion Confinement Penalties and Giant Ion-Screening Effects in One-Dimensional Nanopores](<http://arxiv.org/abs/2603.04651v1>)
+*Kevin Leung* <br>
+Hydration free energy penalties for confined ions deviate significantly from Born Equation predictions and undergo background electrolyte screening that exceeds Debye-Hückel estimates by nearly an order of magnitude.
+
+#### [Kinetic Theory of Chiral Active Disks: Odd Transport and Torque Density](<http://arxiv.org/abs/2603.04273v1>)
+*Raphael Maire, Alessandro Petrini, Umberto Marini Bettolo Marconi, Lorenzo Caprini* <br>
+Tangential impulses during dissipative collisions generate an antisymmetric stress and analytically predictable coefficients, establishing a tractable Boltzmann-Enskog framework for the systematic coarse-graining of chiral active matter.
+
+#### [Cell-Cell Adhesion as a Double-Edged Sword in Tissue Fluidity](<http://arxiv.org/abs/2603.04170v1>)
+*Anh Q. Nguyen, Pradip K. Bera, Jacob Notbohm, Dapeng Bi* <br>
+Energetic adhesion energy facilitates collective migration by lowering neighbor-exchange barriers, whereas dissipative junctional viscosity promotes jamming by resisting cell rearrangements and modulating tissue relaxation timescales.
+
+#### [Study of flow of crystals and deformable particles in a channel and the effective segregation of soft and hard particles](<http://arxiv.org/abs/2603.04075v1>)
+*Padmanabha Bose, Smarajit Karmakar* <br>
+High-density stiff assemblies of two-dimensional polymeric rings develop fluid layers at channel boundaries, while narrow confinement acts as the primary driver for partitioning particles according to their individual flexibility.
+
+#### [How Different are Self and Nonself?](<http://link.aps.org/doi/10.1103/fbct-vzwm>)
+*Andreas Tiffeau-Mayer, Jonathan A. Levine, Christopher J. Russo, Quentin Marcou, William Bialek, and Benjamin D. Greenbaum* <br>
+Peptidome modeling across species reveals that self and nonself sequences are nearly indistinguishable, implying that the immune system effectively targets antigens closely resembling the organism’s own proteome.
+
+#### [Machine-Learning-Inferred and Energy-Landscape-Guided Analyses Reveal Kinetic Determinants of CRISPR/Cas9 Gene Editing](<http://link.aps.org/doi/10.1103/rtxh-6fdl>)
+*Lei Jin, Risi Liyanage, Dongsheng Duan, and Shi-Jie Chen* <br>
+R-loop unfolding rates serve as a key predictor of cleavage efficiency, enabling more accurate forecasting of on- and off-target gene editing outcomes through random forest modeling.
+
+#### [Entropic Tug of War: Topological Constraints Spontaneously Rectify the Dynamics of a Polymer with Heterogeneous Fluctuations](<http://link.aps.org/doi/10.1103/rkms-2v1l>)
+*Adam H. T. P. Höfler, Iurii Chubak, Christos N. Likos, and Jan Smrek* <br>
+Translational symmetry breaking drives persistent directional transport in dense molecular environments, providing a physical framework for understanding the movement of living chromatin.
+
+#### [Bias in the AlphaFold3 prediction of ligand-induced domain motion in enzymes](<https://www.pnas.org/doi/abs/10.1073/pnas.2530709123?af=R>)
+*Hao Yu, Ayse A. Bekar-Cesaretli, Maria Lazou, Dima Kozakov, Diane Joseph-McCarthy, Sandor Vajda* <br>
+The relative abundance of specific structural states in the training data determines predicted conformations, leading to a memorization effect where the model defaults to the most frequent PDB state regardless of ligand presence or affinity.
+
+#### [Stress-dependent growth in breast cancer arises from a mechano-osmotic coupling and cell-sizing checkpoint](<https://www.pnas.org/doi/abs/10.1073/pnas.2523159123?af=R>)
+*Irish Senthilkumar, Jef Vangheel, Vatsal Kumar, Laoise McNamara, Bart Smeets, Enda Howley, Eoin McEvoy* <br>
+Extracellular loading restricts tumor expansion by generating hydrostatic forces that oppose osmotic pressure from biomolecule synthesis, preventing cells from reaching the critical volume threshold required to trigger mitosis.
+
+#### [Adding noise and scaling forces to speed up the Langevin clock](<http://arxiv.org/abs/2603.03620v1>)
+*Prithviraj Basak, Stephen Whitelam, John Bechhoefer* <br>
+Maintaining systems closer to thermal equilibrium during time-dependent protocols enables more precise free-energy recovery and accelerates performance in stochastic thermodynamic computing devices.
+
+#### [Introducing a fusogenicity metric for lipid nanoparticle formulation](<https://www.biorxiv.org/content/10.64898/2026.03.02.708638v1>)
+*Zheng, L.; Baliga, M.; Gallagher, S. F.; Gao, A. Z.; Rueben, J.; Go, Y. K.; Deserno, M.; Leal, C.* <br>
+The ratio of Gaussian and bending moduli ($Q$), derived from small angle X-ray scattering, captures spontaneous curvature to provide a predictive framework for optimizing the drug release efficiency of delivery vehicles like SM-102 and ALC-0315.
+
+#### [Progressive Backmapping of Highly Coarse-Grained Protein Models](<https://www.biorxiv.org/content/10.64898/2026.03.02.709104v1>)
+*Zhu, Y.; Remington, J. M.; Song, S.; Yang, B.; Magee, B. P.; Schneebeli, S. T.; Li, J.* <br>
+Stepwise reconstruction through intermediate resolutions enables the accurate recovery of all-atom details in massive protein complexes, including entire viral assemblies comprising hundreds of subunits.
+
+#### [Myristoylation licenses disordered viral VP4 protein to anchor to and perforate the membrane through phase separation](<https://www.biorxiv.org/content/10.64898/2026.03.02.708992v1>)
+*Huang, S.; Deng, F.; Liu, T.; Li, W.; Wang, P.; Song, J.; Huang, J.; Zhang, S.; Liu, J.; Wang, Y.; Zhang, M.; Sun, B.* <br>
+N-terminal myristoylation functions as a multi-functional regulator that drives the formation of membrane-remodeling condensates to generate curvature and lower the free energy barrier for stable pore formation, providing a biophysical basis for the divergent modification requirements across enteroviruses.
+
+#### [Aromatic ring transforms DNA binding modes of an octahedral rhodium complex](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00150-5?rss=yes>)
+*Guðfríður Björg Möller, Micah J. McCauley, Liam J. Price, Grace Ferris, Ioulia Rouzina, Megan Núñez, Mark C. Williams* <br>
+The chrysi complex selectively binds mismatched DNA sites through metalloinsertion, whereas the phi complex functions as a classical intercalator within well-matched base pairs.
+
+#### [Mechano-sensitivity of multi-component caveolae](<https://www.biorxiv.org/content/10.64898/2026.03.03.709391v1>)
+*Sarkar, N.; Lamaze, C.; Sens, P.* <br>
+Synergistic interactions between Cavin proteins and EHD2 neck rings create a switch-like mechanical response that triggers the abrupt release of molecular components once a specific tension threshold is exceeded.
+
+#### [HaloTag-based approach to quantify subcellular localization of TRPV3 channels.](<https://www.cell.com/biophysj/fulltext/S0006-3495(26)00175-X?rss=yes>)
+*Alexander Holloway, Joshua Chiang, Afroza Khan, Eric N. Senning, Andrés Jara-Oseguera* <br>
+Accurate measurement of surface expression in live cells facilitates investigations into how endogenous factors and disease-linked mutations influence channel trafficking and skin health.
+
+#### [Molecular assembly of the KCNQ1-KCNE1-BACE1 complex](<https://www.biorxiv.org/content/10.64898/2026.03.03.709230v1>)
+*Martin, A.; Bienert, V.; Haefner, S.; Stockinger, F.; Möhwald, A.; Freimuth, M.; Karch, S.; Broichhagen, J.; Sandoz, G.; Alzheimer, C.; Huth, T.* <br>
+BACE1 recruits two molecules per channel tetramer to a binding site distinct from KCNE1, utilizing its extracellular domain to slow gating while allowing for the formation of a functionally additive tripartite complex.
+
+#### [Deep learning linking mechanistic models to single-cell transcriptomics data reveals transcriptional bursting in response to DNA damage](<https://elifesciences.org/articles/100623>)
+*Benyuan Jiang, Jiajun Zhang, Qing Nie, Songhao Luo, Zhenquan Zhang, Zhiwei Huang, Zihao Wang* <br>
+DeepTX identifies how specific modulations of burst size and frequency govern divergent outcomes such as differentiation, apoptosis, and survival across various genotoxic treatments.
+
+#### [Characterizing the Impact of Nucleoid-Associated Proteins on HU-DNA Interactions by Live-Cell Single-Molecule Tracking](<https://www.biorxiv.org/content/10.64898/2025.12.19.695591v2>)
+*Fuller, D. E. H.; Dai, X.; McCarthy, L.; Way, L.; Wang, X.; Biteen, J. S.* <br>
+Dps and H-NS modulate HU mobility and chromosomal interactions by driving growth-phase-dependent changes in nucleoid compaction and organization.
+
+#### [Relaxation to nonequilibrium](<http://arxiv.org/abs/2603.03490v1>)
+*Christian Maes, Karel Netočný* <br>
+Evolution equations for macroscopic systems are characterized as zero-cost flows of a nonlinear extension of the Onsager-Machlup action, utilizing the frenesy and local detailed balance to generalize the GENERIC formalism for steady-state conditions.
+
+#### [The Integration Host Factor is a pH-responsive protein that switches from DNA bending to DNA bridging in acidic biofilm-like conditions](<http://arxiv.org/abs/2603.03466v1>)
+*Dinesh Parthasarathy, Saminathan Ramakrishnan, Georgia Tsang, Auro Varat Patnaik, Sabrina M. C. Hardy, Willem Vanderlinden, Jamieson Howard, Braden Bylett, James R. Law, Mark Leake, Agnes Noy, Davide Michieletto* <br>
+Residue protonation at pH levels below 5 exposes positively charged surface patches that enable the protein to mechanically stabilize the biofilm matrix through intermolecular DNA crosslinking.
+
+#### [Will a Large Complex System be a Maxwell Demon?](<http://arxiv.org/abs/2603.03248v1>)
+*Matthew P Leighton* <br>
+Maxwell demon behavior in random stochastic systems becomes exponentially less likely as degrees of freedom increase, implying that large-scale demons must result from selection rather than chance.
+
+#### [Guiding isotropic active fluids with anisotropic friction](<http://arxiv.org/abs/2603.03232v1>)
+*Cody D. Schimming, Brian A. Camley* <br>
+Positive topological defects in the substrate aggregate active fluids into clusters that transition from stationary clumps to revolving or steered units when azimuthal symmetry is broken.
+
+#### [Flocking by stopping: A mechanism of emergent order in collective movement](<http://link.aps.org/doi/10.1103/lnrz-wrf4>)
+*Yogesh Kumar KC, Arshed Nabeel, Srikanth Iyer, and Vishwesha Guttal* <br>
+Intermittent pauses in activity enable simple pairwise interactions to generate stable global alignment by mitigating the disordering effects of social noise.
+
+#### [Transport-generated signals uncover geometric features of evolving branched structures](<http://link.aps.org/doi/10.1103/bnnl-xnm6>)
+*Fabian H. Kreten, Ludger Santen, and Reza Shaebani* <br>
+A noninvasive diagnostic framework analyzes time-resolved data from a single observation site to recover global properties without tracking individual particle trajectories.
+
+#### [Riding the Wave: Polymers in Time-dependent Nonequilibrium Baths](<http://arxiv.org/abs/2603.02777v1>)
+*Bhavesh Valecha, Jens-Uwe Sommer, Abhinav Sharma* <br>
+Structural length and topology determine the direction of steady-state transport, with long, ring, and star configurations moving with the signal while short and fully connected structures drift against it.
+
+#### [ATP synthase activity boosts membrane proton acceptance and lateral diffusion](<https://www.pnas.org/doi/abs/10.1073/pnas.2510444123?af=R>)
+*Hendrik Flegel, Ambili Ramanthrikkovil Variyam, Nadav Amdursky, Claudia Steinem* <br>
+Localized proton transfer along the lipid bilayer surface sustains ATP synthesis by bypassing the bulk aqueous phase, explaining how bioenergetic coupling persists under low delocalized driving forces.
+
+#### [Functional significance of morphological variation in the mechanosensory lateral line system of fishes and its biomimetic potential](<https://www.pnas.org/doi/abs/10.1073/pnas.2508669123?af=R>)
+*Ishu Aggarwal, Jacqueline F. Webb, Patrick R. Onck, Ajay Giri Prakash Kottapalli* <br>
+Cupula geometry and material properties dictate mechanical responses to water flow, explaining how specific morphological shifts across species and developmental stages influence sensory perception and provide design principles for aquatic sensors.
+
+#### [The role of the tryptophan-rich allosteric network and sodium egress in GPCR activation](<https://www.pnas.org/doi/abs/10.1073/pnas.2525502123?af=R>)
+*Zhenzhou Qi, Duy Phuoc Tran, Andrejs Tučs, Roopan Thiara, Louis-Philippe Picard, Koji Tsuda, Aditya Pandey, Adnan Sljoka, Akio Kitao, Robert Scott Prosser* <br>
+The human adenosine A2A receptor samples a precoupled state upon the release of sodium from its conserved pocket, a process mediated by a mechanical signal propagation pathway linking the W246 toggle switch to the G-protein interface.
+
+#### [All-optical intracellular thermal profiling using nanodiamond-based "thermal radar"](<http://arxiv.org/abs/2603.02708v1>)
+*Jiahua Zhang, Yong Hou, Xinhao Hu, Yicheng Wang, Madoka Suzuki, Bo Gao, Zhiqin Chu* <br>
+Frequency-domain fluorescence thermometry (FD-FTM) quantifies local thermal conductivity to resolve biophysical variations in nuclear chromatin packing and protein condensation within living cells.
+
+#### [Stochastic modeling of long-legged ant A. gracilipes locomotion in laboratory experiments](<http://arxiv.org/abs/2603.02665v1>)
+*Jack Featherstone, Anouk Béraud, Meta Virant-Doberlet, Antonio Celani, Mahesh Bandi* <br>
+Active Brownian and run-and-tumble frameworks accurately replicate observed trajectory statistics through consistent probability distributions for turn angles, run durations, and waiting periods.
+
+#### [Dynamic Instabilities and Pattern Formation in Chemotactic Active Matter](<http://arxiv.org/abs/2603.02595v1>)
+*Hongbo Zhao, Qiwei Yu, Andrej Košmrlj, Sujit S. Datta* <br>
+Collective chemical signaling competes with motility-induced phase separation to either inhibit phase growth or generate non-equilibrium structures like traveling waves and spirals through distinct bifurcation mechanisms.
+
+#### [Base-pair scale dynamics of a repair helicase on DNA lesions reveal varied damage-sensing mechanisms](<https://www.biorxiv.org/content/10.64898/2026.03.03.709311v1>)
+*Troitskaia, A.; Lasitza-Male, T.; Caldwell, C. C.; Spies, M.; Chemla, Y. R.* <br>
+XPD pauses and retreats when encountering cyclobutane pyrimidine dimers on the translocated strand, an interaction mediated by two specific structural regions sensitive to DNA modifications.
+
+#### [Beyond fish in formation: A two-tier approach for biomechanical studies of collective movement](<https://www.biorxiv.org/content/10.64898/2026.02.28.708741v1>)
+*Zhang, Y.; Ramesh, D.; Lauder, G.* <br>
+Schooling fish achieve energy conservation by dynamically modulating their positioning and swimming kinematics in response to hydrodynamic stimuli from neighboring individuals.
+
+#### [High-pH NMR to Identify Macromolecular Hydrogen-Bonds and Foldons](<https://www.biorxiv.org/content/10.64898/2026.02.28.708709v1>)
+*Alexandrescu, A.; Rua, A. J.; Shah, S.; Farirchild, D.; Bezsonova, I.* <br>
+Amide proton persistence at pH 10–11 identifies structural interactions with significantly higher accuracy than traditional H/D exchange and reveals hierarchical unfolding pathways in proteins that are otherwise difficult to characterize.
+
+#### [Tubulin transforms Tau and α-synuclein condensates from pathological to physiological](<https://www.nature.com/articles/s41467-026-69618-3>)
+*Lucas, Lathan, Tsoi, Phoebe S., Quan, My Diem, Choi, Kyoung-Jae, Ferreon, Josephine C., Ferreon, Allan Chris M.* <br>
+Microtubule recruitment within these assemblies suppresses the formation of toxic oligomers and amyloids, preventing the neurite degeneration that occurs when tubulin levels decline.
+
+#### [Experimentally calibrated multiscale model predicts schedule dependent drug combination effects](<https://www.nature.com/articles/s41540-026-00669-4>)
+*Hayoun-Mya, Othmane, Montagud, Arnau, Valencia, Alfonso, Ponce-de-Leon, Miguel* <br>
+Interactions between tissue-level transport and intracellular signaling dictate the sequence of molecular target engagement, revealing that inhibiting the PI3K/AKT axis before MEK maximizes efficacy by preventing pro-survival signaling rebounds and locking cells into an apoptotic state.
+
+#### [Velocity sensitivity of mechanotransduction in the afferent terminal underlies vibration detection in the Pacinian corpuscle](<https://www.nature.com/articles/s41467-026-69251-0>)
+*Chikamoto, Akitoshi, Meng, Melissa, Gracheva, Elena O., Bagriantsev, Sviatoslav N.* <br>
+Direct electrophysiological recordings localize the transduction of stimulus speed to the nerve terminal situated within the organ’s inner core.
+
+#### [Disentangling mucus rheology and transport efficiency in human airways](<https://www.biorxiv.org/content/10.64898/2026.01.10.698668v2>)
+*Briole, A.; Mao, Q.; D'Ortona, U.; Favier, J.; Viallat, A.; Loiseau, E.* <br>
+Hydration of the thin fluid layer at the cilia-mucus interface, rather than bulk mechanical properties, governs the success or failure of mucociliary clearance.
+
+#### [Vimentin promotes actin assembly by stabilizing ATP-actin subunits at the barbed end](<https://www.biorxiv.org/content/10.1101/2025.11.17.688760v4>)
+*Paty, L.; Kalvoda, L.; Varela-Salgado, M.; Tran, Q. D.; Lenz, M.; Jegou, A.; Romet-Lemonne, G.; Leduc, C.* <br>
+Vimentin stimulates actin filament nucleation and rapid growth through a direct interaction with ATP-actin monomers that occurs independently of its terminal domains or filamentous structure.
+
+#### [Morphological parameters can capture emergent properties of dynamic disordered cytoskeletal networks](<https://www.biorxiv.org/content/10.64898/2026.03.01.708800v1>)
+*Ghosh, S.; Houston, L.; Vasquez, A.; Ghosh, K.; Prasad, A.* <br>
+Curvature and texture descriptors collectively distinguish between dynamic trajectories of simulated biopolymer networks, identifying subtle transitions that traditional nematic order parameters fail to capture.
+
+#### [Quantifying the effects of cell death and agar density on yeast colony biofilms using an extensional-flow mathematical model](<https://www.biorxiv.org/content/10.1101/2025.10.04.680491v3>)
+*Tam, A. K. Y.; Netherwood, D. J.; Gardner, J. M.; Zhang, J.; Gourlay, C. W.; Jiranek, V.; Binder, B. J.; Green, J. E. F.* <br>
+Strengthened biofilm-substratum adhesion and reduced nutrient uptake are the primary mechanisms by which denser agar inhibits colony expansion, identifying adhesion as the most consistent regulator of yeast growth.
+
+#### [Dynamin optimizes protein-membrane interactions for fission](<https://www.nature.com/articles/s44431-026-00018-9>)
+*Spencer, Russell K. W., Müller, Marcus* <br>
+Leaflet splaying from PH domain insertion minimizes the energetic barrier to tube collapse by creating chevron-shaped deformations that localize the fission site and eliminate the need for protein detachment.
+
+#### [A simple method for computationally unstructuring proteins: some findings](<https://www.biorxiv.org/content/10.1101/2024.11.10.622713v2>)
+*Powell, A.* <br>
+Fold topology determines structural susceptibility, with alpha helical regions demonstrating robustness and unstructuring typically initiating at exposed termini.
+
+#### [Extrapolating molecular dynamics simulations to zero time step and across thermodynamic space](<http://arxiv.org/abs/2603.02383v1>)
+*Kush Coshic, Gerhard Hummer* <br>
+A linear thermodynamic model of integration errors enables the removal of numerical artifacts from simulations and the estimation of key properties such as heat capacity, compressibility, and thermal expansion coefficients.
+
+#### [Anisotropic Diffusion in Lyotropic Chromonic Liquid Crystal using Fluorescence Recovery After Photobleaching](<http://arxiv.org/abs/2603.02147v1>)
+*Kyu Hwan Choi, Jiyong Cheon, Joonwoo Jeong, Sho C. Takatori* <br>
+Divergent transport patterns of intercalating and non-intercalating dyes demonstrate that microstructural evolution regulates molecular motion through competing mechanisms of steric confinement and directed channeling.
+
+#### [Ionic Liquid-Driven Modulation of DNA Brush Morphology on Nanoparticle Surfaces](<http://arxiv.org/abs/2603.02042v1>)
+*Anuj Chhabra, Sandip Mandal, Yugang Zhang, Oleg Gang, Prabal K. Maiti, Sunita Srivastava* <br>
+Imidazolium-based ionic liquids drive a transition from electrostatic-dominated behavior in single-stranded segments to hydrophobic groove-binding-induced compaction in double-stranded regions.
+
+#### [Rupture-Repair Cycles in Regenerating Hydra Tissues](<http://arxiv.org/abs/2603.01851v1>)
+*Oded Agam, Erez Braun* <br>
+Mechanically triggered Ca2+ signaling modulates actomyosin contraction to halt rupture propagation, shifting the statistics of tissue pressure releases from a controlled exponential scale to a scale-free power-law regime when the repair response is inhibited.
+
+#### [General theory for group resetting with application to avoidance](<http://link.aps.org/doi/10.1103/zxff-tkq5>)
+*Juhee Lee, Seong-Gyu Yang, Hye Jin Park, and Ludvig Lizana* <br>
+Collective dynamics within potential landscapes dictate the timing of stochastic returns, extending existing mathematical frameworks beyond single-particle systems to encompass multi-body ensembles.
+
+#### [Electrorheoimaging of a nonequilibrium emulsion: Microstructures and multistate switchable viscosities](<http://link.aps.org/doi/10.1103/416j-vpdj>)
+*Majid Bahraminasr and Anand Yethiraj* <br>
+Stepwise adjustments to electric field strength transform internal droplet configurations into discrete structural phases that offer a wide range of controllable flow resistances.
+
+#### [Two-phase quadratic integrate-and-fire neurons: Exact low-dimensional description for ensembles of finite-voltage neurons](<http://link.aps.org/doi/10.1103/tq4x-8ny1>)
+*Rok Cestnik* <br>
+Realistic spike waveforms are integrated into analytically tractable population dynamics by modeling neurons with continuous membrane potentials.
+
+#### [Slowing translation to avoid cellular depletion of active ribosomes at slow growth rates](<http://link.aps.org/doi/10.1103/3nwf-b259>)
+*Dotan Goberman, Anjan Roy, and Rami Pugatch* <br>
+A trade-off between peptide elongation speed and the metabolic cost of manufacturing ribosomes prevents the autocatalytic collapse of the translation system as growth approaches zero.
+
+#### [Hyperuniformity of Weighted Particle Systems](<http://link.aps.org/doi/10.1103/fr99-qh7h>)
+*Salvatore Torquato, Jaeuk Kim, Michael A. Klatt, Roberto Car, and Paul J. Steinhardt* <br>
+Internal degrees of freedom are integrated into the mathematical framework of hyperuniformity to characterize complex particle arrangements.
+
+#### [Elastohydrodynamic instabilities of a soft robotic arm in a viscous fluid](<http://link.aps.org/doi/10.1103/c914-x8r2>)
+*Mohamed Warda and Ronojoy Adhikari* <br>
+Constant mechanical loading triggers spontaneous transitions between steady and periodic states through the non-linear coupling of structural deformations and drag forces.
+
+#### [Scaling Relations of Multicomponent Phase Coexistence Boundaries](<http://link.aps.org/doi/10.1103/t2v5-49k4>)
+*Daoyuan Qian, Julia Acker, Rob M. Scrutton, Charlotte M. Fischer, Seema Qamar, Tomas Sneideris, Alexander Borodavka, and Tuomas P. J. Knowles* <br>
+Two distinct regimes govern the partitioning of complex mixtures into multiple domains, enabling the quantitative characterization of condensate behavior.
+
+#### [Role of chloride concentration in modulating seizure transitions in excitatory and inhibitory networks](<http://link.aps.org/doi/10.1103/x6qv-lzdg>)
+*Qianchen Gong, Yingpeng Liu, Yan Zhang, Muhua Zheng, and Kesheng Xu* <br>
+Shifts in GABAergic reversal potentials driven by ionic accumulation govern the transition between distinct firing regimes during the progression and termination of pathological discharges.
+
+#### [Euler-Helfrich problem for open vesicles bounded by elastic filaments](<http://link.aps.org/doi/10.1103/9byv-ndvs>)
+*Chengyao Zhang and Xin Yi* <br>
+Spherical harmonics-based energy minimization characterizes the morphological transformations and mechanical stability emerging from the coupling between membrane geometry and boundary elasticity.
+
+#### [Influence of Bubble Lifetime on the Drying of Catalytically Active Sessile Droplets](<http://arxiv.org/abs/2603.01658v1>)
+*Meneka Banik, Ranjini Bandyopadhyay* <br>
+Marangoni convection triggered by oxygen bubbles counteracts outward capillary advection to redirect particle transport, shifting deposition patterns from the droplet periphery toward the center.
+
+#### [Allosteric gating of radical transport in ribonucleotide reductase](<https://www.pnas.org/doi/abs/10.1073/pnas.2600465123?af=R>)
+*Jiali Gao, Xiaohua Chen* <br>
+Structural rearrangements at the subunit interface align a sequence of redox-active tyrosine residues to enable the long-range proton-coupled electron transfer required for catalytic activation.
+
+#### [Ostwald's Rule of Stages in One-Dimension](<http://arxiv.org/abs/2603.01569v1>)
+*Jiajun Chen, Ying Xia, Mingyi Zhang, Yu Huang, James J. De Yoreo* <br>
+Phase boundary fluctuations facilitate a dissolution-reprecipitation mechanism that drives the kinetic transition from metastable to stable peptide structures on graphite, demonstrating that sequential crystallization occurs even in the absence of a thermodynamic nucleation barrier.
+
+#### [A hyperelastic theory for nonlinear hydrogel diffusiophoresis](<http://arxiv.org/abs/2603.01512v2>)
+*Chinmay Katke, C. Nadir Kaplan* <br>
+Reaction-transport dynamics and polymer-solute interactions drive large-scale deformations that can be accelerated up to 40 times by optimizing stimulus concentration, solute size, or fluid flow.
+
+#### [High-Throughput Single-Cell Spectroscopy Using Phasor Analysis of Spectral Flow Cytometry](<https://www.biorxiv.org/content/10.64898/2026.02.27.708623v1>)
+*Pannunzio, B.; Cespedes, P.; Diaz, M.; Ali, D.; Rial, A.; Malacrida, L. S.* <br>
+phSFC translates fit-free hyperspectral signatures to a high-throughput platform, enabling the statistically robust resolution of membrane order and lipid phase behavior in complex biological samples.
+
+#### [Amendable decisions in living systems](<https://www.biorxiv.org/content/10.1101/2025.06.03.657747v2>)
+*Neri, I.; Pigolotti, S.* <br>
+Optimal reversible strategies enable living systems to achieve zero error probability in finite time, explaining decision-making performance across scales ranging from human visual perception to cellular differentiation.
+
+#### [Anomalous diffusion of nanoparticles in semidilute hyaluronic acid solutions](<https://www.biorxiv.org/content/10.64898/2026.02.27.708659v1>)
+*Mitra, H.; Nakate, P.; Stevenson, M. J.; Ardekani, A. M.* <br>
+The ratio of particle size to polymer mesh size determines the degree of hindered mobility, enabling a predictive framework for transport through target-specific biological environments.
+
+#### [Rheb membrane orientation dynamics and functional consequences elucidated by molecular simulations, single-molecule-FRET and signaling assays](<https://www.biorxiv.org/content/10.64898/2026.02.27.708535v1>)
+*Hutchins, C. M.; Pagba, C.; Verma, G.; Jakubec, J.; Du, G.; Jayaraman, V.; Gorfe, A.* <br>
+Transitions between two primary orientation states and two intermediates on endo-membranes regulate mTORC1 activation, establishing spatial dynamics as a functional control mechanism for lipid-modified small GTPases.
+
+#### [Temperature and intrinsic Ca2+ reshape TRPM4 pharmacology](<https://www.biorxiv.org/content/10.64898/2026.01.31.703029v2>)
+*Hu, J.; Ievleva, S.; Park, S. J.; Lee, J.; Cheng, J.; O'Dea, G.; Sheng, J.; Du, J.; Lü, W.* <br>
+Ligand recognition within TRPM4’s binding pockets shifts functionally under physiological conditions, transforming the putative inhibitor TPPO into a potent activator and revealing that environmental variables are critical for identifying selective therapeutic modulators.
+
+#### [Role of mechanical allostery in kindlin-mediated integrin activation](<https://www.nature.com/articles/s42005-026-02557-z>)
+*Zhang, Weiwei, Yang, Haibin, Yang, Zihang, Bian, Yunqiang, Wei, Zhiyi, Yao, Mingxi, Zhang, Jian, Li, Wenfei, Yu, Cong, Wang, Wei* <br>
+Physiological forces overcome the slow in vitro kinetics of kindlin dimerization by lowering the free-energy barrier of its rate-limiting closed-to-open transition.
+
+#### [Protein trafficking and synaptic demand configure complex and dynamic synaptome architectures of individual neurons](<https://www.nature.com/articles/s41598-026-40513-7>)
+*Sorokina, Oksana, Bulovaite, Edita, Sorokin, Anatoly, Grant, Seth G. N., Armstrong, J. Douglas* <br>
+Minimal cell biological processes governing protein transport and local demand are sufficient to generate the complex, age-dependent spatial organization of synaptic proteins observed across diverse neuronal types.
+
+#### [Efficient sampling of large-scale transition pathways and intermediate conformations in sub-mesoscopic protein complexes](<https://www.nature.com/articles/s41467-026-69809-y>)
+*Scaramozzino, Domenico, Lee, Byung Ho, Orellana, Laura* <br>
+eBDIMS2 utilizes an improved coarse-grained algorithm to simulate the complex structural dynamics and functional transitions of high-order protein assemblies.
+
+#### [Mid-infrared light produces anti-ageing effects through resonant absorption by living organisms](<https://www.biorxiv.org/content/10.64898/2026.02.08.704722v2>)
+*Shao, C.; Peng, D.; Zhao, Y.; Shu, Y.; Zhuang, S.; Huang, Q.; Song, B.* <br>
+Super-weak 34-THz radiation extends the lifespan of *C. elegans* by 60% through the optimization of mitochondrial bioenergetics and gene transcription via resonant interactions with molecular phosphate groups.
+
+#### [Agent-based modeling reveals how bats navigate dense group emergences](<https://elifesciences.org/articles/105571>)
+*Omer Mazar, Yossi Yovel* <br>
+Frequent echolocation pulses with short inter-pulse intervals provide the signal redundancy necessary to overcome acoustic jamming when combined with simple movement-guidance strategies like wall-following and obstacle avoidance.
+
+#### [RNA i-Motif Formation at Neutral pH](<https://www.biorxiv.org/content/10.64898/2026.03.01.708865v1>)
+*Preciado-Carrillo, Z.; Fountain, S.; Wright, E. P.; Guneri, D.; Abdelhamid, M. A.; Craggs, T. D.; DING, Y.; Waller, Z. A. E.* <br>
+Single-molecule experiments identify a persistent 1% folded population at physiological pH despite global unfolding in bulk measurements, suggesting these structures may remain biologically relevant within cells.
+
+#### [A fast and accurate calculation method for light induced isomerization of retinal proteins in real time](<https://www.biorxiv.org/content/10.64898/2026.02.27.707937v1>)
+*Althoff, P.; Labudda, K.; Hoeweler, U.; Luebben, M.; Gerwert, K.; Koetting, C.; Rudack, T.* <br>
+Quantum mechanically refined force field parameters integrated into a classical molecular mechanics framework enable the simulation of retinal photoisomerization on its natural 500-femtosecond timescale, accurately identifying the branched photocycle and asymmetric excited state potential of Channelrhodopsin-2.
+
+#### [Mechanical regulation of cellular energy metabolism in cancer microenvironments](<https://www.biorxiv.org/content/10.1101/2024.04.30.591879v3>)
+*Toth, J. M.; Jaganathan, A.; Basir, R.; Pieuchot, L.; Shen, Y.; Reinhart-King, C. A.; Shenoy, V. B.* <br>
+A newly developed cellular metabolic potential within a chemo-mechanical model quantifies the energetic costs of stress fiber assembly and predicts stiffness-dependent AMPK activation and glucose uptake in contractile cells.
+
+#### [Fast MAS NMR Spectroscopy Can Identify G-Quartets and Double-Stranded Structures in Aggregates Formed by GGGGCC RNA Repeats](<https://www.biorxiv.org/content/10.1101/2025.09.07.674584v2>)
+*Zager, S.; Medved, N.; Cevec, M.; Cercek, U.; Rogelj, B.; Plavec, J.; Kragelj, J.* <br>
+A dynamic equilibrium between Watson-Crick and Hoogsteen base-pairing motifs determines the structural composition of the RNA aggregates and shifts in response to divalent cations or nuclear extracts.
+
+#### [Multistep loss of catalytic and ligand binding abilities of hexameric purine nucleoside phosphorylase](<https://www.nature.com/articles/s41598-026-41204-z>)
+*Narczyk, Marta, Bzowska, Agnieszka* <br>
+Dissociation constants for the enzyme shift as specific activity decreases, reflecting intermediate states that remain capable of processing transition-state analogs despite losing the ability to catalyze natural substrates.
+
+#### [Vibrational contribution to the sub-terahertz dielectric response of kinesin and its hydration shell](<https://www.nature.com/articles/s41598-026-40625-0>)
+*Pandey, Saurabh K., Cifra, Michal* <br>
+Antiparallel dipole variations between the protein and its surrounding water layer create a non-additive reduction and blue-shift in low-frequency absorption, characterizing the mechanistic influence of hydration on the motor domain’s dielectric properties.
+
+#### [Elucidating the mechanism of cefpodoxime-BSA interaction via a combination of multi-spectroscopic methods and molecular docking simulations](<https://www.nature.com/articles/s41598-026-39137-8>)
+*El Gammal, Reem N., Elmansi, Heba, El-Emam, Ali A., Hammouda, Mohammed E. A., Belal, Fathalla* <br>
+Hydrophobic interactions drive the spontaneous formation of a static ground-state complex at subdomain IIA, yielding a moderate binding affinity that determines the drug's pharmacokinetic distribution and elimination.
+
+#### [Experimental and simulated FRAP for the quantitative determination of protein diffusion in helical cells](<https://www.biorxiv.org/content/10.64898/2026.02.27.708671v1>)
+*Sakib, S.; Fradin, C.* <br>
+Half-compartment simulations establish the relationship between recovery kinetics and specific morphological parameters, identifying an mNeonGreen diffusion coefficient of 4.9 ± 2.2 μm² s⁻¹ in *Paramagnetospirillum magneticum*.
+
+#### [The Role of Conformational Changes in TcmN Aromatase/Cyclase in Polyketide Biosynthesis](<https://www.biorxiv.org/content/10.64898/2026.02.27.708631v1>)
+*Valadares, V. S.; Granja, A. C. S.; Martins, L. C.; Padmanabha Das, K.; Cino, E. A.; Magalhaes, M. T. Q.; Valente, A. P.; Arthanari, H.; Moraes, A. H.* <br>
+A ligand-gated breathing mechanism regulates the transition between open and closed states to accommodate bulky intermediates and facilitate product release while preventing protein aggregation.
+
+#### [Altered ciliary morphology reduces mechanosensation in a cystic kidney model as indicated by a mathematical model](<https://www.nature.com/articles/s41598-026-39179-y>)
+*Kumamoto, Kanako, Kagami, Hiroyuki, Saitoh, Sei, Yamada, Shiori, Matsumoto, Mami, Ohno, Nobuhiko* <br>
+Increased urine flow potentially mitigates cyst development by restoring mechanical drag forces that are otherwise diminished by the elongated and structurally compromised cilia characteristic of early-stage disease.
+
+#### [Revealing properties for enhanced quantum sensing in engineered proteins](<https://www.biorxiv.org/content/10.64898/2026.02.27.708212v1>)
+*Antill, L. M.; Baidoo, J.; Gerhards, L.* <br>
+Localized reorganization of the donor microenvironment and significantly slowed dipolar dephasing govern the magnetosensitivity of AsLOV2-derived variants while preserving their core structural integrity.
+
+#### [Autophoresis of a Janus particle near a planar wall: a lubrication limit](<http://arxiv.org/abs/2603.00791v1>)
+*Tachin Ruangkriengsin, Günther Turk, Howard A. Stone* <br>
+The size of the active cap determines whether a tilted particle returns to an axisymmetric state or continues to reorient, establishing the conditions for rotational stability in the near-contact regime.
+
+#### [Enhanced 2D structured illumination microscopy: super-resolution with optical sectioning and reduced reconstruction artifacts](<https://www.biorxiv.org/content/10.64898/2026.02.26.708245v1>)
+*Steinecker, S. M.; Ortkrass, H.; Schuerstedt-Seher, J. C.; Kiel, A.; Kralemann-Koehler, A.; Schulte am Esch, J.; Huser, T.; Mueller, M.* <br>
+Integrating coarse and fine illumination patterns suppresses out-of-focus background and optimizes resolution to enable high-fidelity imaging of thick biological specimens across visible and near-infrared wavelengths.
+
+#### [Local GPCR density tips the balance of μ-opioid receptor trafficking](<https://www.biorxiv.org/content/10.64898/2026.02.26.708286v1>)
+*Holsey, M. D.; Bondar, A.; Geggier, P.; Dukas, G. V.; Webb, C. M.; Govindaraju, A.; Mathiasen, S.; Canals, M.; Lambert, N. A.; Asher, W. B.; Javitch, J. A.* <br>
+Shared recruitment of GRK2/3 and β-arrestin across an affinity matrix of class A receptors enables receptor internalization, whereas class B GPCRs inhibit this process by sequestering these same regulatory proteins.
+
+#### [Large-scale simulations reveal evolutionary constraints on intrinsically disordered regions imposed by full-length protein architecture](<https://www.biorxiv.org/content/10.64898/2026.02.27.708199v1>)
+*Jiang, Y.; Liu, X.; Zhao, L.; Lu, Z.-Y.* <br>
+Structural coupling between ordered and disordered segments leads to the evolutionary selection of compact-rigid or extended-flexible states that correspond to distinct regulatory roles in DNA and RNA interaction.
+
+#### [Impact of Image Representation on Deep Learning-Based Single-Cell Classification by Holographic Imaging Flow Cytometry](<https://www.biorxiv.org/content/10.64898/2026.02.26.708207v1>)
+*Pirone, D.; Cavina, B.; Giugliano, G.; Nanetti, F.; Reggiani, F.; Miccio, L.; Kurelac, I.; Ferraro, P.; Memmolo, P.* <br>
+A Pareto analysis of six processing pipelines demonstrates that deep-learning-accelerated methods and intermediate image representations significantly reduce computational overhead while maintaining high classification accuracy compared to full phase reconstruction.
+
+#### [Computational Synthetic Inner Membrane Reveals Cardiolipin-Leak Control of ATP Output](<https://www.biorxiv.org/content/10.64898/2026.02.25.708092v1>)
+*Petalcorin, M. I. R.* <br>
+Respiratory capacity and membrane potential serve as the dominant controllers of energy flux, defining a narrow cardiolipin performance window of 0.18 for maximizing ATP synthesis in programmable membranes.
+
+#### [Stretching drives Membrane Homogenization of Phase-Separated Supported Lipid Bilayers](<https://www.biorxiv.org/content/10.64898/2026.02.26.708304v1>)
+*Perlman Illouz, A.; Meyer, R.; Köster, S.; Golani, G.; Sorkin, R.* <br>
+Equibiaxial tension triggers a second-order phase transition characterized by power-law scaling of the order parameter, establishing a mechanical mechanism for the physical regulation of lateral membrane organization.
+
+#### [Aberration-aware 3D localization microscopy via self-supervised neural-physics learning](<https://www.biorxiv.org/content/10.1101/2025.02.16.638552v2>)
+*Fu, S.; Shi, W.; Katrukha, E. A.; Chen, X.; Fei, Y.; Fang, K.; Wang, R.; Zhang, T.; Ma, D.; Li, Y.* <br>
+LUNAR enables calibration-free, high-density volumetric nanoscopy at large imaging depths by simultaneously inferring molecular parameters and system distortions through an integrated, adaptive optimization process.
+
+#### [Antiparallel Cell Circulation Emerging from Self-Aligned Tension Gradients](<https://www.biorxiv.org/content/10.1101/2025.07.28.667323v2>)
+*Karimata, R.; Hashimura, H.; Horiguchi, S. A.; Fujimori, T.; Sawai, S.; Okuda, S.* <br>
+Reciprocal mechanical interactions between cells that couple their orientation to their velocity drive the organization of stable bidirectional lanes and the spontaneous phase separation of motile cells from nonmotile neighbors.
 

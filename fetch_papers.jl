@@ -1489,12 +1489,26 @@ function fetch_and_display_papers()
     now_str = Dates.format(now(), "yyyy-mm-dd")
 
     println("\nDone. Found $total_count total unique papers.")
+
+    # close HTTP connections before exiting so background monitor tasks don't
+    # report unhandled errors when the script terminates.
+    try
+        HTTP.Connections.closeall()
+        # give background monitor tasks a moment to notice closure and exit
+        sleep(0.1)
+    catch e
+        # ignore, cleanup best-effort
+    end
 end
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
 
 if abspath(PROGRAM_FILE) == @__FILE__
     fetch_and_display_papers()
-    # Clean up HTTP.jl's idle connection pool to suppress "Unhandled Task ERROR" on exit
-    HTTP.Connections.closeall()
+    # additional cleanup just in case
+    try
+        HTTP.Connections.closeall()
+    catch
+        # nothing
+    end
 end

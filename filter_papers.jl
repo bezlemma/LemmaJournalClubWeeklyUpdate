@@ -272,7 +272,12 @@ function main()
     sorted_sources = sort(collect(source_counts); by=x -> x[2], rev=true)
     breakdown = join(["$(src): $(cnt)" for (src, cnt) in sorted_sources], ", ")
 
-    date_str = Dates.format(now(), "u d 'yy")
+    # date_str should reflect the most recent Monday rather than today
+    # (so running on Fri 6 Mar -> use Mon 2 Mar).
+    today = Dates.today()
+    dow = Dates.dayofweek(today)      # 1=Monday, 7=Sunday
+    prev_monday = today - Dates.Day(dow - 1)
+    date_str = Dates.format(prev_monday, "u d 'yy")
 
     println("\nGenerating $OUTPUT_FILE with $total_kept papers...")
     println("Source breakdown: $breakdown")
