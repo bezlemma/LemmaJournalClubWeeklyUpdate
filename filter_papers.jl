@@ -326,7 +326,4 @@ function main()
 end
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    main()
-end
+main()

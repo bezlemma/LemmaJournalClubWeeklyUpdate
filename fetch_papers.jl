@@ -1,9 +1,6 @@
 using HTTP, JSON3, EzXML
-using Gumbo: parsehtml, text
-using Cascadia: Selector, getattr
+using Gumbo, Cascadia
 using Dates, TimeZones
-import Gumbo
-import Cascadia
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
@@ -95,7 +92,7 @@ Paper(; source="", title="", authors="", link="", abstract_text="",
 """Get text content from an HTML string, stripping all tags."""
 function html_to_text(html::AbstractString)
     isempty(html) && return ""
-    doc = parsehtml(html)
+    doc = Gumbo.parsehtml(html)
     return text(doc.root)
 end
 
@@ -182,7 +179,7 @@ function scrape_metadata(url::AbstractString)
         resp.status != 200 && return nothing, nothing, nothing
 
         body = String(resp.body)
-        doc = parsehtml(body)
+        doc = Gumbo.parsehtml(body)
 
         # Authors — try multiple strategies
         authors = String[]
@@ -287,7 +284,7 @@ function clean_aps_abstract(summary::AbstractString)
     images = String[]
     isempty(summary) && return "", images
 
-    doc = parsehtml(summary)
+    doc = Gumbo.parsehtml(summary)
 
     # Extract image URLs
     for img in eachmatch(Selector("img"), doc.root)
@@ -333,7 +330,7 @@ function clean_rsc_abstract(summary::AbstractString)
     images = String[]
     isempty(summary) && return "", "", images
 
-    doc = parsehtml(summary)
+    doc = Gumbo.parsehtml(summary)
 
     # Extract GA images
     for img in eachmatch(Selector("img"), doc.root)
@@ -1005,16 +1002,13 @@ function fetch_arxiv_papers()
                         parse(Int, m.captures[1]), parse(Int, m.captures[2]),
                         parse(Int, m.captures[3]), parse(Int, m.captures[4]),
                         parse(Int, m.captures[5]), parse(Int, m.captures[6])), tz"UTC")
-                else
-                    now(tz"UTC")
+                else; now(tz"UTC");
                 end
-            catch
-                now(tz"UTC")
+            catch; now(tz"UTC");
             end
 
             if published < OLDEST_DATE
-                done = true
-                break
+                done = true; break;
             end
 
             # ID dedup
@@ -1385,14 +1379,9 @@ function fetch_and_display_papers()
 
     all_papers = Paper[]
 
-    # 0. CrossRef (Featured)
-    append!(all_papers, fetch_crossref_papers())
-
-    # 1. arXiv
-    append!(all_papers, fetch_arxiv_papers())
-
-    # 2. bioRxiv
-    append!(all_papers, fetch_biorxiv_papers())
+    append!(all_papers, fetch_crossref_papers())     # 0. CrossRef (Featured)
+    append!(all_papers, fetch_arxiv_papers())     # 1. arXiv
+    append!(all_papers, fetch_biorxiv_papers())     # 2. bioRxiv
 
     # 3. Journal RSS feeds — parallel
     rss_results = Vector{Vector{Paper}}(undef, length(JOURNAL_FEEDS))
@@ -1461,13 +1450,8 @@ function fetch_and_display_papers()
     end
 
     # Write JSON
-    json_list = [Dict(
-        "source" => p.source,
-        "title" => p.title,
-        "authors" => p.authors,
-        "link" => p.link,
-        "abstract" => p.abstract,
-        "images" => p.images,
+    json_list = [Dict("source" => p.source,        "title" => p.title,        "authors" => p.authors,
+        "link" => p.link,        "abstract" => p.abstract,        "images" => p.images,
         "date" => Dates.format(DateTime(p.date, UTC), "yyyy-mm-ddTHH:MM:SS+00:00"),
         "doi" => p.doi,
     ) for p in final_list]
@@ -1475,40 +1459,14 @@ function fetch_and_display_papers()
     open("papers.json", "w") do f
         JSON3.pretty(f, json_list)
     end
-    println("Saved structured data to papers.json")
 
-    # Write raw markdown
-    source_counts = Dict{String, Int}()
-    for p in final_list
-        source_counts[p.source] = get(source_counts, p.source, 0) + 1
-    end
-    sorted_sources = sort(collect(source_counts); by=x -> x[2], rev=true)
-    breakdown = join(["$(src): $(cnt)" for (src, cnt) in sorted_sources], ", ")
+    println("\nDone. Found $total_count total unique papers and saved to json.")
 
-    oldest_str = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
-    now_str = Dates.format(now(), "yyyy-mm-dd")
-
-    println("\nDone. Found $total_count total unique papers.")
-
-    # close HTTP connections before exiting so background monitor tasks don't
-    # report unhandled errors when the script terminates.
-    try
-        HTTP.Connections.closeall()
-        # give background monitor tasks a moment to notice closure and exit
-        sleep(0.1)
-    catch e
-        # ignore, cleanup best-effort
-    end
+    # close HTTP connections before exiting
+    try; HTTP.Connections.closeall(); sleep(0.1)
+    catch e; end
 end
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    fetch_and_display_papers()
-    # additional cleanup just in case
-    try
-        HTTP.Connections.closeall()
-    catch
-        # nothing
-    end
-end
+fetch_and_display_papers()
+try; HTTP.Connections.closeall() catch; end; # additional cleanup just in case
