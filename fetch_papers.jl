@@ -41,6 +41,11 @@ const JOURNAL_FEEDS = [
     (url="https://www.cell.com/cell/current.rss", name="Cell", group=:green_filter, section_filter=nothing),
     (url="https://elifesciences.org/rss/recent.xml", name="eLife", group=:green_filter, section_filter=nothing),
     (url="https://www.molbiolcell.org/action/showFeed?type=etoc&feed=rss&jc=mboc", name="MBoC", group=:green_filter, section_filter=nothing),
+    
+    # Company of Biologists Feeds:
+    (url="https://journals.biologists.com/rss/site_1000007/1000006.xml", name="Journal of Cell Science", group=:green_filter, section_filter=nothing),
+    (url="https://journals.biologists.com/rss/site_1000006/1000005.xml", name="Development", group=:green_filter, section_filter=nothing),
+    (url="https://journals.biologists.com/rss/site_1000008/1000007.xml", name="Journal of Experimental Biology", group=:green_filter, section_filter=nothing),
 ]
 
 const APS_SOURCES = Set(["PRL", "PRX", "PRX Life", "Physical Review E", "PRR"])

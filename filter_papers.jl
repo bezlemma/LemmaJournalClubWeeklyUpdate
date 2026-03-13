@@ -10,6 +10,27 @@ const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models
 
 const FEATURED_SOURCE = "CrossRef/Featured"
 
+# ─── Load Green Authors ──────────────────────────────────────────────────────
+
+function load_green_authors(filename::String)
+    name_list = String[]
+    isfile(filename) || return name_list
+    for line in readlines(filename)
+        line = strip(line)
+        isempty(line) && continue
+        # Handle ORCID format if present: "0000-0000-0000-0000 - Author Name"
+        m = match(r"^\d{4}-\d{4}-\d{4}-[\dX]{4}\s*-\s*(.+)$", line)
+        if m !== nothing
+            push!(name_list, lowercase(strip(m.captures[1])))
+        else
+            push!(name_list, lowercase(line))
+        end
+    end
+    return name_list
+end
+
+const GREEN_AUTHORS = load_green_authors("greenauthors.txt")
+
 # ─── Gemini API calls ───────────────────────────────────────────────────────
 
 """Call Gemini API with a prompt and return the text response."""
@@ -76,7 +97,8 @@ INCLUSION CRITERIA:
 - Novel use of physics to understand biological systems.
 
 EXCLUSION CRITERIA:
-- Not about biology or soft matter (quantum mechanics, astronomy, particle physics)
+- Not about biology or soft matter (quantum mechanics, astronomy, particle physics).
+- SOLID-STATE & HARD CONDENSED MATTER: Polarons, superconductivity, topological insulators, magnetism, purely electronic/magnetic properties of inorganic materials or low-dimensional systems.
 - Static structural biology (routine crystallography).
 - Purely clinical, medical, or descriptive genetics/omics.
 - Pure materials science with no biological application.
@@ -88,7 +110,8 @@ EXCLUSION CRITERIA:
 - ROUTINE MD or CryoEM: The main method is CryoEM, or MD, as stated in the abstract, and there is no deeper physics
 - DATABASES: Papers that just present a list of predicted structures (e.g., "Genome-wide analysis of...").
 - Contains the word CryoEM, Structural, or MD in the title.
-- NON-RESEARCH CONTENT: Reviews, Commentaries, Perspectives, Editorials, News, Withdrawn, Retracted, Author Summaries
+- NON-RESEARCH CONTENT: Reviews, Commentaries, Perspectives, Editorials, News, Withdrawn, Retracted, Author Summaries.
+- PHILOSOPHY & HISTORY: Philosophical essays, epistemological discussions, or historical reviews about biophysics (e.g., "the relation between biology and physics", "dialectical materialism"), rather than presenting new quantitative biological models or physical experiments.
 
 If unsure, default to TRUE.
 Reply with a single word: TRUE or FALSE.
@@ -158,8 +181,11 @@ function process_one_paper(paper)
         abstract_text = string(get(paper, :abstract, ""))
         source = string(get(paper, :source, ""))
 
-        # 1. Featured papers are identified by source tag from ORCID-based fetch
-        if source == FEATURED_SOURCE
+        # 1. Featured papers are identified by source tag OR by having a green author
+        authors = lowercase(string(get(paper, :authors, "")))
+        is_green_author = any(ga -> occursin(ga, authors), GREEN_AUTHORS)
+        
+        if source == FEATURED_SOURCE || is_green_author
             summary = summarize_paper(title, abstract_text)
             return (paper, summary, :featured)
         end
@@ -285,7 +311,7 @@ function main()
     open(OUTPUT_FILE, "w") do f
         # YAML frontmatter
         println(f, "---")
-        println(f, "title: \"Weekly Update $date_str\"")
+        println(f, "title: \"$date_str\"")
         println(f, "format:")
         println(f, "  html:")
         println(f, "    toc: false")
