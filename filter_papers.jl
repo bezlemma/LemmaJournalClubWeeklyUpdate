@@ -12,24 +12,147 @@ const FEATURED_SOURCE = "CrossRef/Featured"
 
 # ─── Load Green Authors ──────────────────────────────────────────────────────
 
+const CROSSREF_MAILTO = "lemma@princeton.edu"
+
 function load_green_authors(filename::String)
-    name_list = String[]
-    isfile(filename) || return name_list
+    entries = Tuple{Union{String,Nothing}, String}[]   # (orcid_or_nothing, name)
+    isfile(filename) || return entries
     for line in readlines(filename)
         line = strip(line)
         isempty(line) && continue
-        # Handle ORCID format if present: "0000-0000-0000-0000 - Author Name"
-        m = match(r"^\d{4}-\d{4}-\d{4}-[\dX]{4}\s*-\s*(.+)$", line)
+        m = match(r"^(\d{4}-\d{4}-\d{4}-[\dX]{4})\s*-\s*(.+)$", line)
         if m !== nothing
-            push!(name_list, lowercase(strip(m.captures[1])))
+            push!(entries, (m.captures[1], lowercase(strip(m.captures[2]))))
         else
-            push!(name_list, lowercase(line))
+            push!(entries, (nothing, lowercase(line)))
         end
     end
-    return name_list
+    return entries
 end
 
-const GREEN_AUTHORS = load_green_authors("greenauthors.txt")
+const GREEN_AUTHOR_ENTRIES = load_green_authors("greenauthors.txt")
+
+"""Normalize a name for fuzzy matching: strip accents, periods, hyphens."""
+function normalize_name(s::AbstractString)::String
+    s = lowercase(s)
+    # Strip common accented chars to ASCII equivalents
+    for (from, to) in [('á','a'),('à','a'),('â','a'),('ä','a'),('ã','a'),
+                        ('é','e'),('è','e'),('ê','e'),('ë','e'),
+                        ('í','i'),('ì','i'),('î','i'),('ï','i'),
+                        ('ó','o'),('ò','o'),('ô','o'),('ö','o'),('õ','o'),
+                        ('ú','u'),('ù','u'),('û','u'),('ü','u'),
+                        ('ñ','n'),('ç','c')]
+        s = replace(s, from => to)
+    end
+    s = replace(s, r"[.\-']" => " ")   # periods, hyphens, apostrophes → spaces
+    s = replace(s, r"\s+" => " ")
+    return strip(s)
+end
+
+"""Split an author list string into individual author names."""
+function split_authors(authors_str::AbstractString)::Vector{String}
+    # Handle both comma-separated (CrossRef/RSS) and semicolon-separated (bioRxiv)
+    delim = occursin(";", authors_str) ? ";" : ","
+    return filter(!isempty, strip.(split(authors_str, delim)))
+end
+
+"""Check if a single author name matches a green author name.
+Handles middle initials, name order swaps, and accent differences."""
+function name_matches(green_name::AbstractString, paper_author::AbstractString)::Bool
+    gn = normalize_name(green_name)
+    pa = normalize_name(paper_author)
+    g_parts = split(gn)
+    p_parts = split(pa)
+    length(g_parts) < 2 && return occursin(gn, pa)
+    length(p_parts) < 2 && return false
+    g_first, g_last = g_parts[1], g_parts[end]
+    p_first, p_last = p_parts[1], p_parts[end]
+    # Forward match: same first and last name
+    if g_first == p_first && g_last == p_last
+        return true
+    end
+    # Swapped: "Last, First" format
+    if g_first == p_last && g_last == p_first
+        return true
+    end
+    # First initial match: "D." or "D" matches "David"
+    if g_last == p_last
+        shorter, longer = length(g_first) <= length(p_first) ? (g_first, p_first) : (p_first, g_first)
+        if length(shorter) == 1 && startswith(longer, shorter)
+            return true
+        end
+    end
+    return false
+end
+
+# Cache CrossRef author data per DOI to avoid redundant API calls
+const _crossref_author_cache = Dict{String, Union{Nothing, Vector{String}}}()
+
+"""Fetch ORCID list for a DOI from CrossRef (cached)."""
+function _get_crossref_orcids(doi::AbstractString)::Union{Nothing, Vector{String}}
+    doi = replace(doi, r"^https?://doi\.org/" => "")
+    haskey(_crossref_author_cache, doi) && return _crossref_author_cache[doi]
+    try
+        sleep(0.1)  # rate-limit CrossRef calls
+        resp = HTTP.get("https://api.crossref.org/works/$doi?mailto=$CROSSREF_MAILTO";
+                        readtimeout=10, status_exception=false)
+        if resp.status != 200
+            _crossref_author_cache[doi] = nothing
+            return nothing
+        end
+        data = JSON3.read(String(resp.body))
+        authors = get(get(data, :message, Dict()), :author, [])
+        orcids = String[]
+        for a in authors
+            orcid_url = string(get(a, :ORCID, ""))
+            !isempty(orcid_url) && push!(orcids, orcid_url)
+        end
+        _crossref_author_cache[doi] = orcids
+        return orcids
+    catch
+        _crossref_author_cache[doi] = nothing
+        return nothing
+    end
+end
+
+"""Check if a paper's DOI has a matching ORCID in CrossRef metadata.
+Returns :verified, :not_found, or :error."""
+function verify_orcid_via_crossref(doi::AbstractString, expected_orcid::String)::Symbol
+    isempty(doi) && return :error
+    orcids = _get_crossref_orcids(doi)
+    orcids === nothing && return :error
+    for orcid_url in orcids
+        occursin(expected_orcid, orcid_url) && return :verified
+    end
+    return :not_found
+end
+
+"""Check if any green author name matches the paper's author string.
+Returns true if a match is found. For names with an ORCID, verifies via CrossRef
+when a DOI is available, to avoid false positives from common names."""
+function check_green_author(authors_str::AbstractString, doi::AbstractString)::Bool
+    paper_authors = split_authors(authors_str)
+    for (i, (orcid, name)) in enumerate(GREEN_AUTHOR_ENTRIES)
+        matched = any(pa -> name_matches(name, pa), paper_authors)
+        matched || continue
+        # If this entry has an ORCID and we have a DOI, verify to avoid false positives
+        if orcid !== nothing && !isempty(doi)
+            result = verify_orcid_via_crossref(doi, orcid)
+            if result == :verified
+                return true
+            elseif result == :not_found
+                # ORCID not on this paper — likely a different person with same name
+                continue
+            else
+                # CrossRef lookup failed — trust the name match as fallback
+                return true
+            end
+        end
+        # No ORCID to verify against, trust the name match
+        return true
+    end
+    return false
+end
 
 # ─── Gemini API calls ───────────────────────────────────────────────────────
 
@@ -182,9 +305,11 @@ function process_one_paper(paper)
         source = string(get(paper, :source, ""))
 
         # 1. Featured papers are identified by source tag OR by having a green author
-        authors = lowercase(string(get(paper, :authors, "")))
-        is_green_author = any(ga -> occursin(ga, authors), GREEN_AUTHORS)
-        
+        authors_str = string(get(paper, :authors, ""))
+        doi_raw = get(paper, :doi, nothing)
+        doi = doi_raw === nothing ? "" : string(doi_raw)
+        is_green_author = check_green_author(authors_str, doi)
+
         if source == FEATURED_SOURCE || is_green_author
             summary = summarize_paper(title, abstract_text)
             return (paper, summary, :featured)
@@ -285,6 +410,10 @@ function main()
     # Deduplicate: remove regular papers that also appear in featured list
     featured_titles = Set(lowercase(string(get(item.paper, :title, ""))) for item in featured_papers)
     filter!(item -> lowercase(string(get(item.paper, :title, ""))) ∉ featured_titles, regular_papers)
+
+    # Sort regular papers: journal papers first, then arXiv/bioRxiv
+    preprint_sources = Set(["arXiv", "bioRxiv"])
+    sort!(regular_papers; by=item -> string(get(item.paper, :source, "")) in preprint_sources ? 1 : 0)
 
     # Generate output
     all_final = vcat(featured_papers, regular_papers)

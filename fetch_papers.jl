@@ -44,8 +44,19 @@ const JOURNAL_FEEDS = [
     
     # Company of Biologists Feeds:
     (url="https://journals.biologists.com/rss/site_1000007/1000006.xml", name="Journal of Cell Science", group=:green_filter, section_filter=nothing),
-    (url="https://journals.biologists.com/rss/site_1000006/1000005.xml", name="Development", group=:green_filter, section_filter=nothing),
-    (url="https://journals.biologists.com/rss/site_1000008/1000007.xml", name="Journal of Experimental Biology", group=:green_filter, section_filter=nothing),
+    (url="https://journals.biologists.com/rss/site_1000005/1000005.xml", name="Development", group=:green_filter, section_filter=nothing),
+    (url="https://journals.biologists.com/rss/site_1000009/1000007.xml", name="Journal of Experimental Biology", group=:green_filter, section_filter=nothing),
+
+    # Additional cell biology / biophysics-adjacent journals:
+    (url="https://www.nature.com/ncb.rss", name="Nature Cell Biology", group=:green_filter, section_filter=nothing),
+    (url="https://www.cell.com/current-biology/inpress.rss", name="Current Biology", group=:green_filter, section_filter=nothing),
+    (url="https://rupress.org/rss/site_1000001/LatestArticles_1000003.xml", name="Journal of Cell Biology", group=:green_filter, section_filter=nothing),
+    (url="https://link.springer.com/search.rss?search-within=Journal&facet-journal-id=44318&query=", name="EMBO Journal", group=:green_filter, section_filter=nothing),
+]
+
+# Journals without RSS feeds — queried via CrossRef ISSN
+const CROSSREF_JOURNAL_ISSNS = [
+    (issn="1949-3592", name="Cytoskeleton"),
 ]
 
 const APS_SOURCES = Set(["PRL", "PRX", "PRX Life", "Physical Review E", "PRR"])
@@ -668,8 +679,7 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
         jar = HTTP.Cookies.CookieJar()
         resp = HTTP.get(url; headers=RSS_HEADERS, readtimeout=30, status_exception=false, redirect=true, cookies=jar)
         if resp.status != 200
-            println("  Error: $source_name returned status $(resp.status)")
-            return papers
+            error("$source_name returned HTTP $(resp.status)")
         end
 
         body = String(resp.body)
@@ -681,8 +691,7 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
             try
                 EzXML.parsexml(body_clean)
             catch e
-                println("  Warning: Issue parsing $source_name feed: $e")
-                return papers
+                error("Failed to parse $source_name feed XML: $e")
             end
         end
 
@@ -796,7 +805,7 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
             ))
         end
     catch e
-        println("  Error fetching $source_name: $e")
+        rethrow()
     end
 
     println("  Found $(length(papers)) papers.")
@@ -1326,22 +1335,26 @@ function _query_crossref_orcid(orcid::String, author_name::String, from_date::St
                 return papers
             elseif resp.status == 429
                 wait_secs = 5 * attempt
-                sleep(wait_secs)
-                continue
+                if attempt < max_retries
+                    println("  ⚠ CrossRef rate-limited for $author_name. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
+                    sleep(wait_secs)
+                    continue
+                else
+                    error("CrossRef rate-limited (429) for $author_name after $max_retries attempts")
+                end
             else
-                println("  ❌ CrossRef failed for $author_name: HTTP $(resp.status)")
-                return papers
+                error("CrossRef failed for $author_name: HTTP $(resp.status)")
             end
         catch e
+            e isa ErrorException && rethrow()
             if e isa HTTP.TimeoutError && attempt < max_retries
                 sleep(3 * attempt)
             else
-                println("  ❌ CrossRef failed for $author_name: $e")
-                return papers
+                error("CrossRef failed for $author_name: $e")
             end
         end
     end
-    return papers
+    error("CrossRef exhausted retries for $author_name")
 end
 
 function fetch_crossref_papers()
@@ -1351,14 +1364,11 @@ function fetch_crossref_papers()
 
     from_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
 
-    # Parallel fetch using @async tasks
+    # Sequential fetch to avoid rate-limiting
     results = Vector{Vector{Paper}}(undef, length(GREEN_ORCIDS))
-    @sync begin
-        for (i, (orcid, name)) in enumerate(GREEN_ORCIDS)
-            @async begin
-                results[i] = _query_crossref_orcid(orcid, name, from_date)
-            end
-        end
+    for (i, (orcid, name)) in enumerate(GREEN_ORCIDS)
+        results[i] = _query_crossref_orcid(orcid, name, from_date)
+        i < length(GREEN_ORCIDS) && sleep(0.2)
     end
 
     papers = Paper[]
@@ -1377,39 +1387,320 @@ function fetch_crossref_papers()
     return collect(values(unique))
 end
 
+# ─── CrossRef ISSN Fetching (for journals without RSS feeds) ─────────────────
+
+function fetch_crossref_issn_papers()
+    isempty(CROSSREF_JOURNAL_ISSNS) && return Paper[]
+    println("Fetching papers from journals without RSS (via CrossRef ISSN)...")
+
+    from_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
+    papers = Paper[]
+
+    for (issn, journal_name) in CROSSREF_JOURNAL_ISSNS
+        println("  Querying CrossRef for $journal_name (ISSN: $issn)...")
+        url = "https://api.crossref.org/works"
+        params = Dict(
+            "filter" => "issn:$issn,from-pub-date:$from_date",
+            "rows" => "25",
+            "sort" => "published",
+            "order" => "desc",
+            "mailto" => CROSSREF_MAILTO,
+        )
+        query_str = join(["$k=$(HTTP.escapeuri(v))" for (k,v) in params], "&")
+        full_url = "$url?$query_str"
+
+        max_retries = 3
+        for attempt in 1:max_retries
+            try
+                resp = HTTP.get(full_url; readtimeout=15, status_exception=false)
+                if resp.status == 200
+                    data = JSON3.read(String(resp.body))
+                    items = get(get(data, :message, Dict()), :items, [])
+                    for item in items
+                        title_parts = get(item, :title, ["No Title"])
+                        title = isempty(title_parts) ? "No Title" : string(first(title_parts))
+
+                        authors_raw = get(item, :author, [])
+                        authors_list = String[]
+                        for a in authors_raw
+                            given = string(get(a, :given, ""))
+                            family = string(get(a, :family, ""))
+                            if !isempty(given) && !isempty(family)
+                                push!(authors_list, "$given $family")
+                            elseif !isempty(family)
+                                push!(authors_list, family)
+                            end
+                        end
+                        authors_str = isempty(authors_list) ? "Unknown" : join(authors_list, ", ")
+
+                        doi = string(get(item, :DOI, ""))
+                        link = !isempty(doi) ? "https://doi.org/$doi" : string(get(item, :URL, ""))
+
+                        abstract_text = string(get(item, :abstract, ""))
+                        if !isempty(abstract_text)
+                            abstract_text = replace(abstract_text, r"<[^>]+>" => "")
+                            abstract_text = strip(abstract_text)
+                        end
+                        isempty(abstract_text) && (abstract_text = "Abstract not available via CrossRef API.")
+
+                        pub_date = crossref_effective_date(item)
+                        pub_date === nothing && continue
+
+                        push!(papers, Paper(
+                            source=journal_name,
+                            title=replace(title, "\n" => " "),
+                            authors=authors_str,
+                            link=link,
+                            abstract_text=abstract_text,
+                            images=String[],
+                            date=pub_date,
+                            doi=!isempty(doi) ? "https://doi.org/$doi" : nothing,
+                        ))
+                    end
+                    println("    Found $(length(items)) papers from $journal_name.")
+                    break
+                elseif resp.status == 429 && attempt < max_retries
+                    sleep(5 * attempt)
+                    continue
+                else
+                    println("  ⚠ CrossRef ISSN query for $journal_name failed: HTTP $(resp.status)")
+                    break
+                end
+            catch e
+                if attempt < max_retries
+                    sleep(3 * attempt)
+                else
+                    println("  ⚠ CrossRef ISSN query for $journal_name failed: $e")
+                end
+            end
+        end
+        sleep(0.3)
+    end
+
+    println("  Found $(length(papers)) total papers from ISSN queries.")
+    return papers
+end
+
+# ─── Checkpoint system ────────────────────────────────────────────────────────
+
+const CHECKPOINT_FILE = "fetch_checkpoint.json"
+const FETCH_CLEAN = get(ENV, "FETCH_CLEAN", "0") == "1"
+
+function _papers_to_dicts(papers::Vector{Paper})
+    [Dict("source" => p.source, "title" => p.title, "authors" => p.authors,
+          "link" => p.link, "abstract" => p.abstract, "images" => p.images,
+          "date" => Dates.format(DateTime(p.date, UTC), "yyyy-mm-ddTHH:MM:SS+00:00"),
+          "doi" => p.doi) for p in papers]
+end
+
+function _dicts_to_papers(items)::Vector{Paper}
+    papers = Paper[]
+    for item in items
+        pub_date = try
+            ZonedDateTime(DateTime(string(item.date)[1:19], "yyyy-mm-ddTHH:MM:SS"), tz"UTC")
+        catch
+            now(tz"UTC")
+        end
+        doi_val = get(item, :doi, nothing)
+        push!(papers, Paper(
+            source=string(get(item, :source, "")),
+            title=string(get(item, :title, "")),
+            authors=string(get(item, :authors, "")),
+            link=string(get(item, :link, "")),
+            abstract_text=string(get(item, :abstract, "")),
+            images=String[string(x) for x in get(item, :images, [])],
+            date=pub_date,
+            doi=doi_val === nothing || string(doi_val) == "null" ? nothing : string(doi_val),
+        ))
+    end
+    return papers
+end
+
+function load_checkpoint()::Dict{String, Vector{Paper}}
+    FETCH_CLEAN && return Dict{String, Vector{Paper}}()
+    !isfile(CHECKPOINT_FILE) && return Dict{String, Vector{Paper}}()
+    try
+        data = JSON3.read(read(CHECKPOINT_FILE, String))
+        # Check if checkpoint is from the current date range
+        cp_date = string(get(data, :from_date, ""))
+        current_from = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
+        if cp_date != current_from
+            println("  Checkpoint is stale (from $cp_date, need $current_from). Starting fresh.")
+            return Dict{String, Vector{Paper}}()
+        end
+        stages = get(data, :stages, Dict())
+        result = Dict{String, Vector{Paper}}()
+        for (k, v) in pairs(stages)
+            result[string(k)] = _dicts_to_papers(v)
+        end
+        println("  Loaded checkpoint with stages: $(join(keys(result), ", "))")
+        return result
+    catch e
+        println("  Warning: Could not load checkpoint: $e. Starting fresh.")
+        return Dict{String, Vector{Paper}}()
+    end
+end
+
+function save_checkpoint(checkpoint::Dict{String, Vector{Paper}})
+    from_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
+    stages_dict = Dict(k => _papers_to_dicts(v) for (k, v) in checkpoint)
+    out = Dict("from_date" => from_date, "stages" => stages_dict)
+    open(CHECKPOINT_FILE, "w") do f
+        JSON3.pretty(f, out)
+    end
+end
+
+function delete_checkpoint()
+    isfile(CHECKPOINT_FILE) && rm(CHECKPOINT_FILE)
+end
+
 # ─── Main orchestrator ───────────────────────────────────────────────────────
 
 function fetch_and_display_papers()
     println("Fetching papers from $(Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")) to Now...")
+    FETCH_CLEAN && println("  FETCH_CLEAN=1: ignoring any checkpoint.")
 
+    checkpoint = load_checkpoint()
     all_papers = Paper[]
 
-    append!(all_papers, fetch_crossref_papers())     # 0. CrossRef (Featured)
-    append!(all_papers, fetch_arxiv_papers())     # 1. arXiv
-    append!(all_papers, fetch_biorxiv_papers())     # 2. bioRxiv
+    # 0. CrossRef (Featured) — errors propagate and halt the pipeline
+    if haskey(checkpoint, "crossref")
+        crossref_papers = checkpoint["crossref"]
+        println("  ↺ CrossRef: $(length(crossref_papers)) papers (from checkpoint)")
+    else
+        crossref_papers = fetch_crossref_papers()
+        println("  ✓ CrossRef: $(length(crossref_papers)) papers")
+        checkpoint["crossref"] = crossref_papers
+        save_checkpoint(checkpoint)
+    end
+    append!(all_papers, crossref_papers)
+
+    # 1. arXiv
+    if haskey(checkpoint, "arxiv")
+        arxiv_papers = checkpoint["arxiv"]
+        println("  ↺ arXiv: $(length(arxiv_papers)) papers (from checkpoint)")
+    else
+        arxiv_papers = fetch_arxiv_papers()
+        if isempty(arxiv_papers)
+            error("FATAL: arXiv returned 0 papers. Aborting to avoid incomplete output.")
+        end
+        println("  ✓ arXiv: $(length(arxiv_papers)) papers")
+        checkpoint["arxiv"] = arxiv_papers
+        save_checkpoint(checkpoint)
+    end
+    append!(all_papers, arxiv_papers)
+
+    # 2. bioRxiv
+    if haskey(checkpoint, "biorxiv")
+        biorxiv_papers = checkpoint["biorxiv"]
+        println("  ↺ bioRxiv: $(length(biorxiv_papers)) papers (from checkpoint)")
+    else
+        biorxiv_papers = fetch_biorxiv_papers()
+        if isempty(biorxiv_papers)
+            error("FATAL: bioRxiv returned 0 papers. Aborting to avoid incomplete output.")
+        end
+        println("  ✓ bioRxiv: $(length(biorxiv_papers)) papers")
+        checkpoint["biorxiv"] = biorxiv_papers
+        save_checkpoint(checkpoint)
+    end
+    append!(all_papers, biorxiv_papers)
 
     # 3. Journal RSS feeds — parallel
-    rss_results = Vector{Vector{Paper}}(undef, length(JOURNAL_FEEDS))
-    @sync begin
-        for (i, feed) in enumerate(JOURNAL_FEEDS)
-            @async begin
-                rss_results[i] = fetch_rss(feed.url, feed.name, feed.group;
-                                           section_filter=feed.section_filter)
+    if haskey(checkpoint, "rss")
+        rss_papers = checkpoint["rss"]
+        println("  ↺ RSS feeds: $(length(rss_papers)) papers (from checkpoint)")
+        append!(all_papers, rss_papers)
+    else
+        rss_results = Vector{Vector{Paper}}(undef, length(JOURNAL_FEEDS))
+        rss_errors = Vector{Union{Nothing,Exception}}(fill(nothing, length(JOURNAL_FEEDS)))
+        @sync begin
+            for (i, feed) in enumerate(JOURNAL_FEEDS)
+                @async begin
+                    try
+                        rss_results[i] = fetch_rss(feed.url, feed.name, feed.group;
+                                                   section_filter=feed.section_filter)
+                    catch e
+                        rss_errors[i] = e
+                    end
+                end
             end
         end
-    end
-    for r in rss_results
-        append!(all_papers, r)
+        failed_feeds = [(JOURNAL_FEEDS[i].name, rss_errors[i]) for i in 1:length(JOURNAL_FEEDS) if rss_errors[i] !== nothing]
+        if !isempty(failed_feeds)
+            for (name, e) in failed_feeds
+                println("  ❌ RSS feed '$name' failed: $e")
+            end
+            println("\n  Checkpoint saved. Fix the issue and re-run to resume.")
+            error("FATAL: $(length(failed_feeds)) RSS feed(s) failed. Aborting to avoid incomplete output.")
+        end
+        rss_papers = Paper[]
+        for r in rss_results
+            append!(rss_papers, r)
+        end
+        println("  ✓ RSS feeds: $(length(rss_papers)) papers")
+        checkpoint["rss"] = rss_papers
+        save_checkpoint(checkpoint)
+        append!(all_papers, rss_papers)
     end
 
+    # 4. CrossRef ISSN journals (no RSS feed available) — green_filter applied
+    if haskey(checkpoint, "issn")
+        green_issn = checkpoint["issn"]
+        println("  ↺ ISSN journals: $(length(green_issn)) papers (from checkpoint)")
+    else
+        issn_papers = fetch_crossref_issn_papers()
+        green_issn = filter(issn_papers) do p
+            al = lowercase(p.authors)
+            for ga in GREEN_AUTHORS
+                occursin(lowercase(ga), al) && return true
+            end
+            tl = lowercase(p.title * " " * p.abstract)
+            for kw in GREEN_KEYWORDS
+                occursin(lowercase(kw), tl) && return true
+            end
+            return false
+        end
+        println("  ✓ ISSN journals: $(length(green_issn)) papers (green-filtered from $(length(issn_papers)))")
+        checkpoint["issn"] = green_issn
+        save_checkpoint(checkpoint)
+    end
+    append!(all_papers, green_issn)
+
+    # All stages complete — delete checkpoint
+    delete_checkpoint()
+    println("  All stages complete. Checkpoint cleared.")
+
+    # ─── Filter single-author arXiv/bioRxiv papers (unless green author) ───
+    before_single = length(all_papers)
+    filter!(all_papers) do p
+        (p.source == "arXiv" || p.source == "bioRxiv") || return true
+        # Multiple authors = comma (arXiv) or semicolon (bioRxiv) in authors string
+        (occursin(",", p.authors) || occursin(";", p.authors)) && return true
+        # Keep if the single author is a green author
+        al = lowercase(p.authors)
+        any(ga -> occursin(ga, al), GREEN_AUTHORS) && return true
+        return false
+    end
+    filtered_single = before_single - length(all_papers)
+    filtered_single > 0 && println("  Filtered $filtered_single single-author arXiv/bioRxiv papers.")
+
     # ─── Deduplication ───
-    # Pass 1: by DOI
+    # Helper: prefer CrossRef/Featured, then earliest date
+    _is_featured(p::Paper) = p.source == "CrossRef/Featured"
+    function _should_replace(existing::Paper, candidate::Paper)
+        _is_featured(candidate) && !_is_featured(existing) && return true
+        _is_featured(existing) && !_is_featured(candidate) && return false
+        return candidate.date < existing.date
+    end
+
+    # Pass 1: by DOI (normalized to lowercase)
     unique_by_doi = Dict{String, Paper}()
     no_doi_papers = Paper[]
     for p in all_papers
         if p.doi !== nothing
-            if !haskey(unique_by_doi, p.doi) || p.date < unique_by_doi[p.doi].date
-                unique_by_doi[p.doi] = p
+            key = lowercase(p.doi)
+            if !haskey(unique_by_doi, key) || _should_replace(unique_by_doi[key], p)
+                unique_by_doi[key] = p
             end
         else
             push!(no_doi_papers, p)
@@ -1420,7 +1711,7 @@ function fetch_and_display_papers()
     unique_map = Dict{String, Paper}()
     for p in vcat(collect(values(unique_by_doi)), no_doi_papers)
         title_clean = filter(isascii, lowercase(replace(p.title, r"[^a-zA-Z0-9]" => "")))
-        if !haskey(unique_map, title_clean) || p.date < unique_map[title_clean].date
+        if !haskey(unique_map, title_clean) || _should_replace(unique_map[title_clean], p)
             unique_map[title_clean] = p
         end
     end

@@ -96,6 +96,7 @@
 0000-0002-1674-3242 - Amy Strom
 0000-0003-1780-370X - Yoonji Kim
 0000-0002-3829-5612 - Iain Cheeseman
+0000-0001-5529-4040 - Slaven Garaj
 
 0000-0002-8467-5763 - Wallace F. Marshall
 0000-0002-4755-4778 - Suliana Manley
