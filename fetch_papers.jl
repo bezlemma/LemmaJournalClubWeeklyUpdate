@@ -4,7 +4,7 @@ using Dates, TimeZones
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
-const DAYS_BACK = 6
+const DAYS_BACK = 7
 const OLDEST_DATE = now(tz"UTC") - Day(DAYS_BACK)
 
 const ARXIV_CATEGORIES = ["physics.bio-ph", "cond-mat.soft"]
