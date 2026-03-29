@@ -842,6 +842,146 @@ function arxiv_paper_id_from_link(link::AbstractString)::String
     return replace(tail, r"v\d+$" => "")
 end
 
+function fetch_arxiv_papers_scrape(seen_ids::Set{String}=Set{String}())
+    println("  Falling back to arXiv HTML scraping...")
+    papers = Paper[]
+
+    for cat in ARXIV_CATEGORIES
+        listing_url = "https://arxiv.org/list/$cat/recent"
+        println("  Fetching listing: $listing_url")
+        listing_resp = try
+            HTTP.get(listing_url; headers=["User-Agent" => ARXIV_USER_AGENT], readtimeout=30, status_exception=false)
+        catch e
+            println("  arXiv listing fetch error for $cat: $e")
+            continue
+        end
+        if listing_resp.status != 200
+            println("  arXiv listing error for $cat: HTTP $(listing_resp.status)")
+            continue
+        end
+
+        html = String(listing_resp.body)
+
+        # Parse date headers: <h3>Fri, 27 Mar 2026 (showing 4 of 4 entries )</h3>
+        # Then parse entries between headers
+        current_date = nothing
+        # Extract all paper entries with their dates
+        # Strategy: find each <h3> date header, then find arXiv IDs, titles, authors until next <h3>
+        lines = split(html, "\n")
+        i = 1
+        while i <= length(lines)
+            line = lines[i]
+            # Check for date header
+            dm = match(r"<h3>\w+,\s+(\d+)\s+(\w+)\s+(\d{4})\s+\(", line)
+            if dm !== nothing
+                day = parse(Int, dm.captures[1])
+                month_str = dm.captures[2]
+                year = parse(Int, dm.captures[3])
+                month_map = Dict("Jan"=>1,"Feb"=>2,"Mar"=>3,"Apr"=>4,"May"=>5,"Jun"=>6,
+                                 "Jul"=>7,"Aug"=>8,"Sep"=>9,"Oct"=>10,"Nov"=>11,"Dec"=>12)
+                month = get(month_map, month_str, 0)
+                if month > 0
+                    current_date = ZonedDateTime(DateTime(year, month, day), tz"UTC")
+                end
+                i += 1
+                continue
+            end
+
+            # Check for arXiv ID
+            id_match = match(r"arXiv:(\d+\.\d+)", line)
+            if id_match !== nothing && current_date !== nothing
+                paper_id = id_match.captures[1]
+                if current_date < OLDEST_DATE || paper_id in seen_ids
+                    i += 1
+                    continue
+                end
+
+                # Scan ahead for title and authors
+                title = ""
+                authors_str = ""
+                for j in i:min(i+20, length(lines))
+                    tl = lines[j]
+                    tm = match(r"<span class='descriptor'>Title:</span>\s*(.*)", tl)
+                    if tm !== nothing
+                        # Title may continue on next line
+                        title = strip(tm.captures[1])
+                        if !endswith(title, "</div>")
+                            for k in (j+1):min(j+5, length(lines))
+                                next = strip(lines[k])
+                                title *= " " * next
+                                endswith(next, "</div>") && break
+                            end
+                        end
+                        title = replace(title, r"<[^>]+>" => "")
+                        title = strip(title)
+                    end
+                    am = match(r"<div class='list-authors'>(.*?)</div>", tl)
+                    if am !== nothing
+                        raw = am.captures[1]
+                        # Extract author names from <a> tags, strip affiliation numbers like (1)
+                        author_names = [strip(replace(m.captures[1], r"\s*\(\d[^)]*\)\s*" => ""))
+                                        for m in eachmatch(r">([^<]+)</a>", raw)]
+                        authors_str = join(author_names, ", ")
+                    end
+                end
+
+                if !isempty(title) && !isempty(paper_id)
+                    !is_research_article(title) && (i += 1; continue)
+                    push!(seen_ids, paper_id)
+                    push!(papers, Paper(
+                        source="arXiv",
+                        title=title,
+                        authors=authors_str,
+                        link="https://arxiv.org/abs/$paper_id",
+                        abstract_text="",  # will be filled below
+                        images=String[],
+                        date=current_date,
+                    ))
+                end
+            end
+            i += 1
+        end
+    end
+
+    println("  arXiv scraping found $(length(papers)) papers from listing pages.")
+
+    if isempty(papers)
+        return papers
+    end
+
+    # Fetch abstracts from individual abs pages
+    println("  Fetching abstracts for $(length(papers)) papers...")
+    for (idx, paper) in enumerate(papers)
+        abs_url = paper.link
+        try
+            sleep(0.5)  # polite rate limiting for HTML pages
+            abs_resp = HTTP.get(abs_url; headers=["User-Agent" => ARXIV_USER_AGENT], readtimeout=30, status_exception=false)
+            if abs_resp.status == 200
+                abs_html = String(abs_resp.body)
+                # Extract abstract from <blockquote class="abstract mathjax">
+                abs_m = match(r"<blockquote class=\"abstract mathjax\">\s*<span class=\"descriptor\">Abstract:</span>(.*?)</blockquote>"s, abs_html)
+                if abs_m !== nothing
+                    abstract_text = strip(replace(abs_m.captures[1], r"<[^>]+>" => ""))
+                    abstract_text = replace(abstract_text, "\n" => " ")
+                    abstract_text = replace(abstract_text, r"\s+" => " ")
+                    papers[idx] = Paper(
+                        source=paper.source, title=paper.title, authors=paper.authors,
+                        link=paper.link, abstract_text=abstract_text,
+                        images=paper.images, date=paper.date,
+                    )
+                end
+            else
+                println("  Warning: could not fetch abstract for $(paper.link): HTTP $(abs_resp.status)")
+            end
+        catch e
+            println("  Warning: error fetching abstract for $(paper.link): $e")
+        end
+    end
+
+    println("  arXiv HTML scraping found $(length(papers)) papers total.")
+    return papers
+end
+
 function fetch_arxiv_papers_rss(seen_ids::Set{String}=Set{String}())
     println("  Falling back to arXiv RSS feeds...")
     papers = Paper[]
@@ -1064,7 +1204,10 @@ function fetch_arxiv_papers()
     end
 
     if api_failed_before_first_page && isempty(papers)
-        papers = fetch_arxiv_papers_rss(seen_ids)
+        papers = fetch_arxiv_papers_scrape(seen_ids)
+        if isempty(papers)
+            papers = fetch_arxiv_papers_rss(seen_ids)
+        end
     end
 
     println("  Found $(length(papers)) arXiv papers.")
