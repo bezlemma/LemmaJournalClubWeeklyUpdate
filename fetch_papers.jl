@@ -151,7 +151,16 @@ const GREEN_KEYWORDS = load_list("greenkeywords.txt")
 const EXCLUDE_TERMS = [
     "review", "perspective", "editorial", "correction", "comment", "highlight",
     "news", "erratum", "author correction", "publisher correction",
-    "profile", "q&a", "inner workings", "front matter", "core concepts", "opinion"
+    "profile", "q&a", "inner workings", "front matter", "core concepts", "opinion",
+    "retraction", "spotlight", "in this issue", "table of contents"
+]
+
+# Title patterns that indicate a software/pipeline paper rather than a biophysics study.
+# Matched as regexes against lowercase title.
+const SOFTWARE_PIPELINE_TITLE_PATTERNS = [
+    r"\b(pipeline|workflow|toolkit|toolbox|software package|software tool)\b",
+    r"\b(web server|web application|web-based tool|web tool|database for)\b",
+    r"\b(python package|r package|julia package|bioinformatics tool)\b",
 ]
 
 const NON_RESEARCH_TYPES = [
@@ -162,6 +171,7 @@ function is_research_article(title::AbstractString, summary::AbstractString="";
                              article_type::AbstractString="")::Bool
     tl = lowercase(title)
     any(t -> occursin(t, tl), EXCLUDE_TERMS) && return false
+    any(pat -> occursin(pat, tl), SOFTWARE_PIPELINE_TITLE_PATTERNS) && return false
     if !isempty(article_type)
         atl = lowercase(article_type)
         if any(t -> occursin(t, atl), NON_RESEARCH_TYPES)
@@ -788,9 +798,10 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
             # Final metadata quality gate.
             has_authors = !isempty(strip(join(authors, ", ")))
             has_abstract = length(strip(abstract_text)) >= MIN_ABSTRACT_CHARS
-            if isempty(strip(title)) || isempty(strip(link)) || !(has_authors || has_abstract)
+            if isempty(strip(title)) || isempty(strip(link)) || !has_authors || !has_abstract
                 short_title = isempty(title) ? "(untitled)" : title[1:min(end, 60)]
-                println("    - Skipping low-metadata entry from $source_name: $short_title")
+                reason = !has_authors ? "no authors" : !has_abstract ? "no abstract" : "missing title/link"
+                println("    - Skipping ($reason): $short_title")
                 continue
             end
 

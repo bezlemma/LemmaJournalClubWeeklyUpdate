@@ -258,7 +258,7 @@ Reply with a single word: TRUE or FALSE.
     end
 end
 
-"""Summarize paper using Gemini."""
+"""Summarize paper using """
 function summarize_paper(title::String, abstract_text::String)::String
     prompt = """
 Provide a one sentence summary of the following paper.
@@ -432,7 +432,7 @@ function main()
     today = Dates.today()
     dow = Dates.dayofweek(today)      # 1=Monday, 7=Sunday
     prev_monday = today - Dates.Day(dow - 1)
-    date_str = Dates.format(prev_monday, "u d 'yy")
+    date_str = Dates.format(prev_monday, "u d yy")
 
     println("\nGenerating $OUTPUT_FILE with $total_kept papers...")
     println("Source breakdown: $breakdown")
