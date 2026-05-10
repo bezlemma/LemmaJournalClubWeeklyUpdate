@@ -1,10 +1,14 @@
 using JSON3, HTTP, Dates
+include(joinpath(@__DIR__, "score_papers.jl"))
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 const GEMINI_API_KEY = get(ENV, "GEMINI_API_KEY", "")
 const INPUT_FILE = "papers.json"
 const OUTPUT_FILE = "papers_final.md"
+const PREVIOUS_WEEKS_DIR = "PreviousWeeks"
+const SCORE_OUTPUT_FILE = "paper_scores.json"
+const DECISIONS_DIR = "TrainingData"
 const GEMINI_MODEL = "gemini-3-flash-preview"
 const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
 
@@ -344,6 +348,16 @@ function main()
     end
 
     papers = JSON3.read(read(INPUT_FILE, String))
+    local_scores = try
+        scores = PaperScorer.score_map_from_files(INPUT_FILE, PREVIOUS_WEEKS_DIR; output_file=SCORE_OUTPUT_FILE)
+        println("Scored $(length(scores)) papers using PreviousWeeks; wrote $SCORE_OUTPUT_FILE.")
+        scores
+    catch e
+        println("Warning: local paper scoring failed: $e")
+        Dict{String, Float64}()
+    end
+
+    paper_score(paper) = get(local_scores, PaperScorer.paper_key(paper), 0.0)
 
     featured_papers = []
     regular_papers = []
@@ -400,10 +414,11 @@ function main()
             continue
         end
         paper, summary, category = result
+        score = paper_score(paper)
         if category == :featured
-            push!(featured_papers, (paper=paper, summary=summary))
+            push!(featured_papers, (paper=paper, summary=summary, score=score))
         elseif category == :regular
-            push!(regular_papers, (paper=paper, summary=summary))
+            push!(regular_papers, (paper=paper, summary=summary, score=score))
         end
     end
 
@@ -411,9 +426,11 @@ function main()
     featured_titles = Set(lowercase(string(get(item.paper, :title, ""))) for item in featured_papers)
     filter!(item -> lowercase(string(get(item.paper, :title, ""))) ∉ featured_titles, regular_papers)
 
-    # Sort regular papers: journal papers first, then arXiv/bioRxiv
+    # Sort regular papers by similarity to previously selected "Some Papers"/featured examples.
     preprint_sources = Set(["arXiv", "bioRxiv"])
-    sort!(regular_papers; by=item -> string(get(item.paper, :source, "")) in preprint_sources ? 1 : 0)
+    sort!(regular_papers; by=item -> (-item.score,
+                                      string(get(item.paper, :source, "")) in preprint_sources ? 1 : 0,
+                                      lowercase(string(get(item.paper, :title, "")))))
 
     # Generate output
     all_final = vcat(featured_papers, regular_papers)
@@ -433,9 +450,33 @@ function main()
     dow = Dates.dayofweek(today)      # 1=Monday, 7=Sunday
     prev_monday = today - Dates.Day(dow - 1)
     date_str = Dates.format(prev_monday, "u d yy")
+    decision_file = joinpath(DECISIONS_DIR, "filter_decisions_$(Dates.format(prev_monday, "yyyy-mm-dd")).jsonl")
+    mkpath(DECISIONS_DIR)
+    open(decision_file, "w") do f
+        for (i, result) in enumerate(results)
+            isassigned(results, i) || continue
+            paper, summary, category = result
+            label = category === nothing ? "rejected" : string(category)
+            JSON3.write(f, Dict(
+                "run_date" => Dates.format(today, "yyyy-mm-dd"),
+                "week" => Dates.format(prev_monday, "yyyy-mm-dd"),
+                "label" => label,
+                "local_score" => paper_score(paper),
+                "source" => string(get(paper, :source, "")),
+                "title" => string(get(paper, :title, "")),
+                "authors" => string(get(paper, :authors, "")),
+                "link" => string(get(paper, :link, "")),
+                "doi" => string(get(paper, :doi, "")),
+                "abstract" => string(get(paper, :abstract, "")),
+                "summary" => summary,
+            ))
+            write(f, "\n")
+        end
+    end
 
     println("\nGenerating $OUTPUT_FILE with $total_kept papers...")
     println("Source breakdown: $breakdown")
+    println("Saved filter decisions to $decision_file")
 
     open(OUTPUT_FILE, "w") do f
         # YAML frontmatter

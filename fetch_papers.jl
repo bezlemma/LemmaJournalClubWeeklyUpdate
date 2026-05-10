@@ -34,11 +34,28 @@ const JOURNAL_FEEDS = [
     (url="https://feeds.aps.org/rss/recent/prxlife.xml", name="PRX Life", group=:include_all, section_filter=nothing),
     (url="https://feeds.aps.org/rss/recent/prresearch.xml", name="PRR", group=:include_all, section_filter=nothing),
     (url="https://www.nature.com/subjects/biophysics.rss", name="Nature", group=:include_all, section_filter=nothing),
+    # Nature subject feeds catch relevant cross-journal papers without ingesting broad journal feeds.
+    (url="https://www.nature.com/subjects/microscopy.rss", name="Nature Microscopy", group=:include_all, section_filter=nothing),
+    (url="https://www.nature.com/subjects/mechanotransduction.rss", name="Nature Mechanotransduction", group=:include_all, section_filter=nothing),
+    (url="https://www.nature.com/subjects/motility.rss", name="Nature Motility", group=:include_all, section_filter=nothing),
+    (url="https://www.nature.com/subjects/morphogenesis.rss", name="Nature Morphogenesis", group=:include_all, section_filter=nothing),
+    (url="https://www.nature.com/subjects/systems-biology.rss", name="Nature Systems Biology", group=:include_all, section_filter=nothing),
     (url="https://www.pnas.org/action/showFeed?type=searchTopic&taxonomyCode=topic&tagCodeOr=biophys-bio&tagCodeOr=biophys-phys", name="PNAS", group=:include_all, section_filter=nothing),
     (url="https://academic.oup.com/rss/site_6448/4114.xml", name="PNAS NEXUS", group=:section_filter, section_filter="Biophysics"),
     (url="https://journals.plos.org/plosone/search/feed/atom?sortOrder=DATE_NEWEST_FIRST&filterJournals=PLoSONE&unformattedQuery=subject%3A%22biophysics%22", name="PLOS ONE", group=:include_all, section_filter=nothing),
     (url="https://www.science.org/rss/express.xml", name="Science", group=:section_filter, section_filter="Biophysics"),
+
+    # Optica Publishing Group feeds are broad, so keep them behind the local green prefilter.
+    (url="https://opg.optica.org/rss/optica_feed.xml", name="Optica", group=:green_filter, section_filter=nothing),
+    (url="https://opg.optica.org/rss/boe_feed.xml", name="Biomedical Optics Express", group=:green_filter, section_filter=nothing),
+    (url="https://opg.optica.org/rss/ome_feed.xml", name="Optical Materials Express", group=:green_filter, section_filter=nothing),
+    (url="https://opg.optica.org/rss/opex_feed.xml", name="Optics Express", group=:green_filter, section_filter=nothing),
+    (url="https://opg.optica.org/rss/ol_feed.xml", name="Optics Letters", group=:green_filter, section_filter=nothing),
+    (url="https://opg.optica.org/rss/ao_feed.xml", name="Applied Optics", group=:green_filter, section_filter=nothing),
+    (url="https://opg.optica.org/rss/prj_feed.xml", name="Photonics Research", group=:green_filter, section_filter=nothing),
+
     (url="https://www.cell.com/cell/current.rss", name="Cell", group=:green_filter, section_filter=nothing),
+    (url="https://www.cell.com/iscience/inpress.rss", name="iScience", group=:green_filter, section_filter=nothing),
     (url="https://elifesciences.org/rss/recent.xml", name="eLife", group=:green_filter, section_filter=nothing),
     (url="https://www.molbiolcell.org/action/showFeed?type=etoc&feed=rss&jc=mboc", name="MBoC", group=:green_filter, section_filter=nothing),
     
@@ -61,6 +78,15 @@ const CROSSREF_JOURNAL_ISSNS = [
 
 const APS_SOURCES = Set(["PRL", "PRX", "PRX Life", "Physical Review E", "PRR"])
 const RSC_SOURCES = Set(["Soft Matter"])
+const OPTICA_SOURCES = Set([
+    "Optica",
+    "Biomedical Optics Express",
+    "Optical Materials Express",
+    "Optics Express",
+    "Optics Letters",
+    "Applied Optics",
+    "Photonics Research",
+])
 
 const CROSSREF_MAILTO = "lemma@princeton.edu"
 
@@ -164,7 +190,7 @@ const SOFTWARE_PIPELINE_TITLE_PATTERNS = [
 ]
 
 const NON_RESEARCH_TYPES = [
-    "commentary", "perspective", "editorial", "news", "interview", "author summary", "correction"
+    "briefing", "commentary", "perspective", "editorial", "news", "interview", "author summary", "correction", "review"
 ]
 
 function is_research_article(title::AbstractString, summary::AbstractString="";
@@ -202,7 +228,7 @@ function scrape_metadata(url::AbstractString)
         jar = HTTP.Cookies.CookieJar()
         resp = HTTP.get(url; headers=BROWSER_HEADERS, readtimeout=30, status_exception=false,
                         redirect=true, cookies=jar)
-        resp.status != 200 && return nothing, nothing, nothing
+        resp.status != 200 && return nothing, nothing, nothing, nothing
 
         body = String(resp.body)
         doc = Gumbo.parsehtml(body)
@@ -295,12 +321,28 @@ function scrape_metadata(url::AbstractString)
             !isempty(article_type) && break
         end
 
+        # DOI
+        doi = nothing
+        for aname in ["citation_doi", "dc.Identifier", "DC.identifier", "DC.Identifier"]
+            nodes = eachmatch(Selector("meta[name=\"$aname\"]"), doc.root)
+            for n in nodes
+                c = getattr(n, "content", "")
+                parsed = normalize_doi(c)
+                if parsed !== nothing
+                    doi = parsed
+                    break
+                end
+            end
+            doi !== nothing && break
+        end
+
         return (isempty(authors) ? nothing : authors),
                (isempty(abstract_text) ? nothing : abstract_text),
-               (isempty(article_type) ? nothing : article_type)
+               (isempty(article_type) ? nothing : article_type),
+               doi
     catch e
         println("  Warning: Metadata scraping failed for $url: $e")
-        return nothing, nothing, nothing
+        return nothing, nothing, nothing, nothing
     end
 end
 
@@ -392,6 +434,23 @@ function clean_rsc_abstract(summary::AbstractString)
     end
 
     return abstract_text, authors_str, images
+end
+
+function clean_optica_abstract(summary::AbstractString)
+    isempty(summary) && return ""
+    abstract_text = summary
+
+    # Optica RSS descriptions often start with "Author, Author<br/>Abstract..."
+    abstract_text = replace(abstract_text, r"(?is)^.*?<br\s*/?>" => "")
+    abstract_text = replace(abstract_text, r"(?is)<br\s*/?>.*$" => "")
+
+    if occursin(r"<[A-Za-z/][^>]*>", abstract_text)
+        abstract_text = html_to_text(abstract_text)
+    end
+
+    # Drop the trailing journal citation block, e.g. "[Opt. Mater. Express 16, 1440-1453 (2026)]".
+    abstract_text = replace(abstract_text, r"\s*\[[^\]]+\]\s*$" => "")
+    return strip(replace(abstract_text, r"\s+" => " "))
 end
 
 # ─── CrossRef metadata lookup ────────────────────────────────────────────────
@@ -626,6 +685,28 @@ function get_entry_link(entry::EzXML.Node)
     return guid
 end
 
+const DOI_PATTERN = r"10\.\d{4,9}/[-._;()/:A-Za-z0-9]+"
+
+function normalize_doi(raw::AbstractString)::Union{String,Nothing}
+    s = strip(raw)
+    isempty(s) && return nothing
+    s = replace(s, r"(?i)^https?://(dx\.)?doi\.org/" => "")
+    s = replace(s, r"(?i)^doi:\s*" => "")
+    m = match(DOI_PATTERN, s)
+    m === nothing && return nothing
+    doi = strip(m.match)
+    doi = replace(doi, r"[\]\).,;]+$" => "")
+    return isempty(doi) ? nothing : doi
+end
+
+function get_entry_doi(entry::EzXML.Node)::Union{String,Nothing}
+    for tag in ["prism:doi", "doi", "dc:identifier", "identifier"]
+        doi = normalize_doi(xml_child_text(entry, tag))
+        doi !== nothing && return doi
+    end
+    return normalize_doi(get_entry_link(entry))
+end
+
 """Get tags/categories from an entry."""
 function get_entry_tags(entry::EzXML.Node)
     tags = String[]
@@ -721,10 +802,14 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
 
             # Research article check
             summary_raw = xml_child_text(entry, "summary")
+            isempty(summary_raw) && (summary_raw = xml_child_text(entry, "dc:description"))
             isempty(summary_raw) && (summary_raw = xml_child_text(entry, "description"))
             isempty(summary_raw) && (summary_raw = xml_child_text(entry, "content"))
+            isempty(summary_raw) && (summary_raw = xml_child_text(entry, "content:encoded"))
+            isempty(summary_raw) && (summary_raw = xml_child_text(entry, "encoded"))
 
-            !is_research_article(title, summary_raw) && continue
+            article_type_raw = xml_child_text(entry, "prism:section")
+            !is_research_article(title, summary_raw; article_type=article_type_raw) && continue
 
             # Section filter
             if group_type == :section_filter && section_filter !== nothing
@@ -745,6 +830,7 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
             abstract_text = replace(summary_raw, "\n" => " ")
             images = String[]
             link = get_entry_link(entry)
+            doi = get_entry_doi(entry)
 
             # APS cleaning
             if source_name in APS_SOURCES
@@ -759,6 +845,21 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
                 images = rsc_images
             end
 
+            if source_name in OPTICA_SOURCES
+                optica_abstract = clean_optica_abstract(summary_raw)
+                !isempty(optica_abstract) && (abstract_text = optica_abstract)
+            end
+
+            # Generic cleanup for HTML summaries such as Nature's content:encoded RSS field.
+            if occursin(r"<[A-Za-z/][^>]*>", abstract_text)
+                abstract_text = html_to_text(replace(abstract_text, r"</p>\s*" => "</p> "))
+            end
+            abstract_text = strip(replace(abstract_text, r"\s+" => " "))
+            abstract_text = replace(
+                abstract_text,
+                r"^Nature [^,]+,\s*Published online:\s*[^;]+;\s*doi:10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\s*" => ""
+            )
+
             # Data quality checks & fallback scraping
             needs_scrape = false
             if source_name == "PNAS"
@@ -772,10 +873,11 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
 
             if needs_scrape && !isempty(link)
                 println("    - Scraping metadata for: $(first(title, 30))...")
-                scraped_authors, scraped_abstract, scraped_type = scrape_metadata(link)
+                scraped_authors, scraped_abstract, scraped_type, scraped_doi = scrape_metadata(link)
 
                 scraped_authors !== nothing && (authors = scraped_authors)
                 scraped_abstract !== nothing && (abstract_text = scraped_abstract)
+                doi === nothing && scraped_doi !== nothing && (doi = scraped_doi)
 
                 if scraped_type !== nothing && !is_research_article(title; article_type=string(scraped_type))
                     continue
@@ -813,6 +915,7 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
                 abstract_text=abstract_text,
                 images=images,
                 date=published,
+                doi=doi,
             ))
         end
     catch e

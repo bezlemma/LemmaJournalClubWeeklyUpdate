@@ -1,4 +1,6 @@
+.DS_Store
 papers_final.md
 papers.json
+paper_scores.json
 fetch_checkpoint.json
 push_papers.sh
