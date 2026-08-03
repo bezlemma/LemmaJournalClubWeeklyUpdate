@@ -77,6 +77,7 @@ function parse_qmd_file(path::AbstractString)::Vector{TrainingDoc}
     current_section = ""
     current_title = ""
     current_url = ""
+    pending_heading_link = false
     buffer = String[]
 
     function flush_entry!()
@@ -96,8 +97,19 @@ function parse_qmd_file(path::AbstractString)::Vector{TrainingDoc}
             flush_entry!()
             current_title = ""
             current_url = ""
+            pending_heading_link = false
             current_section = section
             continue
+        end
+
+        if pending_heading_link && !isempty(current_title)
+            continuation = match(r"^\]?\((.*)\)\s*$", strip(line))
+            if continuation !== nothing
+                current_url = clean_url(continuation.captures[1])
+                pending_heading_link = false
+                continue
+            end
+            pending_heading_link = false
         end
 
         m = match(r"^####\s+\[(.*)\]\((.*)\)\s*$", strip(line))
@@ -105,6 +117,19 @@ function parse_qmd_file(path::AbstractString)::Vector{TrainingDoc}
             flush_entry!()
             current_title = strip(m.captures[1])
             current_url = clean_url(m.captures[2])
+            pending_heading_link = false
+            empty!(buffer)
+            continue
+        end
+
+
+        m = match(r"^####\s+\[(.*)\]\s*$", strip(line))
+        m === nothing && (m = match(r"^####\s+\[(.*)\s*$", strip(line)))
+        if m !== nothing
+            flush_entry!()
+            current_title = strip(m.captures[1])
+            current_url = ""
+            pending_heading_link = true
             empty!(buffer)
             continue
         end

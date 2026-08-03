@@ -5,4 +5,5 @@ paper_scores.json
 fetch_checkpoint.json
 fetch_warnings.json
 TrainingData/reader_feedback.json
-push_papers.sh
+newsletter-payload.json
+resend-warning.json

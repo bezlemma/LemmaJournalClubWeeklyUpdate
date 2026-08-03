@@ -26,4 +26,4 @@ echo "==> Filtering papers"
 julia --project filter_papers.jl
 
 echo ""
-echo "Done. Review and manually edit papers_final.md next."
+echo "Done. papers_final.md is a local preview; the GitHub workflow freezes and delivers production editions automatically."

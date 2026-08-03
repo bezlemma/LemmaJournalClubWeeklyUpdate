@@ -21,6 +21,7 @@ const BIORXIV_CONNECT_TIMEOUT_SECS = something(tryparse(Int, get(ENV, "BIORXIV_C
 const BIORXIV_MAX_TOTAL_SECS = something(tryparse(Float64, get(ENV, "BIORXIV_MAX_TOTAL_SECS", "120")), 120.0)
 const BIORXIV_MAX_PAGES = something(tryparse(Int, get(ENV, "BIORXIV_MAX_PAGES", "100")), 100)
 const API_READ_TIMEOUT_SECS = something(tryparse(Int, get(ENV, "API_READ_TIMEOUT_SECS", "30")), 30)
+const RSS_MAX_RETRIES = something(tryparse(Int, get(ENV, "RSS_MAX_RETRIES", "3")), 3)
 const MIN_ABSTRACT_CHARS = something(tryparse(Int, get(ENV, "MIN_ABSTRACT_CHARS", "80")), 80)
 const FETCH_WARNINGS_FILE = "fetch_warnings.json"
 const FETCH_WARNINGS = String[]
@@ -772,10 +773,23 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
     try
         # Cookie jar needed for Nature.com's idp.nature.com cookie gate (303→302→302 redirect chain)
         jar = HTTP.Cookies.CookieJar()
-        resp = HTTP.get(url; headers=RSS_HEADERS, readtimeout=30, status_exception=false, redirect=true, cookies=jar)
-        if resp.status != 200
-            error("$source_name returned HTTP $(resp.status)")
+        resp = nothing
+        for attempt in 1:RSS_MAX_RETRIES
+            try
+                candidate = HTTP.get(url; headers=RSS_HEADERS, readtimeout=30, status_exception=false, redirect=true, cookies=jar)
+                if candidate.status == 200
+                    resp = candidate
+                    break
+                end
+                attempt == RSS_MAX_RETRIES && error("$source_name returned HTTP $(candidate.status)")
+                println("  $source_name returned HTTP $(candidate.status); retrying ($attempt/$RSS_MAX_RETRIES)...")
+            catch e
+                attempt == RSS_MAX_RETRIES && rethrow(e)
+                println("  $source_name request failed; retrying ($attempt/$RSS_MAX_RETRIES)...")
+            end
+            sleep(2 * attempt)
         end
+        resp === nothing && error("$source_name did not return a usable response")
 
         body = String(resp.body)
         xmldoc = try
@@ -1909,7 +1923,7 @@ function fetch_and_display_papers()
         println("  ↺ RSS feeds: $(length(rss_papers)) papers (from checkpoint)")
         append!(all_papers, rss_papers)
     else
-        rss_results = Vector{Vector{Paper}}(undef, length(JOURNAL_FEEDS))
+        rss_results = [Paper[] for _ in JOURNAL_FEEDS]
         rss_errors = Vector{Union{Nothing,Exception}}(fill(nothing, length(JOURNAL_FEEDS)))
         @sync begin
             for (i, feed) in enumerate(JOURNAL_FEEDS)
@@ -1927,9 +1941,9 @@ function fetch_and_display_papers()
         if !isempty(failed_feeds)
             for (name, e) in failed_feeds
                 println("  ❌ RSS feed '$name' failed: $e")
+                push!(FETCH_WARNINGS, "Journal RSS feed '$name' failed after retries; that source may be incomplete this week.")
             end
-            println("\n  Checkpoint saved. Fix the issue and re-run to resume.")
-            error("FATAL: $(length(failed_feeds)) RSS feed(s) failed. Aborting to avoid incomplete output.")
+            println("  Continuing with the remaining sources; the owner warning will identify the failed feeds.")
         end
         rss_papers = Paper[]
         for r in rss_results

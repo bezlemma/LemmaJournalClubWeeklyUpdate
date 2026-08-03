@@ -12,6 +12,8 @@ const DECISIONS_DIR = "TrainingData"
 const READER_FEEDBACK_FILE = joinpath(DECISIONS_DIR, "reader_feedback.json")
 const GEMINI_MODEL = "gemini-3-flash-preview"
 const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
+const MAX_AI_FAILURE_FRACTION = something(tryparse(Float64, get(ENV, "MAX_AI_FAILURE_FRACTION", "0.05")), 0.05)
+const MAX_AI_FAILURE_COUNT = something(tryparse(Int, get(ENV, "MAX_AI_FAILURE_COUNT", "5")), 5)
 
 const FEATURED_SOURCE = "CrossRef/Featured"
 
@@ -168,14 +170,14 @@ function gemini_generate(prompt::String; max_retries=3)::String
     body = Dict(
         "contents" => [Dict(
             "parts" => [Dict("text" => prompt)]
-        )]
+        )],
+        "generationConfig" => Dict("temperature" => 0.0),
     )
-    url = "$GEMINI_URL_BASE?key=$(HTTP.escapeuri(GEMINI_API_KEY))"
 
     for attempt in 1:max_retries
         try
-            resp = HTTP.post(url,
-                ["Content-Type" => "application/json"],
+            resp = HTTP.post(GEMINI_URL_BASE,
+                ["Content-Type" => "application/json", "x-goog-api-key" => GEMINI_API_KEY],
                 JSON3.write(body);
                 readtimeout=30,
                 status_exception=false)
@@ -202,7 +204,7 @@ function gemini_generate(prompt::String; max_retries=3)::String
                 sleep(2 * attempt)
             end
         catch e
-            attempt == max_retries && (println("  Gemini API error: $e"); return "")
+            attempt == max_retries && (println("  Gemini API request failed after $max_retries attempts: $(typeof(e))"); return "")
             sleep(2 * attempt)
         end
     end
@@ -287,18 +289,19 @@ Reply with a single word: TRUE or FALSE.
     try
         result_raw = gemini_generate(prompt)
         result = uppercase(strip(result_raw))
-        if result == "TRUE"
+        answer = match(r"^(TRUE|FALSE)\b", result)
+        if answer !== nothing && answer.captures[1] == "TRUE"
             return true, "AI Approved"
-        elseif result == "FALSE"
+        elseif answer !== nothing && answer.captures[1] == "FALSE"
             return false, "AI Rejected"
         elseif isempty(result)
-            return true, "AI Unavailable Fallback"
+            return false, "AI Unavailable"
         else
-            return true, "AI Ambiguous Fallback"
+            return false, "AI Ambiguous Response"
         end
     catch e
         println("  Error classifying '$(first(title, 30))...': $e")
-        return true, "Error Fallback: $e"
+        return false, "AI Processing Error"
     end
 end
 
@@ -356,20 +359,20 @@ function process_one_paper(paper)
 
         if source == FEATURED_SOURCE || is_green_author
             summary = summarize_paper(title, abstract_text)
-            return (paper, summary, :featured)
+            return (paper, summary, :featured, "Featured source or author")
         end
 
         # 2. AI Classification for all other papers
         is_biophysics, reason = classify_paper(title, abstract_text)
         if is_biophysics
             summary = summarize_paper(title, abstract_text)
-            return (paper, summary, :regular)
+            return (paper, summary, :regular, reason)
         else
-            return (paper, "", nothing)
+            return (paper, "", nothing, reason)
         end
     catch e
         println("Error processing $(first(string(get(paper, :title, "")), 30))...: $e")
-        return (paper, "", nothing)
+        return (paper, "", nothing, "Processing error")
     end
 end
 
@@ -377,14 +380,12 @@ end
 
 function main()
     if isempty(GEMINI_API_KEY)
-        println("Error: GEMINI_API_KEY environment variable not set.")
-        return
+        error("GEMINI_API_KEY environment variable not set.")
     end
 
     println("Loading papers from $INPUT_FILE...")
     if !isfile(INPUT_FILE)
-        println("Error: $INPUT_FILE not found. Run fetch_papers.jl first.")
-        return
+        error("$INPUT_FILE not found. Run fetch_papers.jl first.")
     end
 
     papers = JSON3.read(read(INPUT_FILE, String))
@@ -421,13 +422,13 @@ function main()
                         results[i] = process_one_paper(paper)
                     catch e
                         println("Error in worker for paper $i: $e")
-                        results[i] = (paper, "", nothing)
+                        results[i] = (paper, "", nothing, "Processing error")
                     end
 
                     # Print progress as each paper completes
                     Threads.atomic_add!(completed, 1)
                     n = completed[]
-                    _, summary, category = results[i]
+                    _, summary, category, _ = results[i]
                     title_str = first(string(get(paper, :title, "")), 40)
 
                     lock(print_lock) do
@@ -448,12 +449,40 @@ function main()
         end
     end
 
+    classification_attempts = 0
+    classification_failures = 0
+    summary_attempts = 0
+    summary_failures = 0
+    processing_failures = 0
+    for (i, result) in enumerate(results)
+        isassigned(results, i) || continue
+        _, summary, category, reason = result
+        if startswith(reason, "AI ")
+            classification_attempts += 1
+            reason in ("AI Approved", "AI Rejected") || (classification_failures += 1)
+        elseif reason == "Processing error"
+            processing_failures += 1
+        end
+        if category !== nothing
+            summary_attempts += 1
+            summary == "Summary unavailable." && (summary_failures += 1)
+        end
+    end
+
+    allowed_failures(total) = total == 0 ? 0 : min(MAX_AI_FAILURE_COUNT, max(1, floor(Int, total * MAX_AI_FAILURE_FRACTION)))
+    println("AI health: $classification_failures/$classification_attempts classification failures, " *
+            "$summary_failures/$summary_attempts summary failures, $processing_failures processing failures.")
+    if classification_failures > allowed_failures(classification_attempts) ||
+       summary_failures > allowed_failures(summary_attempts) || processing_failures > 0
+        error("AI health gate failed; refusing to publish or email an unreliable edition.")
+    end
+
     # Collect results
     for (i, result) in enumerate(results)
         if !isassigned(results, i)
             continue
         end
-        paper, summary, category = result
+        paper, summary, category, _ = result
         score = paper_score(paper)
         if category == :featured
             push!(featured_papers, (paper=paper, summary=summary, score=score))
@@ -495,12 +524,13 @@ function main()
     open(decision_file, "w") do f
         for (i, result) in enumerate(results)
             isassigned(results, i) || continue
-            paper, summary, category = result
+            paper, summary, category, reason = result
             label = category === nothing ? "rejected" : string(category)
             JSON3.write(f, Dict(
                 "run_date" => Dates.format(today, "yyyy-mm-dd"),
                 "week" => Dates.format(prev_monday, "yyyy-mm-dd"),
                 "label" => label,
+                "classifier_reason" => reason,
                 "local_score" => paper_score(paper),
                 "source" => string(get(paper, :source, "")),
                 "title" => string(get(paper, :title, "")),
