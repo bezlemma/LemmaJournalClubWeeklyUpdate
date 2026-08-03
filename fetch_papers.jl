@@ -1343,6 +1343,25 @@ function biorxiv_doi_from_link(link::AbstractString)::Union{String,Nothing}
     return m === nothing ? nothing : m.match
 end
 
+function biorxiv_api_url(start_date::AbstractString, end_date::AbstractString, cursor::Integer)::String
+    category = HTTP.escapeuri(BIORXIV_COLLECTION)
+    return "https://api.biorxiv.org/details/biorxiv/$start_date/$end_date/$cursor/json?category=$category"
+end
+
+function deduplicate_biorxiv_papers(papers::Vector{Paper})::Vector{Paper}
+    unique_papers = Dict{String, Paper}()
+    for p in papers
+        key = lowercase(something(p.doi, strip(p.title)))
+        if !haskey(unique_papers, key) || p.date < unique_papers[key].date
+            unique_papers[key] = p
+        end
+    end
+
+    final = collect(values(unique_papers))
+    sort!(final; by=p -> p.date, rev=true)
+    return final
+end
+
 function fetch_biorxiv_papers_rss()
     println("  Falling back to bioRxiv RSS feeds...")
 
@@ -1353,12 +1372,18 @@ function fetch_biorxiv_papers_rss()
 
     rss_papers = Paper[]
     for (i, url) in enumerate(urls)
-        if i == 1
-            append!(rss_papers, fetch_rss(url, "bioRxiv", :include_all))
-        else
-            append!(rss_papers, fetch_rss(url, "bioRxiv", :section_filter; section_filter=BIORXIV_COLLECTION))
+        feed_papers = try
+            if i == 1
+                fetch_rss(url, "bioRxiv", :include_all)
+            else
+                fetch_rss(url, "bioRxiv", :section_filter; section_filter=BIORXIV_COLLECTION)
+            end
+        catch e
+            println("  bioRxiv RSS backup feed failed: $e")
+            Paper[]
         end
-        !isempty(rss_papers) && break
+        append!(rss_papers, feed_papers)
+        !isempty(feed_papers) && break
     end
 
     papers = Paper[]
@@ -1376,15 +1401,7 @@ function fetch_biorxiv_papers_rss()
         ))
     end
 
-    unique_papers = Dict{String, Paper}()
-    for p in papers
-        key = something(p.doi, lowercase(p.title))
-        if !haskey(unique_papers, key) || p.date < unique_papers[key].date
-            unique_papers[key] = p
-        end
-    end
-
-    final = collect(values(unique_papers))
+    final = deduplicate_biorxiv_papers(papers)
     println("  bioRxiv RSS fallback found $(length(final)) papers.")
     return final
 end
@@ -1406,24 +1423,23 @@ function fetch_biorxiv_papers()
     cursor = 0
     max_retries = something(tryparse(Int, get(ENV, "BIORXIV_MAX_RETRIES", "3")), 3)
     pages_fetched = 0
-    api_failed_before_first_page = false
+    api_complete = false
+    api_problem = nothing
     t0 = time()
 
     while true
         if time() - t0 > BIORXIV_MAX_TOTAL_SECS
-            warning = "bioRxiv API pagination exceeded its $(BIORXIV_MAX_TOTAL_SECS)-second budget; the bioRxiv portion of this edition may be incomplete."
-            push!(FETCH_WARNINGS, warning)
-            println("  ⚠ $warning")
+            api_problem = "bioRxiv API pagination exceeded its $(BIORXIV_MAX_TOTAL_SECS)-second budget"
+            println("  bioRxiv primary API stopped: $api_problem. Trying the RSS backup.")
             break
         end
         if pages_fetched >= BIORXIV_MAX_PAGES
-            warning = "bioRxiv API pagination exceeded its $(BIORXIV_MAX_PAGES)-page budget; the bioRxiv portion of this edition may be incomplete."
-            push!(FETCH_WARNINGS, warning)
-            println("  ⚠ $warning")
+            api_problem = "bioRxiv API pagination exceeded its $(BIORXIV_MAX_PAGES)-page budget"
+            println("  bioRxiv primary API stopped: $api_problem. Trying the RSS backup.")
             break
         end
 
-        url = "https://api.biorxiv.org/details/biorxiv/$start_date/$end_date/$cursor/json"
+        url = biorxiv_api_url(start_date, end_date, cursor)
 
         data = nothing
         for attempt in 1:max_retries
@@ -1442,7 +1458,7 @@ function fetch_biorxiv_papers()
                         continue
                     else
                         println("  ❌ bioRxiv temporary errors persisted after $max_retries attempts.")
-                        api_failed_before_first_page = (pages_fetched == 0)
+                        api_problem = "bioRxiv API returned HTTP $(resp.status) after $max_retries attempts at cursor $cursor"
                         break
                     end
                 end
@@ -1456,12 +1472,15 @@ function fetch_biorxiv_papers()
                     sleep(wait_secs)
                 else
                     println("  ❌ bioRxiv failed after $max_retries attempts at cursor $cursor: $e")
-                    api_failed_before_first_page = (pages_fetched == 0)
+                    api_problem = "bioRxiv API failed after $max_retries attempts at cursor $cursor"
                 end
             end
         end
 
-        (data === nothing || !haskey(data, :collection)) && break
+        if data === nothing || !haskey(data, :collection)
+            api_problem === nothing && (api_problem = "bioRxiv API returned no paper collection at cursor $cursor")
+            break
+        end
 
         for item in data.collection
             cat = get(item, :category, "")
@@ -1502,29 +1521,39 @@ function fetch_biorxiv_papers()
         end
 
         pages_fetched += 1
-        (new_cursor >= total || count == 0) && break
+        if new_cursor >= total || count == 0
+            api_complete = true
+            break
+        end
         if new_cursor <= cursor
-            warning = "bioRxiv API cursor did not advance (cursor=$cursor, next=$new_cursor); the bioRxiv portion of this edition may be incomplete."
-            push!(FETCH_WARNINGS, warning)
-            println("  ⚠ $warning")
+            api_problem = "bioRxiv API cursor did not advance (cursor=$cursor, next=$new_cursor)"
+            println("  bioRxiv primary API stopped: $api_problem. Trying the RSS backup.")
             break
         end
         cursor = new_cursor
         sleep(0.5)
     end
 
-    # Deduplicate by DOI (keep earliest date)
-    unique_papers = Dict{String, Paper}()
-    for p in papers
-        doi = something(p.doi, p.title)
-        if !haskey(unique_papers, doi) || p.date < unique_papers[doi].date
-            unique_papers[doi] = p
+    final = deduplicate_biorxiv_papers(papers)
+    if !api_complete || isempty(final)
+        backup = try
+            fetch_biorxiv_papers_rss()
+        catch e
+            println("  bioRxiv RSS backup failed: $e")
+            Paper[]
         end
-    end
 
-    final = collect(values(unique_papers))
-    if api_failed_before_first_page && isempty(final)
-        final = fetch_biorxiv_papers_rss()
+        if !isempty(backup)
+            final = deduplicate_biorxiv_papers(vcat(final, backup))
+            if !api_complete
+                println("  ✓ bioRxiv RSS backup recovered the incomplete API scrape; no manual intervention is needed.")
+            end
+        elseif !api_complete
+            reason = something(api_problem, "bioRxiv API did not complete")
+            warning = "$reason, and the RSS backup returned 0 papers; the bioRxiv portion of this edition may be incomplete."
+            push!(FETCH_WARNINGS, warning)
+            println("  ⚠ $warning")
+        end
     end
 
     println("  Found $(length(final)) bioRxiv papers (biophysics).")
@@ -2040,5 +2069,7 @@ function fetch_and_display_papers()
 end
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
-fetch_and_display_papers()
-try; HTTP.Connections.closeall() catch; end; # additional cleanup just in case
+if abspath(PROGRAM_FILE) == @__FILE__
+    fetch_and_display_papers()
+    try; HTTP.Connections.closeall() catch; end; # additional cleanup just in case
+end
