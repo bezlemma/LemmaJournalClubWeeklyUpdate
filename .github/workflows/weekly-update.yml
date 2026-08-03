@@ -78,6 +78,30 @@ jobs:
             -H "Content-Type: application/json" \
             --data-binary @resend-warning.json
 
+      - name: Download anonymous reader voting feedback
+        env:
+          NEWSLETTER_API_URL: ${{ secrets.NEWSLETTER_API_URL }}
+          NEWSLETTER_ADMIN_TOKEN: ${{ secrets.NEWSLETTER_ADMIN_TOKEN }}
+        run: |
+          mkdir -p TrainingData
+          if [ -z "$NEWSLETTER_API_URL" ] || [ -z "$NEWSLETTER_ADMIN_TOKEN" ]; then
+            echo '{"papers":[]}' > TrainingData/reader_feedback.json
+            echo "Reader feedback is unavailable because the newsletter API is not configured."
+            exit 0
+          fi
+
+          if ! curl --fail-with-body --silent --show-error \
+            "$NEWSLETTER_API_URL/admin/feedback-export" \
+            -H "Authorization: Bearer $NEWSLETTER_ADMIN_TOKEN" \
+            -o TrainingData/reader_feedback.json; then
+            echo '{"papers":[]}' > TrainingData/reader_feedback.json
+            echo "Reader feedback could not be downloaded; continuing without it."
+          fi
+          if ! jq -e '.papers | type == "array"' TrainingData/reader_feedback.json > /dev/null; then
+            echo '{"papers":[]}' > TrainingData/reader_feedback.json
+            echo "Reader feedback was malformed; continuing without it."
+          fi
+
       - name: Filter and summarize papers
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -94,6 +118,7 @@ jobs:
             papers_final.md
             paper_scores.json
             fetch_warnings.json
+            TrainingData/reader_feedback.json
             TrainingData/filter_decisions_*.jsonl
 
       - name: Email the edition to active subscribers

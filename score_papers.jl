@@ -2,7 +2,10 @@ module PaperScorer
 
 using JSON3
 
-export load_training_docs, paper_key, score_map_from_files, score_papers_from_files
+export load_training_docs, load_reader_feedback_docs, paper_key, score_map_from_files, score_papers_from_files
+
+const READER_FEEDBACK_WEIGHT_PER_NET_VOTE = 25.0
+const MAX_READER_FEEDBACK_NET_VOTES = 5
 
 const SECTION_WEIGHTS = Dict(
     "featured" => 2.0,
@@ -149,6 +152,44 @@ function load_rejected_docs(decisions_dir::AbstractString="TrainingData")::Vecto
     return docs
 end
 
+function load_reader_feedback_docs(feedback_file::AbstractString="TrainingData/reader_feedback.json")
+    positive = TrainingDoc[]
+    negative = TrainingDoc[]
+    !isfile(feedback_file) && return positive, negative
+
+    payload = try
+        JSON3.read(read(feedback_file, String))
+    catch
+        return positive, negative
+    end
+
+    for item in get(payload, :papers, [])
+        upvotes = try Int(get(item, :upvotes, 0)) catch; 0 end
+        downvotes = try Int(get(item, :downvotes, 0)) catch; 0 end
+        net_votes = upvotes - downvotes
+        net_votes == 0 && continue
+
+        title = string(get(item, :title, ""))
+        summary = string(get(item, :summary, ""))
+        source = string(get(item, :source, ""))
+        text = strip_markdown(join([title, summary, source], " "))
+        isempty(text) && continue
+
+        vote_weight = min(abs(net_votes), MAX_READER_FEEDBACK_NET_VOTES)
+        weight = READER_FEEDBACK_WEIGHT_PER_NET_VOTE * vote_weight
+        doc = TrainingDoc(
+            title,
+            string(get(item, :link, "")),
+            net_votes > 0 ? "reader-upvote" : "reader-downvote",
+            text,
+            weight,
+            feedback_file,
+        )
+        push!(net_votes > 0 ? positive : negative, doc)
+    end
+    return positive, negative
+end
+
 function tokens(text::AbstractString)::Vector{String}
     lowered = lowercase(strip_markdown(text))
     cleaned = replace(lowered, r"[^a-z0-9]+" => " ")
@@ -277,11 +318,17 @@ end
 function score_map_from_files(input_file::AbstractString="papers.json",
                               previous_weeks_dir::AbstractString="PreviousWeeks";
                               decisions_dir::AbstractString="TrainingData",
+                              feedback_file::AbstractString="TrainingData/reader_feedback.json",
                               output_file::Union{AbstractString, Nothing}="paper_scores.json")
     papers = JSON3.read(read(input_file, String))
     training_docs = load_training_docs(previous_weeks_dir)
     negative_docs = load_rejected_docs(decisions_dir)
-    scores = score_papers(training_docs, papers; negative_docs=negative_docs)
+    feedback_positive, feedback_negative = load_reader_feedback_docs(feedback_file)
+    scores = score_papers(
+        vcat(training_docs, feedback_positive),
+        papers;
+        negative_docs=vcat(negative_docs, feedback_negative),
+    )
     score_map = Dict{String, Float64}()
     rows = Dict{String, Any}[]
 
