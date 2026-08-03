@@ -22,6 +22,8 @@ const BIORXIV_MAX_TOTAL_SECS = something(tryparse(Float64, get(ENV, "BIORXIV_MAX
 const BIORXIV_MAX_PAGES = something(tryparse(Int, get(ENV, "BIORXIV_MAX_PAGES", "100")), 100)
 const API_READ_TIMEOUT_SECS = something(tryparse(Int, get(ENV, "API_READ_TIMEOUT_SECS", "30")), 30)
 const MIN_ABSTRACT_CHARS = something(tryparse(Int, get(ENV, "MIN_ABSTRACT_CHARS", "80")), 80)
+const FETCH_WARNINGS_FILE = "fetch_warnings.json"
+const FETCH_WARNINGS = String[]
 
 # Journal Feed Configuration
 # group: :include_all / :section_filter / :green_filter
@@ -56,7 +58,9 @@ const JOURNAL_FEEDS = [
 
     (url="https://www.cell.com/cell/current.rss", name="Cell", group=:green_filter, section_filter=nothing),
     (url="https://www.cell.com/iscience/inpress.rss", name="iScience", group=:green_filter, section_filter=nothing),
-    (url="https://elifesciences.org/rss/recent.xml", name="eLife", group=:green_filter, section_filter=nothing),
+    # eLife's public site RSS endpoint now rejects automated requests. Their
+    # official Observer service exposes the same publication data as RSS.
+    (url="https://prod--observer.elifesciences.org/report/latest-articles-by-subject.rss?subject=physics-living-systems", name="eLife", group=:include_all, section_filter=nothing),
     (url="https://www.molbiolcell.org/action/showFeed?type=etoc&feed=rss&jc=mboc", name="MBoC", group=:green_filter, section_filter=nothing),
     
     # Company of Biologists Feeds:
@@ -1407,11 +1411,15 @@ function fetch_biorxiv_papers()
 
     while true
         if time() - t0 > BIORXIV_MAX_TOTAL_SECS
-            println("  bioRxiv fetch time budget exceeded ($(BIORXIV_MAX_TOTAL_SECS)s). Stopping API pagination.")
+            warning = "bioRxiv API pagination exceeded its $(BIORXIV_MAX_TOTAL_SECS)-second budget; the bioRxiv portion of this edition may be incomplete."
+            push!(FETCH_WARNINGS, warning)
+            println("  ⚠ $warning")
             break
         end
         if pages_fetched >= BIORXIV_MAX_PAGES
-            println("  bioRxiv page budget exceeded ($(BIORXIV_MAX_PAGES)). Stopping API pagination.")
+            warning = "bioRxiv API pagination exceeded its $(BIORXIV_MAX_PAGES)-page budget; the bioRxiv portion of this edition may be incomplete."
+            push!(FETCH_WARNINGS, warning)
+            println("  ⚠ $warning")
             break
         end
 
@@ -1496,7 +1504,9 @@ function fetch_biorxiv_papers()
         pages_fetched += 1
         (new_cursor >= total || count == 0) && break
         if new_cursor <= cursor
-            println("  bioRxiv cursor did not advance (cursor=$cursor next=$new_cursor). Breaking to avoid hang.")
+            warning = "bioRxiv API cursor did not advance (cursor=$cursor, next=$new_cursor); the bioRxiv portion of this edition may be incomplete."
+            push!(FETCH_WARNINGS, warning)
+            println("  ⚠ $warning")
             break
         end
         cursor = new_cursor
@@ -1814,6 +1824,8 @@ end
 # ─── Main orchestrator ───────────────────────────────────────────────────────
 
 function fetch_and_display_papers()
+    empty!(FETCH_WARNINGS)
+    isfile(FETCH_WARNINGS_FILE) && rm(FETCH_WARNINGS_FILE)
     println("Fetching papers from $(Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")) to Now...")
     FETCH_CLEAN && println("  FETCH_CLEAN=1: ignoring any checkpoint.")
 
@@ -2011,6 +2023,13 @@ function fetch_and_display_papers()
 
     open("papers.json", "w") do f
         JSON3.pretty(f, json_list)
+    end
+
+    if !isempty(FETCH_WARNINGS)
+        open(FETCH_WARNINGS_FILE, "w") do f
+            JSON3.pretty(f, FETCH_WARNINGS)
+        end
+        println("  Saved $(length(FETCH_WARNINGS)) fetch warning(s) to $FETCH_WARNINGS_FILE.")
     end
 
     println("\nDone. Found $total_count total unique papers and saved to json.")

@@ -1,0 +1,166 @@
+name: Biophysics weekly update
+
+on:
+  schedule:
+    # 09:00 Eastern during daylight saving time; 08:00 during standard time.
+    - cron: "0 13 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: biophysics-weekly-update
+  cancel-in-progress: false
+
+jobs:
+  build-edition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out the paper pipeline
+        uses: actions/checkout@v4
+
+      - name: Install Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: "1.12.6"
+
+      - name: Cache Julia packages
+        uses: julia-actions/cache@v2
+
+      - name: Install dependencies
+        run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
+
+      - name: Check required configuration
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "GEMINI_API_KEY is not configured."
+            exit 1
+          fi
+
+      - name: Fetch current papers
+        env:
+          FETCH_CLEAN: "1"
+        run: julia --project=. fetch_papers.jl
+
+      - name: Email the owner about a partial scrape
+        if: ${{ success() }}
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          WARNING_EMAIL: ${{ secrets.WARNING_EMAIL }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ ! -s fetch_warnings.json ]; then
+            exit 0
+          fi
+          if [ -z "$RESEND_API_KEY" ] || [ -z "$WARNING_EMAIL" ]; then
+            echo "Fetch warnings were recorded, but RESEND_API_KEY or WARNING_EMAIL is not configured."
+            cat fetch_warnings.json
+            exit 0
+          fi
+
+          FROM_ADDRESS="${RESEND_FROM:-Biophysics Weekly <onboarding@resend.dev>}"
+          WARNINGS="$(jq -r '.[] | "• " + .' fetch_warnings.json)"
+          jq -n \
+            --arg from "$FROM_ADDRESS" \
+            --arg to "$WARNING_EMAIL" \
+            --arg subject "Biophysics Weekly scrape warning" \
+            --arg html "<h1>The weekly run completed with a scrape warning</h1><pre>$WARNINGS</pre><p>The edition was generated, but the affected source may be incomplete.</p><p><a href=\"$RUN_URL\">Inspect the GitHub run or manually re-run the workflow</a>.</p>" \
+            '{from:$from,to:[$to],subject:$subject,html:$html}' > resend-warning.json
+
+          curl --fail-with-body https://api.resend.com/emails \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            --data-binary @resend-warning.json
+
+      - name: Filter and summarize papers
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: julia --project=. filter_papers.jl
+
+      - name: Save the generated edition
+        uses: actions/upload-artifact@v4
+        with:
+          name: biophysics-weekly-${{ github.run_number }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            papers.json
+            papers_final.md
+            paper_scores.json
+            fetch_warnings.json
+            TrainingData/filter_decisions_*.jsonl
+
+      - name: Email the edition to active subscribers
+        env:
+          NEWSLETTER_API_URL: ${{ secrets.NEWSLETTER_API_URL }}
+          NEWSLETTER_ADMIN_TOKEN: ${{ secrets.NEWSLETTER_ADMIN_TOKEN }}
+        run: |
+          if [ -z "$NEWSLETTER_API_URL" ] || [ -z "$NEWSLETTER_ADMIN_TOKEN" ]; then
+            echo "Newsletter delivery is not active: NEWSLETTER_API_URL or NEWSLETTER_ADMIN_TOKEN is missing."
+            exit 0
+          fi
+
+          DECISION_FILE="$(ls -t TrainingData/filter_decisions_*.jsonl | head -n 1)"
+          EDITION_ID="$(head -n 1 "$DECISION_FILE" | jq -r '.week')"
+          SUBJECT="$(date -u -d "$EDITION_ID" '+Biophysics Weekly Update — Week of %B %-d, %Y')"
+          jq -n \
+            --arg editionId "$EDITION_ID" \
+            --arg subject "$SUBJECT" \
+            --rawfile markdown papers_final.md \
+            '{editionId:$editionId,subject:$subject,markdown:$markdown}' > newsletter-payload.json
+
+          curl --fail-with-body "$NEWSLETTER_API_URL/admin/send-edition" \
+            -H "Authorization: Bearer $NEWSLETTER_ADMIN_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data-binary @newsletter-payload.json
+
+      - name: Save this edition for future learning
+        run: |
+          DECISION_FILE="$(ls -t TrainingData/filter_decisions_*.jsonl | head -n 1)"
+          EDITION_ID="$(head -n 1 "$DECISION_FILE" | jq -r '.week')"
+          ARCHIVE_FILE="$(date -u -d "$EDITION_ID" '+PreviousWeeks/%b%d_%Y.qmd')"
+          PAPER_DATA_FILE="${ARCHIVE_FILE%.qmd}.papers.json"
+          cp papers_final.md "$ARCHIVE_FILE"
+          cp papers.json "$PAPER_DATA_FILE"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DECISION_FILE" "$ARCHIVE_FILE" "$PAPER_DATA_FILE"
+          if git diff --cached --quiet; then
+            echo "No new learning data to save."
+            exit 0
+          fi
+          git commit -m "Save Biophysics Weekly learning data for $EDITION_ID"
+          git push
+
+      - name: Email the owner if the weekly run failed
+        if: ${{ failure() }}
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          WARNING_EMAIL: ${{ secrets.WARNING_EMAIL }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$RESEND_API_KEY" ] || [ -z "$WARNING_EMAIL" ]; then
+            echo "Warning email not sent: RESEND_API_KEY or WARNING_EMAIL is not configured."
+            exit 0
+          fi
+
+          FROM_ADDRESS="${RESEND_FROM:-Biophysics Weekly <onboarding@resend.dev>}"
+          jq -n \
+            --arg from "$FROM_ADDRESS" \
+            --arg to "$WARNING_EMAIL" \
+            --arg subject "Biophysics Weekly scrape failed" \
+            --arg html "<h1>The weekly paper run failed</h1><p>At least one fetch, filter, delivery, or publishing step did not complete. Delivery is idempotent, so after inspecting the failure it is safe to re-run the workflow; subscribers who already received the edition will be skipped.</p><p><a href=\"$RUN_URL\">Open the GitHub run, inspect the failure, and re-run the workflow</a>.</p>" \
+            '{from:$from,to:[$to],subject:$subject,html:$html}' > resend-warning.json
+
+          curl --fail-with-body https://api.resend.com/emails \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            --data-binary @resend-warning.json
