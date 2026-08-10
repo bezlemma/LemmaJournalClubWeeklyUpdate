@@ -5,6 +5,12 @@ on:
     # 09:00 Eastern during daylight saving time; 08:00 during standard time.
     - cron: "0 13 * * 1"
   workflow_dispatch:
+    inputs:
+      send_correction:
+        description: "Send the frozen current edition again as a corrected delivery"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -163,12 +169,23 @@ jobs:
 
           EDITION_ID="${{ steps.edition.outputs.edition_id }}"
           SUBJECT="$(date -u -d "$EDITION_ID" '+Biophysics Weekly Update — Week of %B %-d, %Y')"
+          DELIVERY_SUBJECT="$SUBJECT"
+          DELIVERY_ID="$EDITION_ID"
+          REPLACE_FROZEN="false"
+          if [ "${{ inputs.send_correction || false }}" = "true" ]; then
+            DELIVERY_ID="${EDITION_ID}-correction-${{ github.run_number }}"
+            DELIVERY_SUBJECT="Correction — $SUBJECT"
+            REPLACE_FROZEN="true"
+          fi
           jq -n \
             --arg editionId "$EDITION_ID" \
+            --arg deliveryId "$DELIVERY_ID" \
             --arg subject "$SUBJECT" \
+            --arg deliverySubject "$DELIVERY_SUBJECT" \
+            --argjson replaceFrozenEdition "$REPLACE_FROZEN" \
             --rawfile markdown papers_final.md \
             --slurpfile paperMetadata papers.json \
-            '{editionId:$editionId,subject:$subject,markdown:$markdown,paperMetadata:$paperMetadata[0]}' > newsletter-payload.json
+            '{editionId:$editionId,deliveryId:$deliveryId,replaceFrozenEdition:$replaceFrozenEdition,subject:$subject,deliverySubject:$deliverySubject,markdown:$markdown,paperMetadata:$paperMetadata[0]}' > newsletter-payload.json
 
           curl --fail-with-body "$NEWSLETTER_API_URL/admin/send-edition" \
             -H "Authorization: Bearer $NEWSLETTER_ADMIN_TOKEN" \
