@@ -16,9 +16,23 @@ const GEMINI_MAX_RETRIES = something(tryparse(Int, get(ENV, "GEMINI_MAX_RETRIES"
 const GEMINI_READ_TIMEOUT = something(tryparse(Int, get(ENV, "GEMINI_READ_TIMEOUT", "30")), 30)
 const GEMINI_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_WORKERS", "8")), 8)
 const GEMINI_REPAIR_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_REPAIR_WORKERS", "4")), 4)
+const GEMINI_MAX_RUN_COST_USD = something(tryparse(Float64, get(ENV, "GEMINI_MAX_RUN_COST_USD", "5.0")), 5.0)
+const GEMINI_MAX_REQUESTS = something(tryparse(Int, get(ENV, "GEMINI_MAX_REQUESTS", "400")), 400)
+# Paid-tier standard pricing checked 2026-08-10:
+# https://ai.google.dev/gemini-api/docs/pricing#gemini-3-flash-preview
+const GEMINI_INPUT_USD_PER_MILLION = 0.50
+const GEMINI_OUTPUT_USD_PER_MILLION = 3.00
+const GEMINI_COST_SAFETY_MULTIPLIER = 2.0
+const GEMINI_MAX_OUTPUT_TOKENS = 256
+const GEMINI_RESERVED_OUTPUT_TOKENS = 1024
 const MAX_AI_FAILURE_FRACTION = something(tryparse(Float64, get(ENV, "MAX_AI_FAILURE_FRACTION", "0.05")), 0.05)
 const MAX_AI_FAILURE_COUNT = something(tryparse(Int, get(ENV, "MAX_AI_FAILURE_COUNT", "5")), 5)
 const SUMMARY_FALLBACK_COUNT = Threads.Atomic{Int}(0)
+const GEMINI_BUDGET_LOCK = ReentrantLock()
+const GEMINI_RESERVED_COST_USD = Ref(0.0)
+const GEMINI_REPORTED_COST_USD = Ref(0.0)
+const GEMINI_REQUEST_COUNT = Ref(0)
+const GEMINI_BUDGET_EXHAUSTED = Ref(false)
 
 const FEATURED_SOURCE = "CrossRef/Featured"
 
@@ -168,6 +182,50 @@ end
 
 # ─── Gemini API calls ───────────────────────────────────────────────────────
 
+"""Conservatively reserve budget before a request so concurrent workers cannot overshoot."""
+function reserve_gemini_request!(prompt::String)::Bool
+    # UTF-8 bytes are a safe upper bound for text tokens. Output reservation is
+    # four times the API response cap, then all prices receive a 2x safety margin.
+    input_token_upper_bound = max(1, ncodeunits(prompt))
+    reservation = GEMINI_COST_SAFETY_MULTIPLIER * (
+        input_token_upper_bound * GEMINI_INPUT_USD_PER_MILLION / 1_000_000 +
+        GEMINI_RESERVED_OUTPUT_TOKENS * GEMINI_OUTPUT_USD_PER_MILLION / 1_000_000
+    )
+
+    lock(GEMINI_BUDGET_LOCK) do
+        over_cost = GEMINI_RESERVED_COST_USD[] + reservation > GEMINI_MAX_RUN_COST_USD
+        over_requests = GEMINI_REQUEST_COUNT[] >= GEMINI_MAX_REQUESTS
+        if over_cost || over_requests
+            if !GEMINI_BUDGET_EXHAUSTED[]
+                reason = over_cost ? "cost reservation" : "request count"
+                println("  Gemini budget guard stopped further calls at $reason: " *
+                        "\$$(round(GEMINI_RESERVED_COST_USD[], digits=3)) reserved across " *
+                        "$(GEMINI_REQUEST_COUNT[]) requests (limits: \$$GEMINI_MAX_RUN_COST_USD, " *
+                        "$GEMINI_MAX_REQUESTS requests).")
+            end
+            GEMINI_BUDGET_EXHAUSTED[] = true
+            return false
+        end
+        GEMINI_RESERVED_COST_USD[] += reservation
+        GEMINI_REQUEST_COUNT[] += 1
+        return true
+    end
+end
+
+"""Record the provider-reported token cost for diagnostics after a 200 response."""
+function record_gemini_usage!(data)
+    usage = get(data, :usageMetadata, nothing)
+    usage === nothing && return
+    prompt_tokens = try Int(get(usage, :promptTokenCount, 0)) catch; 0 end
+    candidate_tokens = try Int(get(usage, :candidatesTokenCount, 0)) catch; 0 end
+    thought_tokens = try Int(get(usage, :thoughtsTokenCount, 0)) catch; 0 end
+    cost = prompt_tokens * GEMINI_INPUT_USD_PER_MILLION / 1_000_000 +
+           (candidate_tokens + thought_tokens) * GEMINI_OUTPUT_USD_PER_MILLION / 1_000_000
+    lock(GEMINI_BUDGET_LOCK) do
+        GEMINI_REPORTED_COST_USD[] += cost
+    end
+end
+
 """Call Gemini API with a prompt and return the text response."""
 function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
     isempty(GEMINI_API_KEY) && return ""
@@ -176,10 +234,14 @@ function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
         "contents" => [Dict(
             "parts" => [Dict("text" => prompt)]
         )],
-        "generationConfig" => Dict("temperature" => 0.0),
+        "generationConfig" => Dict(
+            "temperature" => 0.0,
+            "maxOutputTokens" => GEMINI_MAX_OUTPUT_TOKENS,
+        ),
     )
 
     for attempt in 1:max_retries
+        reserve_gemini_request!(prompt) || return ""
         try
             resp = HTTP.post(GEMINI_URL_BASE,
                 ["Content-Type" => "application/json", "x-goog-api-key" => GEMINI_API_KEY],
@@ -195,6 +257,7 @@ function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
 
             if resp.status == 200
                 data = JSON3.read(String(resp.body))
+                record_gemini_usage!(data)
                 candidates = get(data, :candidates, [])
                 if !isempty(candidates)
                     content = get(first(candidates), :content, Dict())
@@ -534,6 +597,9 @@ function main()
     println("AI health: $classification_failures/$classification_attempts classification failures, " *
             "$summary_failures/$summary_attempts summary failures, $summary_fallbacks extractive summary fallbacks, " *
             "$processing_failures processing failures.")
+    println("Gemini cost guard: \$$(round(GEMINI_REPORTED_COST_USD[], digits=4)) provider-reported, " *
+            "\$$(round(GEMINI_RESERVED_COST_USD[], digits=3)) conservatively reserved across " *
+            "$(GEMINI_REQUEST_COUNT[]) requests (caps: \$$GEMINI_MAX_RUN_COST_USD and $GEMINI_MAX_REQUESTS requests).")
     if classification_failures > allowed_failures(classification_attempts) ||
        summary_failures > allowed_failures(summary_attempts) || processing_failures > 0
         error("AI health gate failed; refusing to publish or email an unreliable edition.")
