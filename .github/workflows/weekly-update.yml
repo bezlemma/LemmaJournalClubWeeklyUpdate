@@ -189,15 +189,17 @@ jobs:
           fi
 
           FROM_ADDRESS="${RESEND_FROM:-Biophysics Weekly <onboarding@resend.dev>}"
+          SUBJECT="Biophysics Weekly run failed"
           DETAILS="At least one fetch, filter, delivery, or publishing step did not complete."
           if [ -s fetch_warnings.json ]; then
             WARNINGS="$(jq -r '.[] | "• " + .' fetch_warnings.json)"
+            SUBJECT="Biophysics Weekly scrape incomplete"
             DETAILS="The scrape remained incomplete after automatic retries:<br><pre>$WARNINGS</pre>"
           fi
           jq -n \
             --arg from "$FROM_ADDRESS" \
             --arg to "$WARNING_EMAIL" \
-            --arg subject "Biophysics Weekly scrape failed" \
+            --arg subject "$SUBJECT" \
             --arg html "<h1>The weekly paper run needs attention</h1><p>$DETAILS</p><p>It is safe to re-run the workflow. An unfinished edition will be rebuilt; a previously frozen edition will be reused exactly, and subscribers who already received it will be skipped.</p><p><a href=\"$RUN_URL\">Open the GitHub run, inspect the failure, and re-run the workflow</a>.</p>" \
             '{from:$from,to:[$to],subject:$subject,html:$html}' > resend-warning.json
 

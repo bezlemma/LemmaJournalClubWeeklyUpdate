@@ -12,6 +12,10 @@ const DECISIONS_DIR = "TrainingData"
 const READER_FEEDBACK_FILE = joinpath(DECISIONS_DIR, "reader_feedback.json")
 const GEMINI_MODEL = "gemini-3-flash-preview"
 const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
+const GEMINI_MAX_RETRIES = something(tryparse(Int, get(ENV, "GEMINI_MAX_RETRIES", "4")), 4)
+const GEMINI_READ_TIMEOUT = something(tryparse(Int, get(ENV, "GEMINI_READ_TIMEOUT", "45")), 45)
+const GEMINI_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_WORKERS", "5")), 5)
+const GEMINI_REPAIR_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_REPAIR_WORKERS", "2")), 2)
 const MAX_AI_FAILURE_FRACTION = something(tryparse(Float64, get(ENV, "MAX_AI_FAILURE_FRACTION", "0.05")), 0.05)
 const MAX_AI_FAILURE_COUNT = something(tryparse(Int, get(ENV, "MAX_AI_FAILURE_COUNT", "5")), 5)
 
@@ -164,7 +168,7 @@ end
 # ─── Gemini API calls ───────────────────────────────────────────────────────
 
 """Call Gemini API with a prompt and return the text response."""
-function gemini_generate(prompt::String; max_retries=3)::String
+function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
     isempty(GEMINI_API_KEY) && return ""
 
     body = Dict(
@@ -179,12 +183,12 @@ function gemini_generate(prompt::String; max_retries=3)::String
             resp = HTTP.post(GEMINI_URL_BASE,
                 ["Content-Type" => "application/json", "x-goog-api-key" => GEMINI_API_KEY],
                 JSON3.write(body);
-                readtimeout=30,
+                readtimeout=GEMINI_READ_TIMEOUT,
                 status_exception=false)
 
-            if resp.status == 429
-                wait_secs = 5 * attempt
-                sleep(wait_secs)
+            if resp.status == 408 || resp.status == 429 || 500 <= resp.status < 600
+                attempt == max_retries && (println("  Gemini API request failed after $max_retries attempts: HTTP $(resp.status)"); return "")
+                sleep(min(30, 3 * 2^(attempt - 1)))
                 continue
             end
 
@@ -195,17 +199,19 @@ function gemini_generate(prompt::String; max_retries=3)::String
                     content = get(first(candidates), :content, Dict())
                     parts = get(content, :parts, [])
                     if !isempty(parts)
-                        return strip(string(get(first(parts), :text, "")))
+                        text = strip(string(get(first(parts), :text, "")))
+                        !isempty(text) && return text
                     end
                 end
-                return ""
+                attempt == max_retries && (println("  Gemini API returned no text after $max_retries attempts."); return "")
+                sleep(min(30, 3 * 2^(attempt - 1)))
             else
-                attempt == max_retries && return ""
-                sleep(2 * attempt)
+                println("  Gemini API request failed with non-retryable HTTP $(resp.status).")
+                return ""
             end
         catch e
             attempt == max_retries && (println("  Gemini API request failed after $max_retries attempts: $(typeof(e))"); return "")
-            sleep(2 * attempt)
+            sleep(min(30, 3 * 2^(attempt - 1)))
         end
     end
     return ""
@@ -376,6 +382,19 @@ function process_one_paper(paper)
     end
 end
 
+"""Retry only incomplete AI work after the high-concurrency first pass has drained."""
+function repair_incomplete_ai_result(result)
+    paper, summary, category, reason = result
+    if startswith(reason, "AI ") && reason ∉ ("AI Approved", "AI Rejected")
+        return process_one_paper(paper)
+    elseif category !== nothing && summary == "Summary unavailable."
+        title = string(get(paper, :title, ""))
+        abstract_text = string(get(paper, :abstract, ""))
+        return (paper, summarize_paper(title, abstract_text), category, reason)
+    end
+    return result
+end
+
 # ─── Main ────────────────────────────────────────────────────────────────────
 
 function main()
@@ -404,7 +423,9 @@ function main()
     regular_papers = []
     total = length(papers)
 
-    println("Processing $total papers with parallel execution (10 workers)...")
+    workers = max(1, GEMINI_WORKERS)
+    repair_workers = max(1, GEMINI_REPAIR_WORKERS)
+    println("Processing $total papers with parallel execution ($workers workers)...")
 
     # Process papers with async tasks (batched for rate limiting)
     results = Vector{Any}(undef, total)
@@ -412,7 +433,7 @@ function main()
     print_lock = ReentrantLock()
 
     # Use asyncmap with limited concurrency
-    sem = Base.Semaphore(10)
+    sem = Base.Semaphore(workers)
     @sync begin
         for (i, paper) in enumerate(papers)
             @async begin
@@ -444,6 +465,31 @@ function main()
                     end
                 finally
                     Base.release(sem)
+                end
+            end
+        end
+    end
+
+    retry_indices = Int[]
+    for (i, result) in enumerate(results)
+        isassigned(results, i) || continue
+        _, summary, category, reason = result
+        if (startswith(reason, "AI ") && reason ∉ ("AI Approved", "AI Rejected")) ||
+           (category !== nothing && summary == "Summary unavailable.")
+            push!(retry_indices, i)
+        end
+    end
+
+    if !isempty(retry_indices)
+        println("Retrying $(length(retry_indices)) incomplete AI results with $repair_workers low-concurrency workers...")
+        repair_sem = Base.Semaphore(repair_workers)
+        @sync for i in retry_indices
+            @async begin
+                Base.acquire(repair_sem)
+                try
+                    results[i] = repair_incomplete_ai_result(results[i])
+                finally
+                    Base.release(repair_sem)
                 end
             end
         end
