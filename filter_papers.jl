@@ -12,12 +12,13 @@ const DECISIONS_DIR = "TrainingData"
 const READER_FEEDBACK_FILE = joinpath(DECISIONS_DIR, "reader_feedback.json")
 const GEMINI_MODEL = "gemini-3-flash-preview"
 const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
-const GEMINI_MAX_RETRIES = something(tryparse(Int, get(ENV, "GEMINI_MAX_RETRIES", "4")), 4)
-const GEMINI_READ_TIMEOUT = something(tryparse(Int, get(ENV, "GEMINI_READ_TIMEOUT", "45")), 45)
-const GEMINI_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_WORKERS", "5")), 5)
-const GEMINI_REPAIR_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_REPAIR_WORKERS", "2")), 2)
+const GEMINI_MAX_RETRIES = something(tryparse(Int, get(ENV, "GEMINI_MAX_RETRIES", "3")), 3)
+const GEMINI_READ_TIMEOUT = something(tryparse(Int, get(ENV, "GEMINI_READ_TIMEOUT", "30")), 30)
+const GEMINI_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_WORKERS", "8")), 8)
+const GEMINI_REPAIR_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_REPAIR_WORKERS", "4")), 4)
 const MAX_AI_FAILURE_FRACTION = something(tryparse(Float64, get(ENV, "MAX_AI_FAILURE_FRACTION", "0.05")), 0.05)
 const MAX_AI_FAILURE_COUNT = something(tryparse(Int, get(ENV, "MAX_AI_FAILURE_COUNT", "5")), 5)
+const SUMMARY_FALLBACK_COUNT = Threads.Atomic{Int}(0)
 
 const FEATURED_SOURCE = "CrossRef/Featured"
 
@@ -311,7 +312,18 @@ Reply with a single word: TRUE or FALSE.
     end
 end
 
-"""Summarize paper using """
+"""Use the first substantive sentence of the real abstract when Gemini is unavailable."""
+function extractive_summary(abstract_text::String)::String
+    clean = replace(strip(abstract_text), r"\s+" => " ")
+    isempty(clean) && return "Summary unavailable."
+    sentence = match(r"^(.{40,600}?[.!?])(?:\s|$)", clean)
+    sentence !== nothing && return strip(sentence.captures[1])
+    limit = min(length(clean), 360)
+    excerpt = first(clean, limit)
+    return limit < length(clean) ? string(strip(excerpt), "…") : strip(excerpt)
+end
+
+"""Summarize a paper, with a logged extractive fallback from its abstract."""
 function summarize_paper(title::String, abstract_text::String)::String
     prompt = """
 Provide a one sentence summary of the following paper.
@@ -324,10 +336,17 @@ Abstract: $abstract_text
 
     try
         result = gemini_generate(prompt)
-        return isempty(result) ? "Summary unavailable." : result
+        if isempty(result)
+            fallback = extractive_summary(abstract_text)
+            fallback != "Summary unavailable." && Threads.atomic_add!(SUMMARY_FALLBACK_COUNT, 1)
+            return fallback
+        end
+        return result
     catch e
         println("  Error summarizing '$(first(title, 30))...': $e")
-        return "Summary unavailable."
+        fallback = extractive_summary(abstract_text)
+        fallback != "Summary unavailable." && Threads.atomic_add!(SUMMARY_FALLBACK_COUNT, 1)
+        return fallback
     end
 end
 
@@ -382,15 +401,11 @@ function process_one_paper(paper)
     end
 end
 
-"""Retry only incomplete AI work after the high-concurrency first pass has drained."""
+"""Retry only an incomplete classification after the first pass has drained."""
 function repair_incomplete_ai_result(result)
-    paper, summary, category, reason = result
+    paper, _, _, reason = result
     if startswith(reason, "AI ") && reason ∉ ("AI Approved", "AI Rejected")
         return process_one_paper(paper)
-    elseif category !== nothing && summary == "Summary unavailable."
-        title = string(get(paper, :title, ""))
-        abstract_text = string(get(paper, :abstract, ""))
-        return (paper, summarize_paper(title, abstract_text), category, reason)
     end
     return result
 end
@@ -473,15 +488,14 @@ function main()
     retry_indices = Int[]
     for (i, result) in enumerate(results)
         isassigned(results, i) || continue
-        _, summary, category, reason = result
-        if (startswith(reason, "AI ") && reason ∉ ("AI Approved", "AI Rejected")) ||
-           (category !== nothing && summary == "Summary unavailable.")
+        _, _, _, reason = result
+        if startswith(reason, "AI ") && reason ∉ ("AI Approved", "AI Rejected")
             push!(retry_indices, i)
         end
     end
 
     if !isempty(retry_indices)
-        println("Retrying $(length(retry_indices)) incomplete AI results with $repair_workers low-concurrency workers...")
+        println("Retrying $(length(retry_indices)) incomplete classifications with $repair_workers low-concurrency workers...")
         repair_sem = Base.Semaphore(repair_workers)
         @sync for i in retry_indices
             @async begin
@@ -516,8 +530,10 @@ function main()
     end
 
     allowed_failures(total) = total == 0 ? 0 : min(MAX_AI_FAILURE_COUNT, max(1, floor(Int, total * MAX_AI_FAILURE_FRACTION)))
+    summary_fallbacks = SUMMARY_FALLBACK_COUNT[]
     println("AI health: $classification_failures/$classification_attempts classification failures, " *
-            "$summary_failures/$summary_attempts summary failures, $processing_failures processing failures.")
+            "$summary_failures/$summary_attempts summary failures, $summary_fallbacks extractive summary fallbacks, " *
+            "$processing_failures processing failures.")
     if classification_failures > allowed_failures(classification_attempts) ||
        summary_failures > allowed_failures(summary_attempts) || processing_failures > 0
         error("AI health gate failed; refusing to publish or email an unreliable edition.")
