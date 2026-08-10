@@ -16,6 +16,14 @@ manual work. The public archive and voting interface live in the separate
 6. commits the new edition to `PreviousWeeks` before delivery; and
 7. asks the Worker to email every active subscriber.
 
+The fetch stage enforces a final seven-day publication window after all sources
+are merged. For bioRxiv, this means the original posting date encoded in the DOI,
+not the date of a later revision. Papers selected for an earlier email are also
+removed before the AI stage so they cannot be sent twice.
+
+Paper-specific featured overrides live in `featured_papers.txt`. Add one stable
+identifier per line in `arxiv:`, `doi:`, or normalized `title:` form.
+
 Freezing before delivery means a partially failed email run can be rerun safely:
 already-sent subscribers are skipped, failed or newly added subscribers receive
 the exact same edition, and the website archive cannot drift from the email.

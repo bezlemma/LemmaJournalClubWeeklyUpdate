@@ -1,0 +1,2 @@
+# Durable paper-specific overrides. Accepted forms are arxiv:, doi:, or title:.
+arxiv:2607.25743

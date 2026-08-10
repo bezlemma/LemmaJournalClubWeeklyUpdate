@@ -105,6 +105,12 @@ Geographically specific energy profiles and regulatory frameworks determine the 
 Neural crest cells exhibit enriched expression of specific isotypes like TUBB3 and TUBA3E that overlap with microtubule motor genes during epithelial-to-mesenchymal transitions in the chick embryo.
 :::
 
+::: {.g-col-12 .g-col-md-6}
+#### [Physical Mechanism of Vacuole Formation in Liquid Droplets](<http://arxiv.org/abs/2607.25743v1>)
+*Pranay Jaiswal, Ivar S. Haugerud, William Verstraeten, Kerstin Göpfrich, Job Boekhoven, Christoph A. Weber* <br>
+Local spinodal instabilities triggered by thermal or chemical shifts drive the emergence and size of these material-depleted domains, providing a non-equilibrium thermodynamic framework for engineering functional multi-compartment architectures.
+:::
+
 :::
 
 ## More Papers
@@ -228,10 +234,6 @@ Conformational rearrangements of the tension-sensing helices at sub-lytic pressu
 #### [Anomalous diffusion and effective shear modulus in a semisolid membrane](<http://link.aps.org/doi/10.1103/lljw-j37w>)
 *Vikash Pandey and Dhrubaditya Mitra* <br>
 Interaction between fluid-like transport and solid-like rigidity within the lipid matrix defines the unique mechanical landscape of biological interfaces.
-
-#### [Physical Mechanism of Vacuole Formation in Liquid Droplets](<http://arxiv.org/abs/2607.25743v1>)
-*Pranay Jaiswal, Ivar S. Haugerud, William Verstraeten, Kerstin Göpfrich, Job Boekhoven, Christoph A. Weber* <br>
-Local spinodal instabilities triggered by thermal or chemical shifts drive the emergence and size of these material-depleted domains, providing a non-equilibrium thermodynamic framework for engineering functional multi-compartment architectures.
 
 #### [Structures of EHD2 filaments on curved membranes provide a model for caveolar neck stabilization](<https://www.nature.com/articles/s41467-026-76288-8>)
 *Vázquez-Sarandeses, Elena, Mikirtumov, Vasilii, Noel, Jeffrey K., Kudryashev, Mikhail, Daumke, Oliver* <br>

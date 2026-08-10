@@ -10,6 +10,7 @@ const PREVIOUS_WEEKS_DIR = "PreviousWeeks"
 const SCORE_OUTPUT_FILE = "paper_scores.json"
 const DECISIONS_DIR = "TrainingData"
 const READER_FEEDBACK_FILE = joinpath(DECISIONS_DIR, "reader_feedback.json")
+const MANUAL_FEATURED_FILE = "featured_papers.txt"
 const GEMINI_MODEL = "gemini-3-flash-preview"
 const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
 const GEMINI_MAX_RETRIES = something(tryparse(Int, get(ENV, "GEMINI_MAX_RETRIES", "3")), 3)
@@ -35,6 +36,36 @@ const GEMINI_REQUEST_COUNT = Ref(0)
 const GEMINI_BUDGET_EXHAUSTED = Ref(false)
 
 const FEATURED_SOURCE = "CrossRef/Featured"
+
+function load_manual_featured_keys(filename::AbstractString)::Set{String}
+    keys = Set{String}()
+    isfile(filename) || return keys
+    for raw_line in eachline(filename)
+        line = lowercase(strip(first(split(raw_line, '#'; limit=2))))
+        isempty(line) && continue
+        push!(keys, line)
+    end
+    return keys
+end
+
+const MANUAL_FEATURED_KEYS = load_manual_featured_keys(MANUAL_FEATURED_FILE)
+
+function is_manually_featured(title::AbstractString, link::AbstractString, doi)::Bool
+    title_key = "title:" * filter(c -> isletter(c) || isdigit(c), lowercase(title))
+    title_key in MANUAL_FEATURED_KEYS && return true
+
+    arxiv_match = match(r"arxiv\.org/(?:abs|pdf)/([^/?#]+)"i, link)
+    if arxiv_match !== nothing
+        arxiv_id = replace(lowercase(arxiv_match.captures[1]), r"\.pdf$" => "")
+        arxiv_id = replace(arxiv_id, r"v\d+$" => "")
+        "arxiv:$arxiv_id" in MANUAL_FEATURED_KEYS && return true
+    end
+
+    doi_text = doi === nothing ? "" : lowercase(strip(string(doi)))
+    doi_text = replace(doi_text, r"^https?://(?:dx\.)?doi\.org/" => "")
+    doi_text = replace(doi_text, r"^doi:\s*" => "")
+    return !isempty(doi_text) && "doi:$doi_text" in MANUAL_FEATURED_KEYS
+end
 
 # ─── Load Green Authors ──────────────────────────────────────────────────────
 
@@ -444,10 +475,12 @@ function process_one_paper(paper)
         doi_raw = get(paper, :doi, nothing)
         doi = doi_raw === nothing ? "" : string(doi_raw)
         is_green_author = check_green_author(authors_str, doi)
+        manual_feature = is_manually_featured(title, string(get(paper, :link, "")), doi_raw)
 
-        if source == FEATURED_SOURCE || is_green_author
+        if manual_feature || source == FEATURED_SOURCE || is_green_author
             summary = summarize_paper(title, abstract_text)
-            return (paper, summary, :featured, "Featured source or author")
+            reason = manual_feature ? "Manually featured paper" : "Featured source or author"
+            return (paper, summary, :featured, reason)
         end
 
         # 2. AI Classification for all other papers
@@ -720,4 +753,6 @@ function main()
 end
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
-main()
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end

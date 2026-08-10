@@ -5,7 +5,13 @@ using Dates, TimeZones
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 const DAYS_BACK = 7
-const OLDEST_DATE = now(tz"UTC") - Day(DAYS_BACK)
+const RUN_UTC = now(tz"UTC")
+const WINDOW_END_DATE = Date(DateTime(RUN_UTC, UTC))
+# Most feeds expose only a calendar date, not a trustworthy publication time.
+# Use the previous Monday-to-Monday calendar boundary so a paper dated exactly
+# seven days ago is not lost merely because its source represented it at 00:00.
+const OLDEST_PUBLICATION_DATE = WINDOW_END_DATE - Day(DAYS_BACK)
+const OLDEST_DATE = ZonedDateTime(DateTime(OLDEST_PUBLICATION_DATE), tz"UTC")
 
 const ARXIV_CATEGORIES = ["physics.bio-ph", "cond-mat.soft"]
 const BIORXIV_COLLECTION = "biophysics"
@@ -25,6 +31,10 @@ const RSS_MAX_RETRIES = something(tryparse(Int, get(ENV, "RSS_MAX_RETRIES", "3")
 const MIN_ABSTRACT_CHARS = something(tryparse(Int, get(ENV, "MIN_ABSTRACT_CHARS", "80")), 80)
 const FETCH_WARNINGS_FILE = "fetch_warnings.json"
 const FETCH_WARNINGS = String[]
+
+publication_date_utc(dt::ZonedDateTime)::Date = Date(DateTime(dt, UTC))
+publication_is_in_window(dt::ZonedDateTime)::Bool =
+    OLDEST_PUBLICATION_DATE <= publication_date_utc(dt) <= WINDOW_END_DATE
 
 # Journal Feed Configuration
 # group: :include_all / :section_filter / :green_filter
@@ -147,6 +157,57 @@ end
 Paper(; source="", title="", authors="", link="", abstract_text="",
       images=String[], date=now(tz"UTC"), doi=nothing) =
     Paper(source, title, authors, link, abstract_text, images, date, doi)
+
+function paper_identity_keys(title::AbstractString, link::AbstractString, doi)::Set{String}
+    keys = Set{String}()
+
+    normalized_title = filter(c -> isletter(c) || isdigit(c), lowercase(title))
+    isempty(normalized_title) || push!(keys, "title:$normalized_title")
+
+    doi_text = doi === nothing ? "" : lowercase(strip(string(doi)))
+    if !isempty(doi_text) && doi_text != "nothing"
+        doi_text = replace(doi_text, r"^https?://(?:dx\.)?doi\.org/" => "")
+        doi_text = replace(doi_text, r"^doi:\s*" => "")
+        doi_text = first(split(doi_text, ['?', '#']; limit=2))
+        isempty(doi_text) || push!(keys, "doi:$doi_text")
+    end
+
+    arxiv_match = match(r"arxiv\.org/(?:abs|pdf)/([^/?#]+)"i, link)
+    if arxiv_match !== nothing
+        arxiv_id = replace(lowercase(arxiv_match.captures[1]), r"\.pdf$" => "")
+        arxiv_id = replace(arxiv_id, r"v\d+$" => "")
+        push!(keys, "arxiv:$arxiv_id")
+    end
+
+    return keys
+end
+
+paper_identity_keys(p::Paper)::Set{String} = paper_identity_keys(p.title, p.link, p.doi)
+
+"""Load only papers actually selected for earlier emails, not rejected candidates."""
+function previously_sent_paper_keys(dir::AbstractString="TrainingData")::Set{String}
+    keys = Set{String}()
+    isdir(dir) || return keys
+
+    for filename in readdir(dir; join=true)
+        occursin(r"filter_decisions_\d{4}-\d{2}-\d{2}\.jsonl$", filename) || continue
+        for line in eachline(filename)
+            isempty(strip(line)) && continue
+            record = try
+                JSON3.read(line)
+            catch
+                continue
+            end
+            lowercase(string(get(record, :label, ""))) in ("featured", "regular") || continue
+            union!(keys, paper_identity_keys(
+                string(get(record, :title, "")),
+                string(get(record, :link, "")),
+                get(record, :doi, nothing),
+            ))
+        end
+    end
+    return keys
+end
 
 # ─── Helper: parse HTML text ────────────────────────────────────────────────
 
@@ -1519,6 +1580,24 @@ function biorxiv_doi_from_link(link::AbstractString)::Union{String,Nothing}
     return m === nothing ? nothing : m.match
 end
 
+"""Return a bioRxiv preprint's first-posted date when it is encoded in its DOI."""
+function biorxiv_original_date(doi::AbstractString, reported_date::ZonedDateTime)::ZonedDateTime
+    # Both current bioRxiv DOI prefixes retain the original YYYY.MM.DD in the
+    # suffix. The API's `date` is the latest version date, which otherwise makes
+    # old revised manuscripts look like newly published papers.
+    m = match(r"/(20\d{2})\.(\d{2})\.(\d{2})(?:\.|$)", lowercase(doi))
+    m === nothing && return reported_date
+    try
+        original = ZonedDateTime(
+            DateTime(parse(Int, m.captures[1]), parse(Int, m.captures[2]), parse(Int, m.captures[3])),
+            tz"UTC",
+        )
+        return min(original, reported_date)
+    catch
+        return reported_date
+    end
+end
+
 function biorxiv_api_url(start_date::AbstractString, end_date::AbstractString, cursor::Integer)::String
     category = HTTP.escapeuri(BIORXIV_COLLECTION)
     return "https://api.biorxiv.org/details/biorxiv/$start_date/$end_date/$cursor/json?category=$category"
@@ -1565,6 +1644,8 @@ function fetch_biorxiv_papers_rss()
     papers = Paper[]
     for p in rss_papers
         doi = biorxiv_doi_from_link(p.link)
+        original_date = doi === nothing ? p.date : biorxiv_original_date(doi, p.date)
+        publication_is_in_window(original_date) || continue
         push!(papers, Paper(
             source="bioRxiv",
             title=p.title,
@@ -1572,7 +1653,7 @@ function fetch_biorxiv_papers_rss()
             link=p.link,
             abstract_text=clean_biorxiv_abstract(p.abstract),
             images=String[],
-            date=p.date,
+            date=original_date,
             doi=doi,
         ))
     end
@@ -1662,7 +1743,7 @@ function fetch_biorxiv_papers()
             cat = get(item, :category, "")
             lowercase(cat) != lowercase(BIORXIV_COLLECTION) && continue
 
-            paper_date = try
+            reported_date = try
                 ZonedDateTime(DateTime(string(item.date), "yyyy-mm-dd"), tz"UTC")
             catch
                 now(tz"UTC")
@@ -1673,6 +1754,8 @@ function fetch_biorxiv_papers()
             clean_abs = clean_biorxiv_abstract(raw_abstract)
             doi = string(item.doi)
             version = string(item.version)
+            paper_date = biorxiv_original_date(doi, reported_date)
+            publication_is_in_window(paper_date) || continue
 
             push!(papers, Paper(
                 source="bioRxiv",
@@ -1792,6 +1875,7 @@ function _query_crossref_orcid(orcid::String, author_name::String, from_date::St
                     # Effective date: earliest non-future date (online/posted/created/etc.)
                     pub_date = crossref_effective_date(item)
                     pub_date === nothing && continue
+                    publication_is_in_window(pub_date) || continue
 
                     push!(papers, Paper(
                         source="CrossRef/Featured",
@@ -2209,6 +2293,28 @@ function fetch_and_display_papers()
     end
 
     final_list = collect(values(unique_map))
+
+    # No source-specific query or metadata quirk may bypass the newsletter's
+    # defining invariant: every paper must have been first published in this
+    # edition's seven-day window.
+    before_date_gate = length(final_list)
+    filter!(p -> publication_is_in_window(p.date), final_list)
+    dropped_by_date_gate = before_date_gate - length(final_list)
+    dropped_by_date_gate > 0 && println(
+        "  Removed $dropped_by_date_gate out-of-window papers at the final publication-date gate."
+    )
+
+    sent_keys = previously_sent_paper_keys()
+    if !isempty(sent_keys)
+        before_repeat_gate = length(final_list)
+        filter!(final_list) do p
+            all(key -> key ∉ sent_keys, paper_identity_keys(p))
+        end
+        dropped_repeats = before_repeat_gate - length(final_list)
+        dropped_repeats > 0 && println(
+            "  Removed $dropped_repeats papers already sent in an earlier edition."
+        )
+    end
     sort!(final_list; by=p -> p.date, rev=true)
 
     total_count = length(final_list)
