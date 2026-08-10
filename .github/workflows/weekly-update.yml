@@ -34,7 +34,7 @@ jobs:
         run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
       - name: Test paper pipeline
-        run: julia --project=. -e 'include(joinpath("test", "feedback_scoring.jl")); include(joinpath("test", "biorxiv_fetching.jl"))'
+        run: julia --project=. -e 'include(joinpath("test", "feedback_scoring.jl")); include(joinpath("test", "biorxiv_fetching.jl")); include(joinpath("test", "journal_fallbacks.jl"))'
 
       - name: Check required configuration
         env:

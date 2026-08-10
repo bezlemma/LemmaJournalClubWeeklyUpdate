@@ -81,6 +81,20 @@ const CROSSREF_JOURNAL_ISSNS = [
     (issn="1949-3592", name="Cytoskeleton"),
 ]
 
+# Independent journal backups used only when a primary RSS feed exhausts its
+# retries. Europe PMC supplies structured publication metadata and abstracts,
+# which lets us apply the same research/article and green-list filters without
+# silently accepting a title-only result.
+const JOURNAL_EUROPEPMC_BACKUP_ISSNS = Dict(
+    "Biophysical Journal" => "0006-3495",
+    "Cell" => "0092-8674",
+    "iScience" => "2589-0042",
+    "Current Biology" => "0960-9822",
+    "EMBO Journal" => "0261-4189",
+)
+const EUROPEPMC_API_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
+const EUROPEPMC_MAX_RETRIES = 3
+
 const APS_SOURCES = Set(["PRL", "PRX", "PRX Life", "Physical Review E", "PRR"])
 const RSC_SOURCES = Set(["Soft Matter"])
 const OPTICA_SOURCES = Set([
@@ -195,7 +209,7 @@ const SOFTWARE_PIPELINE_TITLE_PATTERNS = [
 ]
 
 const NON_RESEARCH_TYPES = [
-    "briefing", "commentary", "perspective", "editorial", "news", "interview", "author summary", "correction", "review"
+    "briefing", "commentary", "perspective", "editorial", "news", "interview", "author summary", "correction", "erratum", "review"
 ]
 
 function is_research_article(title::AbstractString, summary::AbstractString="";
@@ -941,6 +955,154 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
     end
 
     println("  Found $(length(papers)) papers.")
+    return papers
+end
+
+# ─── Europe PMC journal fallback ─────────────────────────────────────────────
+
+function parse_europepmc_date(item)
+    for key in [:firstPublicationDate, :electronicPublicationDate]
+        raw = strip(string(get(item, key, "")))
+        isempty(raw) && continue
+        try
+            return ZonedDateTime(DateTime(Date(first(raw, min(10, length(raw))), dateformat"y-m-d")), tz"UTC")
+        catch
+        end
+    end
+
+    journal_info = get(item, :journalInfo, nothing)
+    if journal_info !== nothing
+        raw = strip(string(get(journal_info, :printPublicationDate, "")))
+        if !isempty(raw)
+            try
+                return ZonedDateTime(DateTime(Date(first(raw, min(10, length(raw))), dateformat"y-m-d")), tz"UTC")
+            catch
+            end
+        end
+    end
+    return nothing
+end
+
+function europepmc_authors(item)::String
+    author_string = strip(string(get(item, :authorString, "")))
+    !isempty(author_string) && return author_string
+
+    author_block = get(item, :authorList, nothing)
+    author_block === nothing && return ""
+    raw_authors = get(author_block, :author, [])
+    names = String[]
+    for author in raw_authors
+        name = strip(string(get(author, :fullName, "")))
+        !isempty(name) && push!(names, name)
+    end
+    return join(names, ", ")
+end
+
+function europepmc_publication_types(item)::String
+    type_block = get(item, :pubTypeList, nothing)
+    type_block === nothing && return ""
+    raw_types = get(type_block, :pubType, [])
+    types = raw_types isa AbstractVector ? String[string(t) for t in raw_types] : String[string(raw_types)]
+    return join(types, ", ")
+end
+
+function clean_europepmc_text(value)::String
+    cleaned = strip(string(value))
+    isempty(cleaned) && return ""
+    occursin(r"<[A-Za-z/][^>]*>", cleaned) && (cleaned = html_to_text(cleaned))
+    return strip(replace(cleaned, r"\s+" => " "))
+end
+
+function europepmc_item_to_paper(item, source_name::AbstractString, group_type::Symbol;
+                                 section_filter::Union{AbstractString,Nothing}=nothing,
+                                 oldest_date::ZonedDateTime=OLDEST_DATE)
+    published = parse_europepmc_date(item)
+    published === nothing && error("Europe PMC record for $source_name has no usable publication date")
+    published < oldest_date && return nothing
+
+    title = clean_europepmc_text(get(item, :title, ""))
+    abstract_text = clean_europepmc_text(get(item, :abstractText, ""))
+    article_type = europepmc_publication_types(item)
+    !is_research_article(title, abstract_text; article_type=article_type) && return nothing
+
+    authors = europepmc_authors(item)
+    doi = lowercase(strip(string(get(item, :doi, ""))))
+    record_id = strip(string(get(item, :id, "")))
+    record_source = strip(string(get(item, :source, "MED")))
+    link = !isempty(doi) ? "https://doi.org/$doi" :
+           (!isempty(record_id) ? "https://europepmc.org/article/$record_source/$record_id" : "")
+
+    missing = String[]
+    isempty(title) && push!(missing, "title")
+    isempty(strip(authors)) && push!(missing, "authors")
+    isempty(link) && push!(missing, "link")
+    length(abstract_text) < MIN_ABSTRACT_CHARS && push!(missing, "abstract")
+    if !isempty(missing)
+        label = isempty(title) ? record_id : first(title, min(80, length(title)))
+        error("Europe PMC research record for $source_name is missing $(join(missing, ", ")): $label")
+    end
+
+    if group_type == :section_filter && section_filter !== nothing
+        sf = lowercase(section_filter)
+        text_match = occursin(sf, lowercase(title)) || occursin(sf, lowercase(abstract_text))
+        !text_match && return nothing
+    elseif group_type == :green_filter
+        !matches_green_filter(authors, title, abstract_text) && return nothing
+    end
+
+    return Paper(
+        source=source_name,
+        title=title,
+        authors=authors,
+        link=link,
+        abstract_text=abstract_text,
+        images=String[],
+        date=published,
+        doi=isempty(doi) ? nothing : doi,
+    )
+end
+
+function fetch_europepmc_issn_papers(issn::AbstractString, source_name::AbstractString,
+                                     group_type::Symbol;
+                                     section_filter::Union{AbstractString,Nothing}=nothing)
+    from_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
+    to_date = Dates.format(DateTime(now(tz"UTC"), UTC), "yyyy-mm-dd")
+    query = "ISSN:$issn AND FIRST_PDATE:[$from_date TO $to_date]"
+    full_url = "$EUROPEPMC_API_URL?query=$(HTTP.escapeuri(query))&format=json&pageSize=1000&resultType=core"
+    headers = ["User-Agent" => "LemmaJournalClubWeeklyUpdate/1.0 ($CROSSREF_MAILTO)"]
+
+    data = nothing
+    for attempt in 1:EUROPEPMC_MAX_RETRIES
+        try
+            resp = HTTP.get(full_url; headers=headers, readtimeout=30, status_exception=false)
+            if resp.status == 200
+                data = JSON3.read(String(resp.body))
+                break
+            end
+            attempt == EUROPEPMC_MAX_RETRIES && error("Europe PMC returned HTTP $(resp.status)")
+            println("  $source_name Europe PMC backup returned HTTP $(resp.status); retrying ($attempt/$EUROPEPMC_MAX_RETRIES)...")
+        catch e
+            attempt == EUROPEPMC_MAX_RETRIES && rethrow(e)
+            println("  $source_name Europe PMC backup request failed; retrying ($attempt/$EUROPEPMC_MAX_RETRIES)...")
+        end
+        sleep(2 * attempt)
+    end
+    data === nothing && error("Europe PMC did not return a usable response for $source_name")
+
+    hit_count = Int(get(data, :hitCount, 0))
+    hit_count == 0 && error("Europe PMC returned 0 records for $source_name; completeness cannot be confirmed")
+    result_list = get(data, :resultList, nothing)
+    result_list === nothing && error("Europe PMC response for $source_name has no result list")
+    items = get(result_list, :result, [])
+    hit_count > length(items) && error("Europe PMC returned only $(length(items)) of $hit_count records for $source_name")
+
+    papers = Paper[]
+    for item in items
+        paper = europepmc_item_to_paper(item, source_name, group_type;
+                                        section_filter=section_filter)
+        paper !== nothing && push!(papers, paper)
+    end
+    println("  ✓ Europe PMC backup screened $hit_count $source_name records and retained $(length(papers)) papers.")
     return papers
 end
 
@@ -1931,8 +2093,25 @@ function fetch_and_display_papers()
                     try
                         rss_results[i] = fetch_rss(feed.url, feed.name, feed.group;
                                                    section_filter=feed.section_filter)
-                    catch e
-                        rss_errors[i] = e
+                    catch primary_error
+                        backup_issn = get(JOURNAL_EUROPEPMC_BACKUP_ISSNS, feed.name, nothing)
+                        if backup_issn === nothing
+                            rss_errors[i] = primary_error
+                        else
+                            println("  ⚠ $(feed.name) primary RSS failed after retries. Trying Europe PMC (ISSN $backup_issn)...")
+                            try
+                                rss_results[i] = fetch_europepmc_issn_papers(
+                                    backup_issn, feed.name, feed.group;
+                                    section_filter=feed.section_filter,
+                                )
+                                println("  ✓ $(feed.name) recovered through Europe PMC; no source warning needed.")
+                            catch backup_error
+                                rss_errors[i] = ErrorException(
+                                    "primary RSS failed ($(sprint(showerror, primary_error))); " *
+                                    "Europe PMC backup failed ($(sprint(showerror, backup_error)))"
+                                )
+                            end
+                        end
                     end
                 end
             end
@@ -1941,7 +2120,8 @@ function fetch_and_display_papers()
         if !isempty(failed_feeds)
             for (name, e) in failed_feeds
                 println("  ❌ RSS feed '$name' failed: $e")
-                push!(FETCH_WARNINGS, "Journal RSS feed '$name' failed after retries; that source may be incomplete this week.")
+                backup_note = haskey(JOURNAL_EUROPEPMC_BACKUP_ISSNS, name) ? " and its Europe PMC backup" : ""
+                push!(FETCH_WARNINGS, "Journal source '$name' failed after RSS retries$backup_note; that source may be incomplete this week.")
             end
             println("  Continuing with the remaining sources; the owner warning will identify the failed feeds.")
         end
