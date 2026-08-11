@@ -50,7 +50,7 @@ jobs:
         run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
       - name: Test paper pipeline
-        run: julia --project=. -e 'include(joinpath("test", "feedback_scoring.jl")); include(joinpath("test", "biorxiv_fetching.jl")); include(joinpath("test", "journal_fallbacks.jl"))'
+        run: julia --project=. -e 'include(joinpath("test", "feedback_scoring.jl")); include(joinpath("test", "biorxiv_fetching.jl")); include(joinpath("test", "journal_fallbacks.jl")); include(joinpath("test", "edition_integrity.jl"))'
 
       - name: Check required configuration
         env:
@@ -141,6 +141,12 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           EDITION_ID: ${{ steps.edition.outputs.edition_id }}
         run: julia --project=. filter_papers.jl
+
+      - name: Validate edition integrity
+        env:
+          EDITION_ID: ${{ steps.edition.outputs.edition_id }}
+          MIN_EDITION_PAPERS: "50"
+        run: julia --project=. validate_edition.jl
 
       - name: Save the generated edition
         uses: actions/upload-artifact@v4

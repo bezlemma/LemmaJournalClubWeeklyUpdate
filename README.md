@@ -54,6 +54,12 @@ The newsletter API URL is currently the Cloudflare Worker URL ending in
   the edition, and the owner receives the failed-source details by email.
 - Excessive Gemini classification or summary failures stop the run before an
   edition is committed or emailed.
+- Every edition must contain at least 50 papers; every selected paper must fall
+  within the edition's inclusive seven-day window and have complete title,
+  author, abstract, link, source, date, and summary fields. Placeholder content
+  such as `Abstract not available` fails the integrity gate.
+- The website/email artifacts are independently cross-checked against the
+  selected decision records before either publication or delivery.
 - A delivery failure stops the workflow, but the edition is already frozen, so
   the GitHub **Re-run jobs** action is safe.
 

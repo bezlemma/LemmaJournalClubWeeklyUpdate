@@ -1,5 +1,7 @@
 using JSON3, HTTP, Dates
 include(joinpath(@__DIR__, "score_papers.jl"))
+include(joinpath(@__DIR__, "edition_integrity.jl"))
+using .EditionIntegrity
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
@@ -42,6 +44,11 @@ const GEMINI_REQUEST_COUNT = Ref(0)
 const GEMINI_BUDGET_EXHAUSTED = Ref(false)
 
 const FEATURED_SOURCE = "CrossRef/Featured"
+
+function edition_date_for_run(today::Date=Dates.today())::Date
+    CONFIGURED_EDITION_DATE !== nothing && return CONFIGURED_EDITION_DATE
+    return today - Day(dayofweek(today) - 1)
+end
 
 function load_manual_featured_keys(filename::AbstractString)::Set{String}
     keys = Set{String}()
@@ -422,9 +429,7 @@ end
 
 """Return true only for a complete one-sentence summary, not a token fragment."""
 function is_complete_summary(summary::String)::Bool
-    clean = strip(summary)
-    length(split(clean)) >= 6 || return false
-    return occursin(r"[.!?][\"'”’\)\]]*$", clean)
+    return isempty(summary_issues(summary))
 end
 
 """Use the first substantive sentence of the real abstract when Gemini is unavailable."""
@@ -540,7 +545,26 @@ function main()
         error("$INPUT_FILE not found. Run fetch_papers.jl first.")
     end
 
-    papers = JSON3.read(read(INPUT_FILE, String))
+    edition_date = edition_date_for_run()
+    raw_papers = collect(JSON3.read(read(INPUT_FILE, String)))
+    papers, removed_candidates = sanitize_candidates(raw_papers, edition_date)
+    if !isempty(removed_candidates)
+        println("Candidate integrity gate removed $(length(removed_candidates)) invalid paper(s) before AI processing:")
+        for removed in removed_candidates
+            println("  • $(isempty(removed.title) ? "Untitled candidate #$(removed.index)" : removed.title)")
+            for issue in removed.issues
+                println("      - $issue")
+            end
+        end
+        open(INPUT_FILE, "w") do io
+            JSON3.pretty(io, papers)
+        end
+        println("Saved $(length(papers)) validated candidates back to $INPUT_FILE.")
+    end
+    length(papers) >= MIN_EDITION_PAPERS || error(
+        "Candidate integrity gate left only $(length(papers)) valid papers; minimum edition size is $MIN_EDITION_PAPERS."
+    )
+
     local_scores = try
         scores = PaperScorer.score_map_from_files(INPUT_FILE, PREVIOUS_WEEKS_DIR; output_file=SCORE_OUTPUT_FILE)
         println("Scored $(length(scores)) papers using PreviousWeeks; wrote $SCORE_OUTPUT_FILE.")
@@ -687,6 +711,14 @@ function main()
     # Generate output
     all_final = vcat(featured_papers, regular_papers)
     total_kept = length(all_final)
+    integrity_issues = selected_edition_issues(all_final, edition_date)
+    if !isempty(integrity_issues)
+        println("Edition integrity gate failed with $(length(integrity_issues)) issue(s):")
+        for issue in integrity_issues
+            println("  • $issue")
+        end
+        error("Refusing to publish or email an invalid edition.")
+    end
 
     source_counts = Dict{String, Int}()
     for item in all_final
@@ -699,12 +731,7 @@ function main()
     # date_str should reflect the most recent Monday rather than today
     # (so running on Fri 6 Mar -> use Mon 2 Mar).
     today = Dates.today()
-    if CONFIGURED_EDITION_DATE === nothing
-        dow = Dates.dayofweek(today)      # 1=Monday, 7=Sunday
-        prev_monday = today - Dates.Day(dow - 1)
-    else
-        prev_monday = CONFIGURED_EDITION_DATE
-    end
+    prev_monday = edition_date
     date_str = Dates.format(prev_monday, "u d yy")
     decision_file = joinpath(DECISIONS_DIR, "filter_decisions_$(Dates.format(prev_monday, "yyyy-mm-dd")).jsonl")
     mkpath(DECISIONS_DIR)
@@ -720,6 +747,7 @@ function main()
                 "classifier_reason" => reason,
                 "local_score" => paper_score(paper),
                 "source" => string(get(paper, :source, "")),
+                "date" => string(get(paper, :date, "")),
                 "title" => string(get(paper, :title, "")),
                 "authors" => string(get(paper, :authors, "")),
                 "link" => string(get(paper, :link, "")),
