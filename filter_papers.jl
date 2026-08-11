@@ -24,7 +24,6 @@ const GEMINI_MAX_REQUESTS = something(tryparse(Int, get(ENV, "GEMINI_MAX_REQUEST
 const GEMINI_INPUT_USD_PER_MILLION = 0.50
 const GEMINI_OUTPUT_USD_PER_MILLION = 3.00
 const GEMINI_COST_SAFETY_MULTIPLIER = 2.0
-const GEMINI_MAX_OUTPUT_TOKENS = 256
 const GEMINI_RESERVED_OUTPUT_TOKENS = 1024
 const MAX_AI_FAILURE_FRACTION = something(tryparse(Float64, get(ENV, "MAX_AI_FAILURE_FRACTION", "0.05")), 0.05)
 const MAX_AI_FAILURE_COUNT = something(tryparse(Int, get(ENV, "MAX_AI_FAILURE_COUNT", "5")), 5)
@@ -215,8 +214,9 @@ end
 
 """Conservatively reserve budget before a request so concurrent workers cannot overshoot."""
 function reserve_gemini_request!(prompt::String)::Bool
-    # UTF-8 bytes are a safe upper bound for text tokens. Output reservation is
-    # four times the API response cap, then all prices receive a 2x safety margin.
+    # UTF-8 bytes are a safe upper bound for text tokens. The output reservation
+    # is deliberately conservative for these one-word and one-sentence prompts;
+    # it is only a spend estimate and does not restrict Gemini's response length.
     input_token_upper_bound = max(1, ncodeunits(prompt))
     reservation = GEMINI_COST_SAFETY_MULTIPLIER * (
         input_token_upper_bound * GEMINI_INPUT_USD_PER_MILLION / 1_000_000 +
@@ -224,7 +224,10 @@ function reserve_gemini_request!(prompt::String)::Bool
     )
 
     lock(GEMINI_BUDGET_LOCK) do
-        over_cost = GEMINI_RESERVED_COST_USD[] + reservation > GEMINI_MAX_RUN_COST_USD
+        # Provider-reported usage can exceed an estimate. Use whichever running
+        # total is greater so real usage also trips the guard before another call.
+        guarded_cost = max(GEMINI_RESERVED_COST_USD[], GEMINI_REPORTED_COST_USD[])
+        over_cost = guarded_cost + reservation > GEMINI_MAX_RUN_COST_USD
         over_requests = GEMINI_REQUEST_COUNT[] >= GEMINI_MAX_REQUESTS
         if over_cost || over_requests
             if !GEMINI_BUDGET_EXHAUSTED[]
@@ -265,10 +268,7 @@ function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
         "contents" => [Dict(
             "parts" => [Dict("text" => prompt)]
         )],
-        "generationConfig" => Dict(
-            "temperature" => 0.0,
-            "maxOutputTokens" => GEMINI_MAX_OUTPUT_TOKENS,
-        ),
+        "generationConfig" => Dict("temperature" => 0.0),
     )
 
     for attempt in 1:max_retries
@@ -291,11 +291,18 @@ function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
                 record_gemini_usage!(data)
                 candidates = get(data, :candidates, [])
                 if !isempty(candidates)
-                    content = get(first(candidates), :content, Dict())
+                    candidate = first(candidates)
+                    finish_reason = uppercase(string(get(candidate, :finishReason, "")))
+                    content = get(candidate, :content, Dict())
                     parts = get(content, :parts, [])
                     if !isempty(parts)
                         text = strip(string(get(first(parts), :text, "")))
-                        !isempty(text) && return text
+                        if !isempty(text) && finish_reason in ("", "STOP")
+                            return text
+                        end
+                    end
+                    if !isempty(finish_reason) && finish_reason != "STOP"
+                        println("  Gemini returned an incomplete response (finish reason: $finish_reason); retrying.")
                     end
                 end
                 attempt == max_retries && (println("  Gemini API returned no text after $max_retries attempts."); return "")
@@ -406,6 +413,13 @@ Reply with a single word: TRUE or FALSE.
     end
 end
 
+"""Return true only for a complete one-sentence summary, not a token fragment."""
+function is_complete_summary(summary::String)::Bool
+    clean = strip(summary)
+    length(split(clean)) >= 6 || return false
+    return occursin(r"[.!?][\"'”’\)\]]*$", clean)
+end
+
 """Use the first substantive sentence of the real abstract when Gemini is unavailable."""
 function extractive_summary(abstract_text::String)::String
     clean = replace(strip(abstract_text), r"\s+" => " ")
@@ -430,7 +444,8 @@ Abstract: $abstract_text
 
     try
         result = gemini_generate(prompt)
-        if isempty(result)
+        if isempty(result) || !is_complete_summary(result)
+            !isempty(result) && println("  Gemini returned an incomplete summary for '$(first(title, 30))...'; using the abstract fallback.")
             fallback = extractive_summary(abstract_text)
             fallback != "Summary unavailable." && Threads.atomic_add!(SUMMARY_FALLBACK_COUNT, 1)
             return fallback
