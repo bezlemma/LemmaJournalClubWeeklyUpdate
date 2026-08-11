@@ -6,8 +6,13 @@ on:
     - cron: "0 13 * * 1"
   workflow_dispatch:
     inputs:
+      regenerate_current:
+        description: "Rebuild and replace the already frozen current edition"
+        required: false
+        default: false
+        type: boolean
       send_correction:
-        description: "Send the frozen current edition again as a corrected delivery"
+        description: "Send the current edition again as a corrected delivery"
         required: false
         default: false
         type: boolean
@@ -64,14 +69,18 @@ jobs:
           echo "archive_file=$ARCHIVE_FILE" >> "$GITHUB_OUTPUT"
           echo "paper_data_file=$PAPER_DATA_FILE" >> "$GITHUB_OUTPUT"
 
-          if [ -s "$ARCHIVE_FILE" ] && [ -s "$PAPER_DATA_FILE" ]; then
+          if [ -s "$ARCHIVE_FILE" ] && [ -s "$PAPER_DATA_FILE" ] && [ "${{ inputs.regenerate_current || false }}" != "true" ]; then
             cp "$ARCHIVE_FILE" papers_final.md
             cp "$PAPER_DATA_FILE" papers.json
             echo "reused=true" >> "$GITHUB_OUTPUT"
             echo "Reusing the frozen $EDITION_ID edition for this rerun."
           else
             echo "reused=false" >> "$GITHUB_OUTPUT"
-            echo "No frozen $EDITION_ID edition exists; generating it now."
+            if [ "${{ inputs.regenerate_current || false }}" = "true" ]; then
+              echo "Regenerating and replacing the frozen $EDITION_ID edition."
+            else
+              echo "No frozen $EDITION_ID edition exists; generating it now."
+            fi
           fi
 
       - name: Fetch current papers
@@ -172,7 +181,7 @@ jobs:
           DELIVERY_SUBJECT="$SUBJECT"
           DELIVERY_ID="$EDITION_ID"
           REPLACE_FROZEN="false"
-          if [ "${{ inputs.send_correction || false }}" = "true" ]; then
+          if [ "${{ inputs.send_correction || false }}" = "true" ] || [ "${{ inputs.regenerate_current || false }}" = "true" ]; then
             DELIVERY_ID="${EDITION_ID}-correction-${{ github.run_number }}"
             DELIVERY_SUBJECT="Correction — $SUBJECT"
             REPLACE_FROZEN="true"
