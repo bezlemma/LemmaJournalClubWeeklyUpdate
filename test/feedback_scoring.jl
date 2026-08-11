@@ -32,6 +32,8 @@ mktemp() do path, io
     positive, negative = PaperScorer.load_reader_feedback_docs(path)
     @test length(positive) == 1
     @test length(negative) == 1
+    @test positive[1].weight == 3.0
+    @test negative[1].weight == 4.0
 
     candidates = [
         Dict(
@@ -47,6 +49,27 @@ mktemp() do path, io
     ]
     scores = PaperScorer.score_papers(positive, candidates; negative_docs=negative)
     @test scores[1] > scores[2]
+end
+
+@testset "historical section weights" begin
+    mktempdir() do root
+        week = joinpath(root, "week.qmd")
+        write(week, """
+# Featured Papers
+
+#### [Promoted paper](https://example.com/promoted)
+Promoted summary.
+
+## More Papers
+
+#### [Remaining paper](https://example.com/remaining)
+Remaining summary.
+""")
+        docs = PaperScorer.load_training_docs(root)
+        weights = Dict(doc.title => doc.weight for doc in docs)
+        @test weights["Promoted paper"] == 2.0
+        @test weights["Remaining paper"] == 1.0
+    end
 end
 
 @testset "AI decisions are audit-only" begin

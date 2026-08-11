@@ -4,9 +4,6 @@ using JSON3
 
 export load_training_docs, load_reader_feedback_docs, paper_key, score_map_from_files, score_papers_from_files
 
-const READER_FEEDBACK_WEIGHT_PER_NET_VOTE = 25.0
-const MAX_READER_FEEDBACK_NET_VOTES = 5
-
 const SECTION_WEIGHTS = Dict(
     "featured" => 2.0,
     "some" => 2.0,
@@ -191,8 +188,8 @@ function load_reader_feedback_docs(feedback_file::AbstractString="TrainingData/r
     for item in get(payload, :papers, [])
         upvotes = try Int(get(item, :upvotes, 0)) catch; 0 end
         downvotes = try Int(get(item, :downvotes, 0)) catch; 0 end
-        net_votes = upvotes - downvotes
-        net_votes == 0 && continue
+        preference_score = upvotes - 2 * downvotes
+        preference_score == 0 && continue
 
         title = string(get(item, :title, ""))
         summary = string(get(item, :summary, ""))
@@ -200,17 +197,16 @@ function load_reader_feedback_docs(feedback_file::AbstractString="TrainingData/r
         text = strip_markdown(join([title, summary, source], " "))
         isempty(text) && continue
 
-        vote_weight = min(abs(net_votes), MAX_READER_FEEDBACK_NET_VOTES)
-        weight = READER_FEEDBACK_WEIGHT_PER_NET_VOTE * vote_weight
+        weight = Float64(abs(preference_score))
         doc = TrainingDoc(
             title,
             string(get(item, :link, "")),
-            net_votes > 0 ? "reader-upvote" : "reader-downvote",
+            preference_score > 0 ? "reader-upvote" : "reader-downvote",
             text,
             weight,
             feedback_file,
         )
-        push!(net_votes > 0 ? positive : negative, doc)
+        push!(preference_score > 0 ? positive : negative, doc)
     end
     return positive, negative
 end

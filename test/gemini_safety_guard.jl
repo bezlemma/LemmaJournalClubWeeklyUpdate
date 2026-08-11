@@ -4,6 +4,27 @@ if !isdefined(Main, :begin_gemini_request!)
     include(joinpath(@__DIR__, "..", "filter_papers.jl"))
 end
 
+@testset "structured classifier responses" begin
+    approved = parse_scored_classification("""
+    ```json
+    {"score": 78, "category": "cell mechanics", "explanation": "Measures force transmission in living cells."}
+    ```
+    """)
+    @test approved == (true, "AI Approved", 78, "cell mechanics", "Measures force transmission in living cells.")
+
+    rejected = parse_scored_classification(
+        "{\"score\": 31, \"category\": \"clinical genomics\", \"explanation\": \"No physical mechanism is studied.\"}",
+        "AI Recall",
+    )
+    @test rejected == (false, "AI Recall Rejected", 31, "clinical genomics", "No physical mechanism is studied.")
+
+    # Preserve compatibility with a valid response from an older prompt while
+    # the new structured format rolls out.
+    @test parse_scored_classification("TRUE") ==
+          (true, "AI Approved", 75, "unspecified", "Legacy binary classifier response.")
+    @test parse_scored_classification("")[2] == "AI Unavailable"
+end
+
 function reset_gemini_guard_for_test!()
     GEMINI_IN_FLIGHT_COST_USD[] = 0.0
     GEMINI_UNREPORTED_COST_USD[] = 0.0

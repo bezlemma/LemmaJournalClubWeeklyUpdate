@@ -2,7 +2,7 @@ module SelectionPolicy
 
 export RECALL_MIN_LOCAL_SCORE, SCORE_POLICY_VERSION, recall_approval_supported
 
-const SCORE_POLICY_VERSION = "human-feedback-v1"
+const SCORE_POLICY_VERSION = "human-feedback-v2"
 
 const RECALL_MIN_LOCAL_SCORE = something(
     tryparse(Float64, get(ENV, "RECALL_MIN_LOCAL_SCORE", "0.05")),

@@ -73,10 +73,13 @@ The newsletter API URL is currently the Cloudflare Worker URL ending in
 Normal successful weeks require no intervention.
 
 Previous AI rejections are saved for auditability but are never used as
-negative training examples. Only explicit anonymous reader downvotes provide
-negative learning feedback; prior selections and reader upvotes provide the
-positive examples. Scoring-policy versions are recorded with new decisions so
-frozen editions are not reinterpreted when the learning scale changes.
+negative training examples. Historical `More Papers` selections contribute +1,
+historical promoted/featured selections contribute +2, each reader upvote
+contributes +1, and each reader downvote contributes -2. New filter decisions
+also retain the classifier's 0–100 relevance score, topic category, and concrete
+explanation for calibration and auditing. Scoring-policy versions are recorded
+with new decisions so frozen editions are not reinterpreted when the learning
+scale changes.
 
 ## Local preview
 

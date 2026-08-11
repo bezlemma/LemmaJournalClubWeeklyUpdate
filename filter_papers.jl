@@ -41,6 +41,7 @@ const GEMINI_RESERVED_OUTPUT_TOKENS = 1024
 const MAX_AI_FAILURE_FRACTION = something(tryparse(Float64, get(ENV, "MAX_AI_FAILURE_FRACTION", "0.05")), 0.05)
 const MAX_AI_FAILURE_COUNT = something(tryparse(Int, get(ENV, "MAX_AI_FAILURE_COUNT", "5")), 5)
 const MIN_SELECTION_FRACTION = something(tryparse(Float64, get(ENV, "MIN_SELECTION_FRACTION", "0.50")), 0.50)
+const CLASSIFIER_SCORE_THRESHOLD = something(tryparse(Int, get(ENV, "CLASSIFIER_SCORE_THRESHOLD", "50")), 50)
 const SUMMARY_FALLBACK_COUNT = Threads.Atomic{Int}(0)
 const GEMINI_BUDGET_LOCK = ReentrantLock()
 const GEMINI_IN_FLIGHT_COST_USD = Ref(0.0)
@@ -51,8 +52,30 @@ const GEMINI_BUDGET_EXHAUSTED = Ref(false)
 const GEMINI_BUDGET_REASON = Ref("")
 const GEMINI_COOLDOWN_LOCK = ReentrantLock()
 const GEMINI_COOLDOWN_UNTIL = Ref(0.0)
+const CLASSIFICATION_AUDIT_LOCK = ReentrantLock()
+const CLASSIFICATION_AUDIT = Dict{String, Dict{String, Any}}()
 
 const FEATURED_SOURCE = "CrossRef/Featured"
+
+function record_classification_audit!(paper, pass::String, score, category::String, explanation::String)
+    key = PaperScorer.paper_key(paper)
+    lock(CLASSIFICATION_AUDIT_LOCK) do
+        audit = get!(CLASSIFICATION_AUDIT, key, Dict{String, Any}())
+        audit["$(pass)_score"] = score
+        audit["$(pass)_category"] = category
+        audit["$(pass)_explanation"] = explanation
+        audit["final_score"] = score
+        audit["final_category"] = category
+        audit["final_explanation"] = explanation
+    end
+end
+
+function classification_audit(paper)::Dict{String, Any}
+    key = PaperScorer.paper_key(paper)
+    return lock(CLASSIFICATION_AUDIT_LOCK) do
+        copy(get(CLASSIFICATION_AUDIT, key, Dict{String, Any}()))
+    end
+end
 
 function edition_date_for_run(today::Date=Dates.today())::Date
     CONFIGURED_EDITION_DATE !== nothing && return CONFIGURED_EDITION_DATE
@@ -408,18 +431,18 @@ function reader_feedback_context(filename::AbstractString)::String
     for item in get(payload, :papers, [])
         upvotes = try Int(get(item, :upvotes, 0)) catch; 0 end
         downvotes = try Int(get(item, :downvotes, 0)) catch; 0 end
-        net_votes = upvotes - downvotes
-        net_votes == 0 && continue
+        preference_score = upvotes - 2 * downvotes
+        preference_score == 0 && continue
         title = replace(strip(string(get(item, :title, ""))), r"\s+" => " ")
         isempty(title) && continue
         title = first(title, min(length(title), 240))
-        push!(net_votes > 0 ? positive : negative, (abs(net_votes), title))
+        push!(preference_score > 0 ? positive : negative, (abs(preference_score), title))
     end
 
     sort!(positive; by=item -> (-item[1], lowercase(item[2])))
     sort!(negative; by=item -> (-item[1], lowercase(item[2])))
-    positive_lines = ["- $(item[2]) (net +$(item[1]))" for item in first(positive, min(12, length(positive)))]
-    negative_lines = ["- $(item[2]) (net -$(item[1]))" for item in first(negative, min(12, length(negative)))]
+    positive_lines = ["- $(item[2]) (weighted +$(item[1]))" for item in first(positive, min(12, length(positive)))]
+    negative_lines = ["- $(item[2]) (weighted -$(item[1]))" for item in first(negative, min(12, length(negative)))]
     isempty(positive_lines) && push!(positive_lines, "- None yet")
     isempty(negative_lines) && push!(negative_lines, "- None yet")
     return "MORE LIKE THESE:\n$(join(positive_lines, "\n"))\n\nDOES NOT BELONG:\n$(join(negative_lines, "\n"))"
@@ -427,7 +450,43 @@ end
 
 const READER_FEEDBACK_CONTEXT = reader_feedback_context(READER_FEEDBACK_FILE)
 
-"""Classify paper as biophysics (true/false) using Gemini."""
+function parse_scored_classification(result_raw::AbstractString, reason_prefix::String="AI")
+    result = strip(result_raw)
+    isempty(result) && return false, "$reason_prefix Unavailable", nothing, "", ""
+
+    json_match = match(r"\{.*\}"s, result)
+    if json_match !== nothing
+        try
+            payload = JSON3.read(json_match.match)
+            raw_score = get(payload, :score, nothing)
+            score = raw_score isa Number ? round(Int, raw_score) : tryparse(Int, strip(string(raw_score)))
+            score === nothing && error("missing numeric score")
+            score = clamp(score, 0, 100)
+            category = strip(replace(string(get(payload, :category, "")), r"\s+" => " "))
+            explanation = strip(replace(string(get(payload, :explanation, "")), r"\s+" => " "))
+            isempty(category) && error("missing category")
+            isempty(explanation) && error("missing explanation")
+            approved = score >= CLASSIFIER_SCORE_THRESHOLD
+            reason = approved ? "$reason_prefix Approved" : "$reason_prefix Rejected"
+            return approved, reason, score, first(category, min(length(category), 120)),
+                   first(explanation, min(length(explanation), 600))
+        catch
+            # Fall through to the legacy parser so an otherwise usable response
+            # does not become a false negative during the format transition.
+        end
+    end
+
+    answer = match(r"^(TRUE|FALSE)\b"i, result)
+    if answer !== nothing
+        approved = uppercase(answer.captures[1]) == "TRUE"
+        score = approved ? 75 : 25
+        reason = approved ? "$reason_prefix Approved" : "$reason_prefix Rejected"
+        return approved, reason, score, "unspecified", "Legacy binary classifier response."
+    end
+    return false, "$reason_prefix Ambiguous Response", nothing, "", ""
+end
+
+"""Classify paper with a recorded 0-100 biophysics relevance score."""
 function classify_paper(title::String, abstract_text::String)
     prompt = """
 Classify if the provided paper is "Biophysics".
@@ -464,26 +523,20 @@ EXCLUSION CRITERIA:
 - NON-RESEARCH CONTENT: Reviews, Commentaries, Perspectives, Editorials, News, Withdrawn, Retracted, Author Summaries.
 - PHILOSOPHY & HISTORY: Philosophical essays, epistemological discussions, or historical reviews about biophysics (e.g., "the relation between biology and physics", "dialectical materialism"), rather than presenting new quantitative biological models or physical experiments.
 
-If unsure, default to TRUE.
-Reply with a single word: TRUE or FALSE.
+Score the paper from 0 to 100 for relevance to this reading list. Borderline work
+that has a defensible biophysics connection should score at least 50. Use one
+short topic category and one short, concrete explanation of the deciding evidence.
+
+Reply with JSON only, without markdown:
+{"score": 0, "category": "topic", "explanation": "reason"}
 """
 
     try
         result_raw = gemini_generate(prompt)
-        result = uppercase(strip(result_raw))
-        answer = match(r"^(TRUE|FALSE)\b", result)
-        if answer !== nothing && answer.captures[1] == "TRUE"
-            return true, "AI Approved"
-        elseif answer !== nothing && answer.captures[1] == "FALSE"
-            return false, "AI Rejected"
-        elseif isempty(result)
-            return false, "AI Unavailable"
-        else
-            return false, "AI Ambiguous Response"
-        end
+        return parse_scored_classification(result_raw, "AI")
     catch e
         println("  Error classifying '$(first(title, 30))...': $e")
-        return false, "AI Processing Error"
+        return false, "AI Processing Error", nothing, "", ""
     end
 end
 
@@ -509,27 +562,20 @@ forces, assembly, transport, mechanics, conformational transitions, or develops 
 substantive quantitative physical method. Exclude only papers that are clearly
 clinical, descriptive omics/genetics, non-biological hard condensed matter,
 routine static structure determination, generic software, or unrelated materials
-science. If there is a defensible biophysics connection, default to TRUE.
+science. Score the paper from 0 to 100. If there is a defensible biophysics
+connection, score it at least 50. Use one short topic category and one short,
+concrete explanation of the deciding evidence.
 
-Reply with a single word: TRUE or FALSE.
+Reply with JSON only, without markdown:
+{"score": 0, "category": "topic", "explanation": "reason"}
 """
 
     try
         result_raw = gemini_generate(prompt)
-        result = uppercase(strip(result_raw))
-        answer = match(r"^(TRUE|FALSE)\b", result)
-        if answer !== nothing && answer.captures[1] == "TRUE"
-            return true, "AI Recall Approved"
-        elseif answer !== nothing && answer.captures[1] == "FALSE"
-            return false, "AI Recall Rejected"
-        elseif isempty(result)
-            return false, "AI Recall Unavailable"
-        else
-            return false, "AI Recall Ambiguous Response"
-        end
+        return parse_scored_classification(result_raw, "AI Recall")
     catch e
         println("  Error recall-checking '$(first(title, 30))...': $e")
-        return false, "AI Recall Processing Error"
+        return false, "AI Recall Processing Error", nothing, "", ""
     end
 end
 
@@ -617,7 +663,8 @@ function process_one_paper(paper)
         end
 
         # 2. AI Classification for all other papers
-        is_biophysics, reason = classify_paper(title, abstract_text)
+        is_biophysics, reason, relevance_score, relevance_category, explanation = classify_paper(title, abstract_text)
+        record_classification_audit!(paper, "initial", relevance_score, relevance_category, explanation)
         if is_biophysics
             summary = summarize_paper(title, abstract_text)
             return (paper, summary, :regular, reason)
@@ -774,7 +821,8 @@ function main()
                     paper, _, _, _ = results[i]
                     title = string(get(paper, :title, ""))
                     abstract_text = string(get(paper, :abstract, ""))
-                    approved, reason = recall_classify_paper(title, abstract_text)
+                    approved, reason, relevance_score, relevance_category, explanation = recall_classify_paper(title, abstract_text)
+                    record_classification_audit!(paper, "recall", relevance_score, relevance_category, explanation)
                     score = paper_score(paper)
                     if approved && recall_approval_supported(paper, score)
                         results[i] = (paper, summarize_paper(title, abstract_text), :regular, reason)
@@ -896,12 +944,23 @@ function main()
         for (i, result) in enumerate(results)
             isassigned(results, i) || continue
             paper, summary, category, reason = result
+            audit = classification_audit(paper)
             label = category === nothing ? "rejected" : string(category)
             JSON3.write(f, Dict(
                 "run_date" => Dates.format(today, "yyyy-mm-dd"),
                 "week" => Dates.format(prev_monday, "yyyy-mm-dd"),
                 "label" => label,
                 "classifier_reason" => reason,
+                "classifier_threshold" => CLASSIFIER_SCORE_THRESHOLD,
+                "classifier_score" => get(audit, "final_score", nothing),
+                "classifier_category" => get(audit, "final_category", ""),
+                "classifier_explanation" => get(audit, "final_explanation", ""),
+                "initial_classifier_score" => get(audit, "initial_score", nothing),
+                "initial_classifier_category" => get(audit, "initial_category", ""),
+                "initial_classifier_explanation" => get(audit, "initial_explanation", ""),
+                "recall_classifier_score" => get(audit, "recall_score", nothing),
+                "recall_classifier_category" => get(audit, "recall_category", ""),
+                "recall_classifier_explanation" => get(audit, "recall_explanation", ""),
                 "score_policy" => SCORE_POLICY_VERSION,
                 "local_score" => paper_score(paper),
                 "source" => string(get(paper, :source, "")),
