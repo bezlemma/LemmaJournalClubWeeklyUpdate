@@ -171,6 +171,7 @@ jobs:
         env:
           EDITION_ID: ${{ steps.edition.outputs.edition_id }}
           MIN_EDITION_PAPERS: "50"
+          MIN_SELECTION_FRACTION: "0.50"
         run: julia --project=. validate_edition.jl
 
       - name: Save the generated edition

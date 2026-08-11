@@ -6,6 +6,7 @@ export MIN_EDITION_PAPERS,
        candidate_issues,
        is_placeholder_text,
        publication_date,
+       required_edition_size,
        sanitize_candidates,
        selected_edition_issues,
        summary_issues
@@ -124,9 +125,21 @@ function sanitize_candidates(papers, edition_date::Date)
     return kept, removed
 end
 
-function selected_edition_issues(items, edition_date::Date; min_papers::Int=MIN_EDITION_PAPERS)::Vector{String}
+function required_edition_size(candidate_count::Int; min_papers::Int=MIN_EDITION_PAPERS,
+                               min_fraction::Float64=0.0)::Int
+    0.0 <= min_fraction <= 1.0 || error("min_fraction must be between 0 and 1")
+    return max(min_papers, ceil(Int, candidate_count * min_fraction))
+end
+
+function selected_edition_issues(items, edition_date::Date; min_papers::Int=MIN_EDITION_PAPERS,
+                                 candidate_count::Union{Nothing, Int}=nothing,
+                                 min_fraction::Float64=0.0)::Vector{String}
     issues = String[]
-    length(items) < min_papers && push!(issues, "edition contains $(length(items)) papers; minimum is $min_papers")
+    required = candidate_count === nothing ? min_papers :
+               required_edition_size(candidate_count; min_papers=min_papers, min_fraction=min_fraction)
+    length(items) < required && push!(issues,
+        "edition contains $(length(items)) papers; minimum is $required" *
+        (candidate_count === nothing ? "" : " for $candidate_count valid candidates"))
 
     seen_links = Set{String}()
     seen_titles = Set{String}()

@@ -7,6 +7,7 @@ const OUTPUT_FILE = get(ENV, "EDITION_MARKDOWN_FILE", "papers_final.md")
 const DECISIONS_DIR = get(ENV, "EDITION_DECISIONS_DIR", "TrainingData")
 const EDITION_ID = strip(get(ENV, "EDITION_ID", ""))
 const MIN_PAPERS = something(tryparse(Int, get(ENV, "MIN_EDITION_PAPERS", "50")), 50)
+const MIN_SELECTION_FRACTION = something(tryparse(Float64, get(ENV, "MIN_SELECTION_FRACTION", "0.50")), 0.50)
 
 function require_edition_date()::Date
     isempty(EDITION_ID) && error("EDITION_ID is required for edition validation.")
@@ -45,7 +46,13 @@ function main()
         push!(selected, (paper=by_link[link], summary=string(get(record, :summary, ""))))
     end
 
-    issues = selected_edition_issues(selected, edition_date; min_papers=MIN_PAPERS)
+    issues = selected_edition_issues(
+        selected,
+        edition_date;
+        min_papers=MIN_PAPERS,
+        candidate_count=length(papers),
+        min_fraction=MIN_SELECTION_FRACTION,
+    )
     append!(issues, unmatched)
 
     markdown = read(OUTPUT_FILE, String)

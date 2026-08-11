@@ -26,6 +26,15 @@ valid_item(index::Int; kwargs...) = (
     count_issues = selected_edition_issues(valid_items[1:49], edition_date)
     @test any(contains("minimum is 50"), count_issues)
 
+    ratio_issues = selected_edition_issues(
+        valid_items,
+        edition_date;
+        candidate_count=153,
+        min_fraction=0.50,
+    )
+    @test any(contains("minimum is 77 for 153 valid candidates"), ratio_issues)
+    @test required_edition_size(153; min_papers=50, min_fraction=0.50) == 77
+
     stale_items = copy(valid_items)
     stale_items[1] = valid_item(1; date="2026-08-02T23:59:59+00:00")
     @test any(contains("older than"), selected_edition_issues(stale_items, edition_date))

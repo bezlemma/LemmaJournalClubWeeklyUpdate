@@ -38,6 +38,7 @@ const GEMINI_COST_SAFETY_MULTIPLIER = 1.25
 const GEMINI_RESERVED_OUTPUT_TOKENS = 1024
 const MAX_AI_FAILURE_FRACTION = something(tryparse(Float64, get(ENV, "MAX_AI_FAILURE_FRACTION", "0.05")), 0.05)
 const MAX_AI_FAILURE_COUNT = something(tryparse(Int, get(ENV, "MAX_AI_FAILURE_COUNT", "5")), 5)
+const MIN_SELECTION_FRACTION = something(tryparse(Float64, get(ENV, "MIN_SELECTION_FRACTION", "0.50")), 0.50)
 const SUMMARY_FALLBACK_COUNT = Threads.Atomic{Int}(0)
 const GEMINI_BUDGET_LOCK = ReentrantLock()
 const GEMINI_IN_FLIGHT_COST_USD = Ref(0.0)
@@ -452,14 +453,12 @@ EXCLUSION CRITERIA:
 - Static structural biology (routine crystallography).
 - Purely clinical, medical, or descriptive genetics/omics.
 - Pure materials science with no biological application.
-- Papers with "Simulation" in the name
 - SOFTWARE: Papers focused on introducing or improving a software package, python framework, etc.
 - NETWORK ECOLOGY: Food webs, trophic levels, ecosystem robustness, predator-prey population graphs.
 - POPULATION DYNAMICS: Lotka-Volterra models, species abundance distributions, biodiversity statistics.
 - HIGH-THROUGHPUT SCREENING: "Virtual screening," "Molecular docking studies," or "In silico characterization" of large lists of proteins without deep mechanistic insight.
 - ROUTINE MD or CryoEM: The main method is CryoEM, or MD, as stated in the abstract, and there is no deeper physics
 - DATABASES: Papers that just present a list of predicted structures (e.g., "Genome-wide analysis of...").
-- Contains the word CryoEM, Structural, or MD in the title.
 - NON-RESEARCH CONTENT: Reviews, Commentaries, Perspectives, Editorials, News, Withdrawn, Retracted, Author Summaries.
 - PHILOSOPHY & HISTORY: Philosophical essays, epistemological discussions, or historical reviews about biophysics (e.g., "the relation between biology and physics", "dialectical materialism"), rather than presenting new quantitative biological models or physical experiments.
 
@@ -483,6 +482,52 @@ Reply with a single word: TRUE or FALSE.
     catch e
         println("  Error classifying '$(first(title, 30))...': $e")
         return false, "AI Processing Error"
+    end
+end
+
+"""Re-review an initial rejection with an explicit false-negative/recall focus."""
+function recall_classify_paper(title::String, abstract_text::String)
+    prompt = """
+Audit a paper that was rejected by a first-pass Biophysics classifier. The weekly
+reading list is intentionally broad, so false negatives are more harmful than
+including a borderline paper.
+
+Title: $title
+Abstract: $abstract_text
+
+Reply TRUE when physical concepts or quantitative physical methods materially
+contribute to understanding a biological or soft-matter system. Relevant topics
+include mechanics, forces, dynamics, transport, thermodynamics, phase behavior,
+polymers, fluids, membranes, active matter, self-assembly, conformational changes,
+single-molecule measurements, or physics-based imaging and instrumentation.
+
+Simulation, molecular dynamics, structural biology, and CryoEM are not automatic
+reasons for exclusion. Include them when the work studies dynamics, energetics,
+forces, assembly, transport, mechanics, conformational transitions, or develops a
+substantive quantitative physical method. Exclude only papers that are clearly
+clinical, descriptive omics/genetics, non-biological hard condensed matter,
+routine static structure determination, generic software, or unrelated materials
+science. If there is a defensible biophysics connection, default to TRUE.
+
+Reply with a single word: TRUE or FALSE.
+"""
+
+    try
+        result_raw = gemini_generate(prompt)
+        result = uppercase(strip(result_raw))
+        answer = match(r"^(TRUE|FALSE)\b", result)
+        if answer !== nothing && answer.captures[1] == "TRUE"
+            return true, "AI Recall Approved"
+        elseif answer !== nothing && answer.captures[1] == "FALSE"
+            return false, "AI Recall Rejected"
+        elseif isempty(result)
+            return false, "AI Recall Unavailable"
+        else
+            return false, "AI Recall Ambiguous Response"
+        end
+    catch e
+        println("  Error recall-checking '$(first(title, 30))...': $e")
+        return false, "AI Recall Processing Error"
     end
 end
 
@@ -710,6 +755,42 @@ function main()
         end
     end
 
+    # A single binary pass proved too prone to silently excluding plausible
+    # biophysics papers. Re-review every explicit rejection once with a
+    # recall-focused prompt. This is intentionally bounded: there is exactly
+    # one audit call per rejected paper, still protected by the run-wide cost
+    # and request ceilings above.
+    rejected_indices = [i for i in eachindex(results) if isassigned(results, i) && results[i][4] == "AI Rejected"]
+    if !isempty(rejected_indices)
+        println("Recall-auditing $(length(rejected_indices)) initial AI rejections with $repair_workers workers...")
+        recall_completed = Threads.Atomic{Int}(0)
+        recall_sem = Base.Semaphore(repair_workers)
+        @sync for i in rejected_indices
+            @async begin
+                Base.acquire(recall_sem)
+                try
+                    paper, _, _, _ = results[i]
+                    title = string(get(paper, :title, ""))
+                    abstract_text = string(get(paper, :abstract, ""))
+                    approved, reason = recall_classify_paper(title, abstract_text)
+                    if approved
+                        results[i] = (paper, summarize_paper(title, abstract_text), :regular, reason)
+                    else
+                        results[i] = (paper, "", nothing, reason)
+                    end
+                    n = Threads.atomic_add!(recall_completed, 1) + 1
+                    lock(print_lock) do
+                        println("[recall $n/$(length(rejected_indices))] " *
+                                (approved ? "🟢 RECOVERED: " : "❌ CONFIRMED: ") *
+                                "$(first(title, 40))...")
+                    end
+                finally
+                    Base.release(recall_sem)
+                end
+            end
+        end
+    end
+
     classification_attempts = 0
     classification_failures = 0
     summary_attempts = 0
@@ -719,8 +800,9 @@ function main()
         isassigned(results, i) || continue
         _, summary, category, reason = result
         if startswith(reason, "AI ")
-            classification_attempts += 1
-            reason in ("AI Approved", "AI Rejected") || (classification_failures += 1)
+            classification_attempts += startswith(reason, "AI Recall ") ? 2 : 1
+            reason in ("AI Approved", "AI Rejected", "AI Recall Approved", "AI Recall Rejected") ||
+                (classification_failures += 1)
         elseif reason == "Processing error"
             processing_failures += 1
         end
@@ -776,7 +858,12 @@ function main()
     # Generate output
     all_final = vcat(featured_papers, regular_papers)
     total_kept = length(all_final)
-    integrity_issues = selected_edition_issues(all_final, edition_date)
+    integrity_issues = selected_edition_issues(
+        all_final,
+        edition_date;
+        candidate_count=total,
+        min_fraction=MIN_SELECTION_FRACTION,
+    )
     if !isempty(integrity_issues)
         println("Edition integrity gate failed with $(length(integrity_issues)) issue(s):")
         for issue in integrity_issues
