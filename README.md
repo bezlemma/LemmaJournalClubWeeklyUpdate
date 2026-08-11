@@ -60,6 +60,10 @@ The newsletter API URL is currently the Cloudflare Worker URL ending in
   such as `Abstract not available` fails the integrity gate.
 - The website/email artifacts are independently cross-checked against the
   selected decision records before either publication or delivery.
+- Frozen corrections can use the `repair_current` workflow option to remove
+  invalid records deterministically from the existing decisions without new AI
+  calls. Normal AI runs use conservative concurrency and respect provider
+  rate-limit backoff as well as the $5/request-count circuit breakers.
 - A delivery failure stops the workflow, but the edition is already frozen, so
   the GitHub **Re-run jobs** action is safe.
 

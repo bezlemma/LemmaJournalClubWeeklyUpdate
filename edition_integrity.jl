@@ -30,11 +30,33 @@ function publication_date(record)::Union{Date, Nothing}
     raw = field_text(record, :date)
     date_match = match(r"^\d{4}-\d{2}-\d{2}", raw)
     date_match === nothing && return nothing
-    return try
+    reported = try
         Date(date_match.match)
     catch
-        nothing
+        return nothing
     end
+
+    # bioRxiv and medRxiv APIs report the latest revision date. Their DOI keeps
+    # the first-posted date, which is the publication date readers expect and
+    # prevents an old revised manuscript from masquerading as a new paper.
+    source = lowercase(field_text(record, :source))
+    link = lowercase(field_text(record, :link))
+    if occursin("biorxiv", source) || occursin("medrxiv", source) ||
+       occursin("biorxiv.org", link) || occursin("medrxiv.org", link) ||
+       occursin("doi.org/10.64898/", link) || occursin("doi.org/10.1101/", link)
+        original_match = match(r"/(20\d{2})\.(\d{2})\.(\d{2})(?:\.|v|$)", link)
+        if original_match !== nothing
+            original = try
+                Date(parse(Int, original_match.captures[1]),
+                     parse(Int, original_match.captures[2]),
+                     parse(Int, original_match.captures[3]))
+            catch
+                nothing
+            end
+            original !== nothing && return min(original, reported)
+        end
+    end
+    return reported
 end
 
 function candidate_issues(record, edition_date::Date)::Vector{String}
@@ -91,7 +113,10 @@ function sanitize_candidates(papers, edition_date::Date)
     for (index, paper) in enumerate(papers)
         issues = candidate_issues(paper, edition_date)
         if isempty(issues)
-            push!(kept, paper)
+            normalized = Dict{Symbol, Any}(Symbol(key) => value for (key, value) in pairs(paper))
+            published = publication_date(paper)
+            published !== nothing && (normalized[:date] = "$(published)T00:00:00+00:00")
+            push!(kept, normalized)
         else
             push!(removed, (index=index, title=field_text(paper, :title), issues=issues))
         end

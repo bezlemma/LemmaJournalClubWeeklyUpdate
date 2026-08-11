@@ -38,6 +38,22 @@ valid_item(index::Int; kwargs...) = (
     future_items[1] = valid_item(1; date="2026-08-11T00:00:00+00:00")
     @test any(contains("after edition date"), selected_edition_issues(future_items, edition_date))
 
+    revised_preprint_items = copy(valid_items)
+    revised_preprint = valid_paper(1; date="2026-08-10T00:00:00+00:00")
+    revised_preprint[:source] = "bioRxiv"
+    revised_preprint[:link] = "https://www.biorxiv.org/content/10.1101/2023.08.22.554088v2"
+    revised_preprint_items[1] = (paper=revised_preprint, summary=valid_items[1].summary)
+    @test any(contains("publication date 2023-08-22 is older"),
+              selected_edition_issues(revised_preprint_items, edition_date))
+
+    featured_preprint_items = copy(valid_items)
+    featured_preprint = valid_paper(1; date="2026-08-10T00:00:00+00:00")
+    featured_preprint[:source] = "CrossRef/Featured"
+    featured_preprint[:link] = "https://doi.org/10.64898/2026.07.31.742166"
+    featured_preprint_items[1] = (paper=featured_preprint, summary=valid_items[1].summary)
+    @test any(contains("publication date 2026-07-31 is older"),
+              selected_edition_issues(featured_preprint_items, edition_date))
+
     placeholder_items = copy(valid_items)
     placeholder_items[1] = (
         paper=valid_paper(1; abstract="Abstract not available via CrossRef API."),

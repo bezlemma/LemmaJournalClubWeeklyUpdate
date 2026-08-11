@@ -24,8 +24,8 @@ const GEMINI_MODEL = "gemini-3-flash-preview"
 const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
 const GEMINI_MAX_RETRIES = something(tryparse(Int, get(ENV, "GEMINI_MAX_RETRIES", "3")), 3)
 const GEMINI_READ_TIMEOUT = something(tryparse(Int, get(ENV, "GEMINI_READ_TIMEOUT", "30")), 30)
-const GEMINI_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_WORKERS", "8")), 8)
-const GEMINI_REPAIR_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_REPAIR_WORKERS", "4")), 4)
+const GEMINI_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_WORKERS", "4")), 4)
+const GEMINI_REPAIR_WORKERS = something(tryparse(Int, get(ENV, "GEMINI_REPAIR_WORKERS", "2")), 2)
 const GEMINI_MAX_RUN_COST_USD = something(tryparse(Float64, get(ENV, "GEMINI_MAX_RUN_COST_USD", "5.0")), 5.0)
 const GEMINI_MAX_REQUESTS = something(tryparse(Int, get(ENV, "GEMINI_MAX_REQUESTS", "400")), 400)
 # Paid-tier standard pricing checked 2026-08-10:
@@ -296,7 +296,14 @@ function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
 
             if resp.status == 408 || resp.status == 429 || 500 <= resp.status < 600
                 attempt == max_retries && (println("  Gemini API request failed after $max_retries attempts: HTTP $(resp.status)"); return "")
-                sleep(min(30, 3 * 2^(attempt - 1)))
+                if resp.status == 429
+                    retry_after = tryparse(Float64, strip(string(HTTP.header(resp, "Retry-After"))))
+                    wait_seconds = min(60.0, something(retry_after, 12.0 * 2^(attempt - 1)))
+                    println("  Gemini rate-limited this request; waiting $(round(wait_seconds; digits=1))s before retry $attempt/$max_retries.")
+                    sleep(wait_seconds)
+                else
+                    sleep(min(30, 3 * 2^(attempt - 1)))
+                end
                 continue
             end
 

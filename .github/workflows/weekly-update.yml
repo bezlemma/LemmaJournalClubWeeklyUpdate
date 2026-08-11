@@ -11,6 +11,11 @@ on:
         required: false
         default: false
         type: boolean
+      repair_current:
+        description: "Remove invalid papers from the current frozen edition without making AI calls"
+        required: false
+        default: false
+        type: boolean
       send_correction:
         description: "Send the current edition again as a corrected delivery"
         required: false
@@ -52,15 +57,6 @@ jobs:
       - name: Test paper pipeline
         run: julia --project=. -e 'include(joinpath("test", "feedback_scoring.jl")); include(joinpath("test", "biorxiv_fetching.jl")); include(joinpath("test", "journal_fallbacks.jl")); include(joinpath("test", "edition_integrity.jl"))'
 
-      - name: Check required configuration
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          if [ -z "$GEMINI_API_KEY" ]; then
-            echo "GEMINI_API_KEY is not configured."
-            exit 1
-          fi
-
       - name: Determine whether this edition is already frozen
         id: edition
         shell: bash
@@ -75,33 +71,53 @@ jobs:
           echo "paper_data_file=$PAPER_DATA_FILE" >> "$GITHUB_OUTPUT"
 
           if [ -s "$ARCHIVE_FILE" ] && [ -s "$PAPER_DATA_FILE" ]; then
-            if [ "${{ inputs.regenerate_current || false }}" = "true" ]; then
+            if [ "${{ inputs.repair_current || false }}" = "true" ]; then
+              cp "$ARCHIVE_FILE" papers_final.md
+              cp "$PAPER_DATA_FILE" papers.json
+              echo "reused=false" >> "$GITHUB_OUTPUT"
+              echo "regenerated_from_frozen=false" >> "$GITHUB_OUTPUT"
+              echo "repaired_from_frozen=true" >> "$GITHUB_OUTPUT"
+              echo "Repairing the frozen $EDITION_ID edition from its existing decisions without AI calls."
+            elif [ "${{ inputs.regenerate_current || false }}" = "true" ]; then
               cp "$PAPER_DATA_FILE" papers.json
               echo "reused=false" >> "$GITHUB_OUTPUT"
               echo "regenerated_from_frozen=true" >> "$GITHUB_OUTPUT"
+              echo "repaired_from_frozen=false" >> "$GITHUB_OUTPUT"
               echo "Re-filtering the frozen $EDITION_ID candidate set without scraping or duplicate removal."
             else
               cp "$ARCHIVE_FILE" papers_final.md
               cp "$PAPER_DATA_FILE" papers.json
               echo "reused=true" >> "$GITHUB_OUTPUT"
               echo "regenerated_from_frozen=false" >> "$GITHUB_OUTPUT"
+              echo "repaired_from_frozen=false" >> "$GITHUB_OUTPUT"
               echo "Reusing the frozen $EDITION_ID edition for this rerun."
             fi
           else
             echo "reused=false" >> "$GITHUB_OUTPUT"
             echo "regenerated_from_frozen=false" >> "$GITHUB_OUTPUT"
+            echo "repaired_from_frozen=false" >> "$GITHUB_OUTPUT"
             echo "No frozen $EDITION_ID edition exists; generating it now."
           fi
 
+      - name: Check required configuration
+        if: ${{ steps.edition.outputs.reused != 'true' && steps.edition.outputs.repaired_from_frozen != 'true' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "GEMINI_API_KEY is not configured."
+            exit 1
+          fi
+
       - name: Fetch current papers
-        if: ${{ steps.edition.outputs.reused != 'true' && steps.edition.outputs.regenerated_from_frozen != 'true' }}
+        if: ${{ steps.edition.outputs.reused != 'true' && steps.edition.outputs.regenerated_from_frozen != 'true' && steps.edition.outputs.repaired_from_frozen != 'true' }}
         env:
           FETCH_CLEAN: "1"
           EDITION_ID: ${{ steps.edition.outputs.edition_id }}
         run: julia --project=. fetch_papers.jl
 
       - name: Stop before publishing an incomplete scrape
-        if: ${{ success() && steps.edition.outputs.reused != 'true' && steps.edition.outputs.regenerated_from_frozen != 'true' }}
+        if: ${{ success() && steps.edition.outputs.reused != 'true' && steps.edition.outputs.regenerated_from_frozen != 'true' && steps.edition.outputs.repaired_from_frozen != 'true' }}
         run: |
           if [ ! -s fetch_warnings.json ]; then
             exit 0
@@ -111,7 +127,7 @@ jobs:
           exit 1
 
       - name: Download anonymous reader voting feedback
-        if: ${{ steps.edition.outputs.reused != 'true' }}
+        if: ${{ steps.edition.outputs.reused != 'true' && steps.edition.outputs.repaired_from_frozen != 'true' }}
         env:
           NEWSLETTER_API_URL: ${{ secrets.NEWSLETTER_API_URL }}
           NEWSLETTER_ADMIN_TOKEN: ${{ secrets.NEWSLETTER_ADMIN_TOKEN }}
@@ -136,11 +152,17 @@ jobs:
           fi
 
       - name: Filter and summarize papers
-        if: ${{ steps.edition.outputs.reused != 'true' }}
+        if: ${{ steps.edition.outputs.reused != 'true' && steps.edition.outputs.repaired_from_frozen != 'true' }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           EDITION_ID: ${{ steps.edition.outputs.edition_id }}
         run: julia --project=. filter_papers.jl
+
+      - name: Repair a frozen edition without AI calls
+        if: ${{ steps.edition.outputs.repaired_from_frozen == 'true' }}
+        env:
+          EDITION_ID: ${{ steps.edition.outputs.edition_id }}
+        run: julia --project=. repair_frozen_edition.jl
 
       - name: Validate edition integrity
         env:
@@ -200,7 +222,7 @@ jobs:
           DELIVERY_SUBJECT="$SUBJECT"
           DELIVERY_ID="$EDITION_ID"
           REPLACE_FROZEN="false"
-          if [ "${{ inputs.send_correction || false }}" = "true" ] || [ "${{ inputs.regenerate_current || false }}" = "true" ]; then
+          if [ "${{ inputs.send_correction || false }}" = "true" ] || [ "${{ inputs.regenerate_current || false }}" = "true" ] || [ "${{ inputs.repair_current || false }}" = "true" ]; then
             DELIVERY_ID="${EDITION_ID}-correction-${{ github.run_number }}"
             DELIVERY_SUBJECT="Correction — $SUBJECT"
             REPLACE_FROZEN="true"
