@@ -243,6 +243,7 @@ function tfidf_vector(counts::Dict{String, Int}, idf::Dict{String, Float64})::Di
 end
 
 function normalize!(vec::Dict{String, Float64})
+    isempty(vec) && return vec
     norm = sqrt(sum(v * v for v in values(vec)))
     norm == 0 && return vec
     for k in keys(vec)
@@ -265,7 +266,9 @@ end
 function get_string(item, key::Symbol)::String
     value = get(item, key, "")
     value === nothing && return ""
-    return string(value)
+    text = string(value)
+    lowercase(strip(text)) in ("nothing", "null", "missing") && return ""
+    return text
 end
 
 function paper_key(item)::String
@@ -342,17 +345,18 @@ end
 
 function score_map_from_files(input_file::AbstractString="papers.json",
                               previous_weeks_dir::AbstractString="PreviousWeeks";
-                              decisions_dir::AbstractString="TrainingData",
                               feedback_file::AbstractString="TrainingData/reader_feedback.json",
                               output_file::Union{AbstractString, Nothing}="paper_scores.json")
     papers = JSON3.read(read(input_file, String))
     training_docs = load_training_docs(previous_weeks_dir)
-    negative_docs = load_rejected_docs(decisions_dir)
     feedback_positive, feedback_negative = load_reader_feedback_docs(feedback_file)
     scores = score_papers(
         vcat(training_docs, feedback_positive),
         papers;
-        negative_docs=vcat(negative_docs, feedback_negative),
+        # AI rejections are retained in TrainingData for auditing, but are not
+        # ground truth and must never train the next AI run. Only explicit
+        # human downvotes contribute negative learning examples.
+        negative_docs=feedback_negative,
     )
     score_map = Dict{String, Float64}()
     rows = Dict{String, Any}[]
@@ -381,9 +385,8 @@ end
 
 function score_papers_from_files(input_file::AbstractString="papers.json",
                                  previous_weeks_dir::AbstractString="PreviousWeeks";
-                                 decisions_dir::AbstractString="TrainingData",
                                  output_file::Union{AbstractString, Nothing}="paper_scores.json")
-    score_map_from_files(input_file, previous_weeks_dir; decisions_dir=decisions_dir, output_file=output_file)
+    score_map_from_files(input_file, previous_weeks_dir; output_file=output_file)
 end
 
 end # module
@@ -394,6 +397,6 @@ if abspath(PROGRAM_FILE) == @__FILE__
     previous_weeks_dir = length(ARGS) >= 2 ? ARGS[2] : "PreviousWeeks"
     output_file = length(ARGS) >= 3 ? ARGS[3] : "paper_scores.json"
     scores = PaperScorer.score_map_from_files(input_file, previous_weeks_dir; output_file=output_file)
-    println("Scored $(length(scores)) papers using $(length(PaperScorer.load_training_docs(previous_weeks_dir))) previous selections and $(length(PaperScorer.load_rejected_docs())) rejected examples.")
+    println("Scored $(length(scores)) papers using previous selections and human voting feedback; AI rejections remain audit-only.")
     println("Wrote $output_file")
 end

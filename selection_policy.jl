@@ -1,10 +1,12 @@
 module SelectionPolicy
 
-export RECALL_MIN_LOCAL_SCORE, recall_approval_supported
+export RECALL_MIN_LOCAL_SCORE, SCORE_POLICY_VERSION, recall_approval_supported
+
+const SCORE_POLICY_VERSION = "human-feedback-v1"
 
 const RECALL_MIN_LOCAL_SCORE = something(
-    tryparse(Float64, get(ENV, "RECALL_MIN_LOCAL_SCORE", "-0.012")),
-    -0.012,
+    tryparse(Float64, get(ENV, "RECALL_MIN_LOCAL_SCORE", "0.05")),
+    0.05,
 )
 
 # Broad aggregators such as arXiv and bioRxiv are already screened by topic.

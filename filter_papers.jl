@@ -902,6 +902,7 @@ function main()
                 "week" => Dates.format(prev_monday, "yyyy-mm-dd"),
                 "label" => label,
                 "classifier_reason" => reason,
+                "score_policy" => SCORE_POLICY_VERSION,
                 "local_score" => paper_score(paper),
                 "source" => string(get(paper, :source, "")),
                 "date" => string(get(paper, :date, "")),

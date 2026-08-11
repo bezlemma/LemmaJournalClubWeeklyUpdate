@@ -106,6 +106,7 @@ function main()
         )
         score = try Float64(get(record, :local_score, 0.0)) catch; 0.0 end
         if label == "regular" && field_text(record, :classifier_reason) == "AI Recall Approved" &&
+           field_text(record, :score_policy) == SCORE_POLICY_VERSION &&
            !recall_approval_supported(by_link[link], score)
             label = "rejected"
             mutable_record["label"] = "rejected"

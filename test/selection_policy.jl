@@ -11,8 +11,8 @@ end
     irrelevant_optics = policy_paper("Optica", "Generating quantum entanglement from sunlight")
     biorxiv = policy_paper("bioRxiv", "Membrane dynamics")
 
-    @test recall_approval_supported(relevant_optics, 0.0)
-    @test !recall_approval_supported(irrelevant_optics, 0.0)
+    @test recall_approval_supported(relevant_optics, RECALL_MIN_LOCAL_SCORE)
+    @test !recall_approval_supported(irrelevant_optics, RECALL_MIN_LOCAL_SCORE)
     @test recall_approval_supported(biorxiv, RECALL_MIN_LOCAL_SCORE)
     @test !recall_approval_supported(biorxiv, RECALL_MIN_LOCAL_SCORE - 0.001)
 end
