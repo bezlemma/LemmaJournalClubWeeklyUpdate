@@ -62,8 +62,11 @@ The newsletter API URL is currently the Cloudflare Worker URL ending in
   selected decision records before either publication or delivery.
 - Frozen corrections can use the `repair_current` workflow option to remove
   invalid records deterministically from the existing decisions without new AI
-  calls. Normal AI runs use conservative concurrency and respect provider
-  rate-limit backoff as well as the $5/request-count circuit breakers.
+  calls. Normal AI runs use the stable Gemini Flash model, coordinated provider
+  rate-limit cooldowns, and a $5 paid-tier-equivalent hard ceiling based on
+  provider-reported usage plus only unresolved/in-flight exposure. The separate
+  2,000-request and 45-minute limits are runaway guards, not normal budgets;
+  rejected retries do not accumulate as fake spend.
 - A delivery failure stops the workflow, but the edition is already frozen, so
   the GitHub **Re-run jobs** action is safe.
 

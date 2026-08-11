@@ -55,7 +55,7 @@ jobs:
         run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
       - name: Test paper pipeline
-        run: julia --project=. -e 'include(joinpath("test", "feedback_scoring.jl")); include(joinpath("test", "biorxiv_fetching.jl")); include(joinpath("test", "journal_fallbacks.jl")); include(joinpath("test", "edition_integrity.jl"))'
+        run: julia --project=. -e 'include(joinpath("test", "feedback_scoring.jl")); include(joinpath("test", "biorxiv_fetching.jl")); include(joinpath("test", "journal_fallbacks.jl")); include(joinpath("test", "edition_integrity.jl")); include(joinpath("test", "gemini_safety_guard.jl"))'
 
       - name: Determine whether this edition is already frozen
         id: edition
@@ -124,6 +124,9 @@ jobs:
           fi
           echo "At least one source remained unavailable after retries. Refusing to freeze or email an incomplete edition."
           cat fetch_warnings.json
+          jq -n \
+            --arg reason "Paper scraping remained incomplete after every configured fallback; see fetch_warnings.json." \
+            '{status:"failed",reason:$reason}' > pipeline_status.json
           exit 1
 
       - name: Download anonymous reader voting feedback
@@ -180,6 +183,7 @@ jobs:
             papers.json
             papers_final.md
             paper_scores.json
+            pipeline_status.json
             fetch_warnings.json
             TrainingData/reader_feedback.json
             TrainingData/filter_decisions_*.jsonl
@@ -237,10 +241,33 @@ jobs:
             --slurpfile paperMetadata papers.json \
             '{editionId:$editionId,deliveryId:$deliveryId,replaceFrozenEdition:$replaceFrozenEdition,subject:$subject,deliverySubject:$deliverySubject,markdown:$markdown,paperMetadata:$paperMetadata[0]}' > newsletter-payload.json
 
-          curl --fail-with-body "$NEWSLETTER_API_URL/admin/send-edition" \
+          if ! curl --fail-with-body "$NEWSLETTER_API_URL/admin/send-edition" \
             -H "Authorization: Bearer $NEWSLETTER_ADMIN_TOKEN" \
             -H "Content-Type: application/json" \
-            --data-binary @newsletter-payload.json
+            --data-binary @newsletter-payload.json; then
+            jq -n \
+              --arg reason "The edition passed validation, but the newsletter delivery API rejected or could not complete the send request." \
+              '{status:"failed",reason:$reason}' > pipeline_status.json
+            exit 1
+          fi
+
+      - name: Put the outcome at the top of the Actions summary
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          if [ "${{ job.status }}" = "failure" ]; then
+            REASON="A workflow step failed; open the failed step below for its exact command output."
+            if [ -s pipeline_status.json ] && [ "$(jq -r '.status // empty' pipeline_status.json)" = "failed" ]; then
+              REASON="$(jq -r '.reason // "No failure reason was recorded."' pipeline_status.json)"
+            fi
+            {
+              echo "# ❌ FAILED — $REASON"
+              echo
+              echo "Nothing was published or emailed after this failure."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "# ✅ SUCCEEDED — edition validated and delivery step completed" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Email the owner if the weekly run failed
         if: ${{ failure() }}
@@ -257,17 +284,21 @@ jobs:
 
           FROM_ADDRESS="${RESEND_FROM:-Biophysics Weekly <onboarding@resend.dev>}"
           SUBJECT="Biophysics Weekly run failed"
-          DETAILS="At least one fetch, filter, delivery, or publishing step did not complete."
+          DETAILS="<strong>FAILED — A workflow step did not complete.</strong> Open the linked run for the failed command."
+          if [ -s pipeline_status.json ] && [ "$(jq -r '.status // empty' pipeline_status.json)" = "failed" ]; then
+            REASON="$(jq -r '.reason // "No failure reason was recorded."' pipeline_status.json)"
+            DETAILS="<strong>FAILED — $REASON</strong>"
+          fi
           if [ -s fetch_warnings.json ]; then
             WARNINGS="$(jq -r '.[] | "• " + .' fetch_warnings.json)"
             SUBJECT="Biophysics Weekly scrape incomplete"
-            DETAILS="The scrape remained incomplete after automatic retries:<br><pre>$WARNINGS</pre>"
+            DETAILS="<strong>FAILED — The scrape remained incomplete after automatic retries.</strong><br><pre>$WARNINGS</pre>"
           fi
           jq -n \
             --arg from "$FROM_ADDRESS" \
             --arg to "$WARNING_EMAIL" \
             --arg subject "$SUBJECT" \
-            --arg html "<h1>The weekly paper run needs attention</h1><p>$DETAILS</p><p>It is safe to re-run the workflow. An unfinished edition will be rebuilt; a previously frozen edition will be reused exactly, and subscribers who already received it will be skipped.</p><p><a href=\"$RUN_URL\">Open the GitHub run, inspect the failure, and re-run the workflow</a>.</p>" \
+            --arg html "<h1>Biophysics Weekly failed</h1><p>$DETAILS</p><p>Nothing later in the pipeline was published or emailed. It is safe to re-run the workflow: an unfinished edition will be rebuilt, while a frozen edition will be reused and subscribers who already received that delivery will be skipped.</p><p><a href=\"$RUN_URL\">Open the failed GitHub run</a>.</p>" \
             '{from:$from,to:[$to],subject:$subject,html:$html}' > resend-warning.json
 
           curl --fail-with-body https://api.resend.com/emails \

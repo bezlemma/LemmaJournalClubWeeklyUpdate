@@ -1,0 +1,58 @@
+using Test
+
+if !isdefined(Main, :begin_gemini_request!)
+    include(joinpath(@__DIR__, "..", "filter_papers.jl"))
+end
+
+function reset_gemini_guard_for_test!()
+    GEMINI_IN_FLIGHT_COST_USD[] = 0.0
+    GEMINI_UNREPORTED_COST_USD[] = 0.0
+    GEMINI_REPORTED_COST_USD[] = 0.0
+    GEMINI_REQUEST_COUNT[] = 0
+    GEMINI_BUDGET_EXHAUSTED[] = false
+    GEMINI_BUDGET_REASON[] = ""
+    GEMINI_COOLDOWN_UNTIL[] = 0.0
+end
+
+@testset "Gemini safety guard accounting" begin
+    reset_gemini_guard_for_test!()
+    prompt = "Classify this short scientific abstract."
+
+    # Rejected/rate-limited HTTP attempts are released, not accumulated as spend.
+    for _ in 1:500
+        reservation = begin_gemini_request!(prompt)
+        @test reservation !== nothing
+        finish_gemini_request!(reservation)
+    end
+    @test GEMINI_IN_FLIGHT_COST_USD[] ≈ 0.0 atol=1e-12
+    @test GEMINI_UNREPORTED_COST_USD[] == 0.0
+    @test GEMINI_REPORTED_COST_USD[] == 0.0
+    @test !GEMINI_BUDGET_EXHAUSTED[]
+
+    # A successful response replaces its temporary estimate with provider usage.
+    reservation = begin_gemini_request!(prompt)
+    usage = JSON3.read("""{"usageMetadata":{"promptTokenCount":100,"candidatesTokenCount":20,"thoughtsTokenCount":30}}""")
+    finish_gemini_request!(reservation; data=usage, charge_unreported=true)
+    expected = 100 * GEMINI_INPUT_USD_PER_MILLION / 1_000_000 +
+               50 * GEMINI_OUTPUT_USD_PER_MILLION / 1_000_000
+    @test GEMINI_REPORTED_COST_USD[] ≈ expected
+    @test GEMINI_IN_FLIGHT_COST_USD[] ≈ 0.0 atol=1e-12
+
+    # A timeout or successful response lacking metadata remains conservatively exposed once.
+    reservation = begin_gemini_request!(prompt)
+    finish_gemini_request!(reservation; charge_unreported=true)
+    @test GEMINI_UNREPORTED_COST_USD[] ≈ reservation
+
+    # Both hard stops still work, but only at true runaway/cost conditions.
+    reset_gemini_guard_for_test!()
+    GEMINI_REPORTED_COST_USD[] = GEMINI_MAX_RUN_COST_USD
+    @test begin_gemini_request!(prompt) === nothing
+    @test GEMINI_BUDGET_EXHAUSTED[]
+    @test occursin("hard ceiling", GEMINI_BUDGET_REASON[])
+
+    reset_gemini_guard_for_test!()
+    GEMINI_REQUEST_COUNT[] = GEMINI_MAX_REQUESTS
+    @test begin_gemini_request!(prompt) === nothing
+    @test GEMINI_BUDGET_EXHAUSTED[]
+    @test occursin("runaway request ceiling", GEMINI_BUDGET_REASON[])
+end
