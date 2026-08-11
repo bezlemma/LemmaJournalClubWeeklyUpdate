@@ -1,11 +1,14 @@
 using JSON3, Dates
 include(joinpath(@__DIR__, "edition_integrity.jl"))
+include(joinpath(@__DIR__, "selection_policy.jl"))
 using .EditionIntegrity
+using .SelectionPolicy
 
 const INPUT_FILE = get(ENV, "EDITION_PAPERS_FILE", "papers.json")
 const OUTPUT_FILE = get(ENV, "EDITION_MARKDOWN_FILE", "papers_final.md")
 const DECISIONS_DIR = get(ENV, "EDITION_DECISIONS_DIR", "TrainingData")
 const EDITION_ID = strip(get(ENV, "EDITION_ID", ""))
+const MIN_SELECTION_FRACTION = something(tryparse(Float64, get(ENV, "MIN_SELECTION_FRACTION", "0.50")), 0.50)
 
 field_text(record, field::Symbol)::String = strip(string(get(record, field, "")))
 
@@ -84,6 +87,7 @@ function main()
     decided_links = Set{String}()
     featured = Any[]
     regular = Any[]
+    recall_downgrades = 0
 
     for line in eachline(decision_file)
         isempty(strip(line)) && continue
@@ -95,17 +99,26 @@ function main()
 
         mutable_record = Dict{String, Any}(string(key) => value for (key, value) in pairs(record))
         mutable_record["date"] = string(publication_date(by_link[link]))
-        push!(kept_records, mutable_record)
 
         label = lowercase(field_text(record, :label))
         label in ("featured", "regular", "rejected") || error(
             "Frozen decision for '$link' has invalid label '$label'."
         )
+        score = try Float64(get(record, :local_score, 0.0)) catch; 0.0 end
+        if label == "regular" && field_text(record, :classifier_reason) == "AI Recall Approved" &&
+           !recall_approval_supported(by_link[link], score)
+            label = "rejected"
+            mutable_record["label"] = "rejected"
+            mutable_record["classifier_reason"] = "AI Recall Rejected by Learning Gate"
+            mutable_record["summary"] = ""
+            recall_downgrades += 1
+        end
+        push!(kept_records, mutable_record)
+
         label == "rejected" && continue
         link in selected_links && error("Frozen selected decisions contain duplicate link '$link'.")
         push!(selected_links, link)
         summary = field_text(record, :summary)
-        score = try Float64(get(record, :local_score, 0.0)) catch; 0.0 end
         item = (paper=by_link[link], summary=summary, score=score)
         label == "featured" ? push!(featured, item) : push!(regular, item)
     end
@@ -120,7 +133,12 @@ function main()
                               field_text(item.paper, :source) in preprint_sources ? 1 : 0,
                               lowercase(field_text(item.paper, :title))))
     selected = vcat(featured, regular)
-    issues = selected_edition_issues(selected, edition_date)
+    issues = selected_edition_issues(
+        selected,
+        edition_date;
+        candidate_count=length(papers),
+        min_fraction=MIN_SELECTION_FRACTION,
+    )
     isempty(issues) || error("Frozen-edition repair failed integrity validation:\n" *
                              join(["  • $issue" for issue in issues], "\n"))
 
@@ -135,7 +153,8 @@ function main()
     write_markdown(featured, regular, edition_date)
 
     dates = sort([publication_date(item.paper) for item in selected])
-    println("Frozen-edition repair: PASS — $(length(selected)) papers, dates $(first(dates)) through $(last(dates)); no AI calls made.")
+    println("Frozen-edition repair: PASS — $(length(selected)) papers, dates $(first(dates)) through $(last(dates)); " *
+            "$recall_downgrades unsupported recall approvals removed; no AI calls made.")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

@@ -55,7 +55,7 @@ jobs:
         run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
       - name: Test paper pipeline
-        run: julia --project=. -e 'include(joinpath("test", "feedback_scoring.jl")); include(joinpath("test", "biorxiv_fetching.jl")); include(joinpath("test", "journal_fallbacks.jl")); include(joinpath("test", "edition_integrity.jl")); include(joinpath("test", "gemini_safety_guard.jl"))'
+        run: julia --project=. -e 'include(joinpath("test", "feedback_scoring.jl")); include(joinpath("test", "biorxiv_fetching.jl")); include(joinpath("test", "journal_fallbacks.jl")); include(joinpath("test", "edition_integrity.jl")); include(joinpath("test", "selection_policy.jl")); include(joinpath("test", "gemini_safety_guard.jl"))'
 
       - name: Determine whether this edition is already frozen
         id: edition

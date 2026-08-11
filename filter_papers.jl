@@ -1,7 +1,9 @@
 using JSON3, HTTP, Dates, Random
 include(joinpath(@__DIR__, "score_papers.jl"))
 include(joinpath(@__DIR__, "edition_integrity.jl"))
+include(joinpath(@__DIR__, "selection_policy.jl"))
 using .EditionIntegrity
+using .SelectionPolicy
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
@@ -773,15 +775,17 @@ function main()
                     title = string(get(paper, :title, ""))
                     abstract_text = string(get(paper, :abstract, ""))
                     approved, reason = recall_classify_paper(title, abstract_text)
-                    if approved
+                    score = paper_score(paper)
+                    if approved && recall_approval_supported(paper, score)
                         results[i] = (paper, summarize_paper(title, abstract_text), :regular, reason)
                     else
+                        approved && (reason = "AI Recall Rejected by Learning Gate")
                         results[i] = (paper, "", nothing, reason)
                     end
                     n = Threads.atomic_add!(recall_completed, 1) + 1
                     lock(print_lock) do
                         println("[recall $n/$(length(rejected_indices))] " *
-                                (approved ? "🟢 RECOVERED: " : "❌ CONFIRMED: ") *
+                                (results[i][3] == :regular ? "🟢 RECOVERED: " : "❌ CONFIRMED: ") *
                                 "$(first(title, 40))...")
                     end
                 finally
@@ -801,7 +805,8 @@ function main()
         _, summary, category, reason = result
         if startswith(reason, "AI ")
             classification_attempts += startswith(reason, "AI Recall ") ? 2 : 1
-            reason in ("AI Approved", "AI Rejected", "AI Recall Approved", "AI Recall Rejected") ||
+            reason in ("AI Approved", "AI Rejected", "AI Recall Approved", "AI Recall Rejected",
+                       "AI Recall Rejected by Learning Gate") ||
                 (classification_failures += 1)
         elseif reason == "Processing error"
             processing_failures += 1

@@ -353,10 +353,6 @@ The fractional inhomogeneous Rouse model unifies subdiffusive sticker dynamics a
 *Biggin, George R., Snee, Matthew, Xiao, Yu-Bai, Smedley, Catherine, Godwin, Alan R. F., Dajani, Rana, Birchenough, Holly L., A. Jowitt, Thomas, Travis, Mark A., Roseman, Alan M., Tarakanova, Anna, Baldock, Clair* <br>
 The structural architecture of the large latent TGFβ–LTBP1 complex reveals the precise molecular interactions that maintain TGFβ in an inactive state and facilitate its controlled activation.
 
-#### [Enhanced phase sensitivity of the Mach-Zehnder-type phase-shifting interferometry with single-intensity and difference-intensity detection](<https://opg.optica.org/abstract.cfm?URI=oe-34-16-30542>)
-*Huanrong He Yaping Zhang* <br>
-Integrating single-intensity and difference-intensity detection schemes suppresses common-mode intensity fluctuations to achieve superior precision and higher sensitivity in optical phase measurements.
-
 #### [Surface Functionality and pH Govern Structural Dynamics and Drug Binding in PETIM and PAMAM Dendrimers](<https://www.biorxiv.org/content/10.64898/2026.08.04.742721v1>)
 *Garg, A.; Mogurampelly, S.; Kanchi, S.* <br>
 Protonation-induced structural expansion, surface-group-dependent hydration, and distinct van der Waals versus electrostatic binding modes for curcumin and doxorubicin establish key molecular design principles for pH-responsive nanocarriers.
@@ -381,99 +377,19 @@ Light-dependent protochlorophyllide oxidoreductase (LPOR) assemblies coordinate 
 *Jung, H.; Lee, B.; Cheng, A. C.* <br>
 Inference-time conditioning perturbations overcome sampling deficiencies in generative architectures, increasing top-20 oracle binding pose success rates by up to 7.8-fold while reducing computational overhead by over 75%.
 
-#### [Molecular insights into ATP synthase c-ring accumulation in BMP-deficient lysosomes in Batten disease](<https://www.biorxiv.org/content/10.64898/2026.08.05.743007v1>)
-*Starke, L. J.; Hansen, E. K.; Petkevicius, K.; Duncan, A. L.* <br>
-Bis(monoacylglycero)phosphate (BMP) utilizes its unique lipid structure to preferentially bind and disperse the hydrophobic c-ring complex within lysosomal membranes, facilitating its clearance and preventing pathological protein aggregation.
-
-#### [A Spectral Route to Directed-Polymer Glasses](<http://arxiv.org/abs/2608.03730v1>)
-*Sen Mu, Abbas Ali Saberi, Mehran Kardar* <br>
-Recasting many-body interactions into logarithmic eigenvalues of a single-polymer transfer-matrix product circumvents combinatorial limits to validate replica Bethe ansatz predictions for the quenched free energy, disorder cumulants, and a disorder-induced linear spectral edge of glassy line matter.
-
-#### [Simulating is not always understanding: When model complexity obscures biology](<http://arxiv.org/abs/2608.06998v1>)
-*Lendert Gelens, Alejandro Fábregas-Tejeda, Grant Ramsey, Sylvia Wenmackers, Bart Smeets* <br>
-Computational cell biology models foster genuine insight only when their free parameters are tightly constrained by experimental data, necessitating a shift toward interpretable model hierarchies and systematic comparisons over the unconstrained addition of complex components.
-
-#### [It Takes Two to Tribo: Stochastic Charge Evolution in Repeated Binary Collisions of Acoustically Levitated Particles](<http://arxiv.org/abs/2608.05083v1>)
-*Tom F. O'Hara, Adrian C. Barnes, Nathan Croll Dawes, Karen L. Aplin* <br>
-Cumulative charge transfer in colliding polystyrene particle pairs adheres to the saturation behavior predicted by the condenser model, whereas conductive graphite-coated particles accumulate substantially less charge.
-
-#### [Non-canonical pore architecture underlies constitutive gating of human retinal TRPM1](<https://www.nature.com/articles/s41467-026-76454-y>)
-*Sharma, Mansi, Nageswar, KV, Kumar, Vikesh, Chattopadhyay, Ankur, Varshney, Nishtha, Chettri, Rohit, Nanda, Sristi, Martemyanov, Kirill A., Singh, Appu Kumar* <br>
-A clockwise pore rotation visualized through cryo-EM drives baseline channel activity, providing structural insights into the mechanisms underlying retinal diseases and pigmentation.
-
 #### [A Universal Control Budget for First-Passage Kinetics](<http://arxiv.org/abs/2608.06368v1>)
 *Shiling Liang, Ruicheng Bao* <br>
 Transition rate sensitivities of mean first-passage times in finite Markov chains are bounded by one in magnitude and sum to -1, placing strict fundamental limits on how effectively barrier adjustments or kinetic proofreading can accelerate reaction completion.
-
-#### [Light Martini water accelerates sampling in coarse-grained molecular dynamics simulations](<https://www.biorxiv.org/content/10.64898/2026.08.03.741232v1>)
-*Elgendy, A.; Zeipelt, A. P.; Schäfer, L. V.* <br>
-Reducing the mass of Martini water beads from 72 to 20 amu lowers water viscosity, enabling up to a 2.68-fold faster sampling of biomolecular reconfigurations without altering equilibrium properties or increasing computational cost.
-
-#### [Overaging with stress in polymer glasses? Faster segmental dynamics despite larger yield stress!](<http://arxiv.org/abs/2608.07310v1>)
-*Masoud Razavi, Enran Xing, M. D. Ediger* <br>
-PMMA glasses aged under stress display faster post-release segmental dynamics alongside a higher yield stress, disproving the overaging hypothesis and demonstrating that yield stress cannot be modeled solely as a function of structural relaxation time.
 
 #### [Versatile 3D space-variant deconvolution with measurement-free point spread function models](<https://opg.optica.org/abstract.cfm?URI=oe-34-16-29928>)
 *Jakub Czuchnowski, Chuan Li, Hongli Ni, Brandon Weissbourd, Jerome Mertz* <br>
 Accurate correction of non-uniform optical aberrations across large volumetric microscopy images is achieved without empirical calibration by integrating physics-derived optical principles into a scalable reconstruction algorithm.
 
-#### [Nanobody regulation of C-type inactivation in Kv1.3 channels](<https://www.nature.com/articles/s41467-026-74630-8>)
-*Selvakumar, Purushotham, Swartz, Kenton J., Fernández-Mariño, Ana I.* <br>
-Disruption of a conserved hydrophobic network linking the turret region to the selectivity filter serves as the key structural mechanism driving nanobody-induced channel inactivation.
-
-#### [Surface Equilibration Mechanism Controls the Stability of a Model Co-deposited Glass Mixture of Organic Semiconductors](<http://arxiv.org/abs/2608.07320v1>)
-*Shinian Cheng, Yejung Lee, Junguang Yu, Lian Yu, M. D. Ediger* <br>
-Binary organic semiconductor glasses co-deposited at substrate temperatures between 0.78 and 0.90 $T_g$ achieve exceptional thermodynamic and kinetic stability, confirming that the surface equilibration mechanism governs the formation of stable glass mixtures.
-
-#### [Non-ideal equivalent model-based terahertz nondestructive measurement for double-layer polymer films](<https://opg.optica.org/abstract.cfm?URI=ol-51-16-4565>)
-*Haoming Yang, Boteng Fang, Ziwei Ming, Zhengang Yang, Kejia Wang* <br>
-Interface imperfections and internal reflection losses are integrated into signal modeling to accurately extract the thickness and refractive index of individual material layers.
-
 #### [Phase-locking of hybrid oscillators](<http://arxiv.org/abs/2608.02926v1>)
 *Joshua H. K. Saldi, Alexandre Morin* <br>
 A novel discrete-time framework reveals that coupled contact-charge electrophoretic systems achieve in-phase synchronization despite mutual repulsion, establishing a general criterion for coherent motion governed by inertia and decaying interaction strengths.
 
-#### [Benchmarking AI-generated structural ensembles of membrane proteins against physics-based modelling](<https://www.biorxiv.org/content/10.64898/2026.08.08.743655v1>)
-*Clifton, B. R.; Grieve, A. G.; Corey, R. A.* <br>
-BioEmu efficiently samples plausible functional conformations of the bacterial membrane protein GlpG at a fraction of the computational cost of microsecond molecular dynamics simulations, capturing key open and closed gate states while omitting parts of the complete conformational landscape.
-
 #### [Experimental and computational investigation of collagen modification in skin chromatic alterations](<https://www.nature.com/articles/s41598-026-64778-0>)
 *Su, Yuping, Li, Zhen, Yang, Xi, Lin, Yu, Fan, Senping, Zhou, Huanjun, Cao, Jian, He, Guangwen, Mammone, Tom, Pernodet, Nadine, Long, Hao* <br>
 Glycated and carbonylated collagens increase skin yellowness by modifying dermal scattering properties to enhance the backscattering of yellow light, operating through a distinct mechanism from melanin, which primarily enhances yellow light reflection from the epidermis.
-
-#### [CryoLigATE: enhancing the resolvability of cryo-EM maps in protein-ligand complexes using deep learning](<https://www.biorxiv.org/content/10.64898/2026.08.04.742718v1>)
-*Haloi, N.; Howard, R. J.; Lindahl, E.* <br>
-A hybrid convolutional-transformer network trained on over 6,000 diverse complexes rapidly refines local density around binding pockets to recover critical ligand functional groups and topological continuity for precise atomic modeling.
-
-#### [AdaptivePy: a unified Python framework for adaptive sampling in molecular dynamics](<https://www.biorxiv.org/content/10.64898/2026.08.04.742868v1>)
-*Nadeem, H.; Kleiman, D. E.; Shukla, D.* <br>
-A single configuration-driven interface integrating nine diverse seed-selection policies enables systematic benchmarking, ensemble meta-sampling, and deep-learning-driven discovery of multi-basin conformational landscapes from a single initial basin.
-
-#### [Strong electroadhesion at low voltage enabled by nanoscale roughness](<http://link.aps.org/doi/10.1103/l1v9-fpps>)
-*Liang Peng, Stefan Kooij, H. Tunç Çiftçi, Daniel Bonn, and Bart Weber* <br>
-Surface roughness dictates electroadhesive performance by establishing a nanoscale gap distribution that governs attractive forces independently of macroscopic device separation.
-
-#### [Deep-Pose-Tracker: an automated behavioural analysis framework for Caenorhabditis elegans](<https://www.nature.com/articles/s41598-026-63642-5>)
-*Saha, Debasish, Chaudhary, Shivam, Vyas, Dhyey, Ghosh-Roy, Anindya, Sharma, Rati* <br>
-A YOLO-based deep learning model performs rapid pose detection and downstream quantification of complex locomotory features, including speed, orientation, omega turns, and low-dimensional eigenworm posture dynamics.
-
-#### [Extraction of directional electron-density features from diffraction data using spherical-harmonic decomposition](<https://www.biorxiv.org/content/10.64898/2026.08.04.742922v1>)
-*Panjikar, S.; Weiss, M.; Jayatilaka, D.* <br>
-Reciprocal-space projection of experimental structure factors isolates dipolar, orbital-like density components to reveal subtle chemical bonding interactions and aromatic $\pi$ systems across both small molecules and macromolecules, even under moderate data resolution.
-
-#### [Overcoming the accuracy-generalization tradeoff in docking and scoring for prospective virtual screening](<https://www.biorxiv.org/content/10.64898/2026.08.03.742480v1>)
-*Petrosyan, G.; Altunyan, V.; Ghukasyan, T.; Abramyan, T. M.; Arakelov, G.; Davtyan, A.; Aghajanyan, T.; Nakipov, I.; Navasardyan, G.; Fahradyan, A.; Tunanyan, H.; Simonyan, A.; Janczyk, P. Ł; De Silva, D.; Saribekyan, H.; Tsidilkovski, L.; Arakelov, V.; Ginoyan, N.; Mnatsakanyan, H.; Ratnikov, M.; Smbatyan, K.; Papoyan, A.; Papoian, G. A.* <br>
-The ML/physics hybrid frameworks DODock and DOScore achieve high accuracy and robust out-of-distribution generalization, successfully identifying novel, potent inhibitors across multiple challenging therapeutic targets in prospective virtual screening campaigns.
-
-#### [Analysis of the conformational dynamics of amylose oligomers using molecular dynamics simulations](<https://www.nature.com/articles/s41598-026-66415-2>)
-*Araki, Mitsugu, Ma, Biao, Sagae, Yukari, Masuda, Katsuyoshi, Okuno, Yasushi* <br>
-Packed amylose dodecamers with 12 or 24 glucose units per chain largely retain their double-helical organization in high-temperature water, whereas shorter six-unit oligomers rapidly undergo structural disordering accompanied by increased water penetration.
-
-#### [Segmental Dynamics in the Strain-hardening Regime for Poly(methyl methacrylate) Glasses with and without Melt-stretching](<http://arxiv.org/abs/2608.07330v1>)
-*Enran Xing, Trevor Bennin, Masoud Razavi, M. D. Ediger* <br>
-Melt-stretched PMMA glasses exhibit a more pronounced strain-hardening effect and a 15% increase in segmental dynamics compared to unstretched samples, while deformation into the deep strain-hardening regime accelerates segmental mobility by up to 40% relative to values just past yield.
-
-#### [Generating quantum entanglement from sunlight](<https://opg.optica.org/abstract.cfm?URI=optica-13-8-1508>)
-*Cheng Li, Jasvinder Brar, Michael Küblböck, Jeremy Upham, Hanieh Fattahi, Robert W. Boyd* <br>
-Harnessing ambient solar radiation to drive entangled photon generation provides a sustainable, off-grid solution to the growing energy demands of quantum communication networks.
 
