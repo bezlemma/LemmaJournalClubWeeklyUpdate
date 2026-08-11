@@ -11,6 +11,13 @@ const SCORE_OUTPUT_FILE = "paper_scores.json"
 const DECISIONS_DIR = "TrainingData"
 const READER_FEEDBACK_FILE = joinpath(DECISIONS_DIR, "reader_feedback.json")
 const MANUAL_FEATURED_FILE = "featured_papers.txt"
+const CONFIGURED_EDITION_DATE = let raw = strip(get(ENV, "EDITION_ID", ""))
+    isempty(raw) ? nothing : try
+        Date(raw)
+    catch
+        error("EDITION_ID must use YYYY-MM-DD format, received '$raw'.")
+    end
+end
 const GEMINI_MODEL = "gemini-3-flash-preview"
 const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
 const GEMINI_MAX_RETRIES = something(tryparse(Int, get(ENV, "GEMINI_MAX_RETRIES", "3")), 3)
@@ -692,8 +699,12 @@ function main()
     # date_str should reflect the most recent Monday rather than today
     # (so running on Fri 6 Mar -> use Mon 2 Mar).
     today = Dates.today()
-    dow = Dates.dayofweek(today)      # 1=Monday, 7=Sunday
-    prev_monday = today - Dates.Day(dow - 1)
+    if CONFIGURED_EDITION_DATE === nothing
+        dow = Dates.dayofweek(today)      # 1=Monday, 7=Sunday
+        prev_monday = today - Dates.Day(dow - 1)
+    else
+        prev_monday = CONFIGURED_EDITION_DATE
+    end
     date_str = Dates.format(prev_monday, "u d yy")
     decision_file = joinpath(DECISIONS_DIR, "filter_decisions_$(Dates.format(prev_monday, "yyyy-mm-dd")).jsonl")
     mkpath(DECISIONS_DIR)

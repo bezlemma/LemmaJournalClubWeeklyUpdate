@@ -5,8 +5,14 @@ using Dates, TimeZones
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 const DAYS_BACK = 7
-const RUN_UTC = now(tz"UTC")
-const WINDOW_END_DATE = Date(DateTime(RUN_UTC, UTC))
+const CONFIGURED_EDITION_DATE = let raw = strip(get(ENV, "EDITION_ID", ""))
+    isempty(raw) ? nothing : try
+        Date(raw)
+    catch
+        error("EDITION_ID must use YYYY-MM-DD format, received '$raw'.")
+    end
+end
+const WINDOW_END_DATE = something(CONFIGURED_EDITION_DATE, Date(DateTime(now(tz"UTC"), UTC)))
 # Most feeds expose only a calendar date, not a trustworthy publication time.
 # Use the previous Monday-to-Monday calendar boundary so a paper dated exactly
 # seven days ago is not lost merely because its source represented it at 00:00.
@@ -188,9 +194,12 @@ paper_identity_keys(p::Paper)::Set{String} = paper_identity_keys(p.title, p.link
 function previously_sent_paper_keys(dir::AbstractString="TrainingData")::Set{String}
     keys = Set{String}()
     isdir(dir) || return keys
+    current_edition = strip(get(ENV, "EDITION_ID", ""))
+    current_decision_file = isempty(current_edition) ? "" : "filter_decisions_$(current_edition).jsonl"
 
     for filename in readdir(dir; join=true)
         occursin(r"filter_decisions_\d{4}-\d{2}-\d{2}\.jsonl$", filename) || continue
+        basename(filename) == current_decision_file && continue
         for line in eachline(filename)
             isempty(strip(line)) && continue
             record = try
@@ -1674,7 +1683,7 @@ function fetch_biorxiv_papers()
     end
 
     start_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
-    end_date = Dates.format(now(UTC), "yyyy-mm-dd")
+    end_date = Dates.format(WINDOW_END_DATE, "yyyy-mm-dd")
 
     papers = Paper[]
     cursor = 0

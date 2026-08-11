@@ -27,6 +27,9 @@ identifier per line in `arxiv:`, `doi:`, or normalized `title:` form.
 Freezing before delivery means a partially failed email run can be rerun safely:
 already-sent subscribers are skipped, failed or newly added subscribers receive
 the exact same edition, and the website archive cannot drift from the email.
+An explicit regeneration re-filters the edition's frozen candidate set; it does
+not scrape again or discard that edition's papers as previously sent. The
+`skip_email` dispatch option publishes a website-only correction.
 
 The website repository polls this archive every six hours and publishes any new
 edition automatically.
