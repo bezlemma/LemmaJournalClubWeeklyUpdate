@@ -57,16 +57,25 @@ const CLASSIFICATION_AUDIT = Dict{String, Dict{String, Any}}()
 
 const FEATURED_SOURCE = "CrossRef/Featured"
 
-function record_classification_audit!(paper, pass::String, score, category::String, explanation::String)
+function record_classification_audit!(
+    paper,
+    pass::AbstractString,
+    score,
+    category::AbstractString,
+    explanation::AbstractString,
+)
     key = PaperScorer.paper_key(paper)
+    pass_key = String(pass)
+    category_text = String(category)
+    explanation_text = String(explanation)
     lock(CLASSIFICATION_AUDIT_LOCK) do
         audit = get!(CLASSIFICATION_AUDIT, key, Dict{String, Any}())
-        audit["$(pass)_score"] = score
-        audit["$(pass)_category"] = category
-        audit["$(pass)_explanation"] = explanation
+        audit["$(pass_key)_score"] = score
+        audit["$(pass_key)_category"] = category_text
+        audit["$(pass_key)_explanation"] = explanation_text
         audit["final_score"] = score
-        audit["final_category"] = category
-        audit["final_explanation"] = explanation
+        audit["final_category"] = category_text
+        audit["final_explanation"] = explanation_text
     end
 end
 

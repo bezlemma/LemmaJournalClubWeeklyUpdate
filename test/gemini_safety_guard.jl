@@ -25,6 +25,30 @@ end
     @test parse_scored_classification("")[2] == "AI Unavailable"
 end
 
+@testset "structured classifier audit accepts parsed strings" begin
+    empty!(CLASSIFICATION_AUDIT)
+    paper = Dict(
+        :title => "Cell mechanics audit test",
+        :link => "https://example.org/cell-mechanics-audit-test",
+    )
+    _, _, score, category, explanation = parse_scored_classification(
+        "{\"score\": 78, \"category\": \"cell mechanics\", \"explanation\": \"Measures force transmission in living cells.\"}",
+    )
+
+    # `strip`/`first` intentionally return SubString values. This is the exact
+    # path that the August 17 run exercised before the audit method failed.
+    @test category isa SubString{String}
+    @test explanation isa SubString{String}
+    @test_nowarn record_classification_audit!(paper, "initial", score, category, explanation)
+
+    audit = classification_audit(paper)
+    @test audit["initial_score"] == 78
+    @test audit["initial_category"] == "cell mechanics"
+    @test audit["initial_explanation"] == "Measures force transmission in living cells."
+    @test audit["final_category"] isa String
+    @test audit["final_explanation"] isa String
+end
+
 function reset_gemini_guard_for_test!()
     GEMINI_IN_FLIGHT_COST_USD[] = 0.0
     GEMINI_UNREPORTED_COST_USD[] = 0.0
