@@ -5,14 +5,14 @@ using Dates, TimeZones
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 const DAYS_BACK = 7
-const CONFIGURED_EDITION_DATE = let raw = strip(get(ENV, "EDITION_ID", ""))
+const CONFIGURED_WINDOW_END_DATE = let raw = strip(get(ENV, "WINDOW_END_DATE", get(ENV, "EDITION_ID", "")))
     isempty(raw) ? nothing : try
         Date(raw)
     catch
-        error("EDITION_ID must use YYYY-MM-DD format, received '$raw'.")
+        error("WINDOW_END_DATE must use YYYY-MM-DD format, received '$raw'.")
     end
 end
-const WINDOW_END_DATE = something(CONFIGURED_EDITION_DATE, Date(DateTime(now(tz"UTC"), UTC)))
+const WINDOW_END_DATE = something(CONFIGURED_WINDOW_END_DATE, Date(DateTime(now(tz"UTC"), UTC)))
 # Most feeds expose only a calendar date, not a trustworthy publication time.
 # Use the previous Monday-to-Monday calendar boundary so a paper dated exactly
 # seven days ago is not lost merely because its source represented it at 00:00.
@@ -194,8 +194,10 @@ paper_identity_keys(p::Paper)::Set{String} = paper_identity_keys(p.title, p.link
 function previously_sent_paper_keys(dir::AbstractString="TrainingData")::Set{String}
     keys = Set{String}()
     isdir(dir) || return keys
-    current_edition = strip(get(ENV, "EDITION_ID", ""))
-    current_decision_file = isempty(current_edition) ? "" : "filter_decisions_$(current_edition).jsonl"
+    configured_decision_file = strip(get(ENV, "DECISION_FILE", ""))
+    current_decision_file = isempty(configured_decision_file) ?
+        "filter_decisions_$(Dates.format(WINDOW_END_DATE, "yyyy-mm-dd")).jsonl" :
+        basename(configured_decision_file)
 
     for filename in readdir(dir; join=true)
         occursin(r"filter_decisions_\d{4}-\d{2}-\d{2}\.jsonl$", filename) || continue

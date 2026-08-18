@@ -16,13 +16,21 @@ const PIPELINE_STATUS_FILE = "pipeline_status.json"
 const DECISIONS_DIR = "TrainingData"
 const READER_FEEDBACK_FILE = joinpath(DECISIONS_DIR, "reader_feedback.json")
 const MANUAL_FEATURED_FILE = "featured_papers.txt"
-const CONFIGURED_EDITION_DATE = let raw = strip(get(ENV, "EDITION_ID", ""))
+const CONFIGURED_WINDOW_END_DATE = let raw = strip(get(ENV, "WINDOW_END_DATE", get(ENV, "EDITION_ID", "")))
+    isempty(raw) ? nothing : try
+        Date(raw)
+    catch
+        error("WINDOW_END_DATE must use YYYY-MM-DD format, received '$raw'.")
+    end
+end
+const CONFIGURED_EDITION_ID = let raw = strip(get(ENV, "EDITION_ID", ""))
     isempty(raw) ? nothing : try
         Date(raw)
     catch
         error("EDITION_ID must use YYYY-MM-DD format, received '$raw'.")
     end
 end
+const CONFIGURED_DECISION_FILE = strip(get(ENV, "DECISION_FILE", ""))
 const GEMINI_MODEL = get(ENV, "GEMINI_MODEL", "gemini-3.6-flash")
 const GEMINI_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/$GEMINI_MODEL:generateContent"
 const GEMINI_MAX_RETRIES = something(tryparse(Int, get(ENV, "GEMINI_MAX_RETRIES", "3")), 3)
@@ -87,9 +95,12 @@ function classification_audit(paper)::Dict{String, Any}
 end
 
 function edition_date_for_run(today::Date=Dates.today())::Date
-    CONFIGURED_EDITION_DATE !== nothing && return CONFIGURED_EDITION_DATE
+    CONFIGURED_WINDOW_END_DATE !== nothing && return CONFIGURED_WINDOW_END_DATE
     return today - Day(dayofweek(today) - 1)
 end
+
+edition_id_for_run(window_end_date::Date)::Date =
+    something(CONFIGURED_EDITION_ID, window_end_date - Day(7))
 
 function load_manual_featured_keys(filename::AbstractString)::Set{String}
     keys = Set{String}()
@@ -708,6 +719,7 @@ function main()
     end
 
     edition_date = edition_date_for_run()
+    edition_id = edition_id_for_run(edition_date)
     raw_papers = collect(JSON3.read(read(INPUT_FILE, String)))
     papers, removed_candidates = sanitize_candidates(raw_papers, edition_date)
     if !isempty(removed_candidates)
@@ -942,12 +954,11 @@ function main()
     sorted_sources = sort(collect(source_counts); by=x -> x[2], rev=true)
     breakdown = join(["$(src): $(cnt)" for (src, cnt) in sorted_sources], ", ")
 
-    # date_str should reflect the most recent Monday rather than today
-    # (so running on Fri 6 Mar -> use Mon 2 Mar).
     today = Dates.today()
-    prev_monday = edition_date
-    date_str = Dates.format(prev_monday, "u d yy")
-    decision_file = joinpath(DECISIONS_DIR, "filter_decisions_$(Dates.format(prev_monday, "yyyy-mm-dd")).jsonl")
+    date_str = Dates.format(edition_id, "u d yy")
+    decision_file = isempty(CONFIGURED_DECISION_FILE) ?
+        joinpath(DECISIONS_DIR, "filter_decisions_$(Dates.format(edition_date, "yyyy-mm-dd")).jsonl") :
+        CONFIGURED_DECISION_FILE
     mkpath(DECISIONS_DIR)
     open(decision_file, "w") do f
         for (i, result) in enumerate(results)
@@ -957,7 +968,7 @@ function main()
             label = category === nothing ? "rejected" : string(category)
             JSON3.write(f, Dict(
                 "run_date" => Dates.format(today, "yyyy-mm-dd"),
-                "week" => Dates.format(prev_monday, "yyyy-mm-dd"),
+                "week" => Dates.format(edition_id, "yyyy-mm-dd"),
                 "label" => label,
                 "classifier_reason" => reason,
                 "classifier_threshold" => CLASSIFIER_SCORE_THRESHOLD,
@@ -993,6 +1004,8 @@ function main()
         # YAML frontmatter
         println(f, "---")
         println(f, "title: \"$date_str\"")
+        println(f, "edition_id: \"$(Dates.format(edition_id, "yyyy-mm-dd"))\"")
+        println(f, "window_end_date: \"$(Dates.format(edition_date, "yyyy-mm-dd"))\"")
         println(f, "format:")
         println(f, "  html:")
         println(f, "    toc: false")

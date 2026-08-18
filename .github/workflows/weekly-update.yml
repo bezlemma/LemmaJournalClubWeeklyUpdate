@@ -62,13 +62,17 @@ jobs:
         shell: bash
         run: |
           DAY_OFFSET="$(( $(date -u +%u) - 1 ))"
-          EDITION_ID="$(date -u -d "$DAY_OFFSET days ago" '+%Y-%m-%d')"
-          ARCHIVE_FILE="$(date -u -d "$EDITION_ID" '+PreviousWeeks/%b%d_%Y.qmd')"
+          WINDOW_END_DATE="$(date -u -d "$DAY_OFFSET days ago" '+%Y-%m-%d')"
+          EDITION_ID="$(date -u -d "$WINDOW_END_DATE - 7 days" '+%Y-%m-%d')"
+          ARCHIVE_FILE="$(date -u -d "$WINDOW_END_DATE" '+PreviousWeeks/%b%d_%Y.qmd')"
           PAPER_DATA_FILE="${ARCHIVE_FILE%.qmd}.papers.json"
+          DECISION_FILE="TrainingData/filter_decisions_${WINDOW_END_DATE}.jsonl"
 
           echo "edition_id=$EDITION_ID" >> "$GITHUB_OUTPUT"
+          echo "window_end_date=$WINDOW_END_DATE" >> "$GITHUB_OUTPUT"
           echo "archive_file=$ARCHIVE_FILE" >> "$GITHUB_OUTPUT"
           echo "paper_data_file=$PAPER_DATA_FILE" >> "$GITHUB_OUTPUT"
+          echo "decision_file=$DECISION_FILE" >> "$GITHUB_OUTPUT"
 
           if [ -s "$ARCHIVE_FILE" ] && [ -s "$PAPER_DATA_FILE" ]; then
             if [ "${{ inputs.repair_current || false }}" = "true" ]; then
@@ -114,6 +118,8 @@ jobs:
         env:
           FETCH_CLEAN: "1"
           EDITION_ID: ${{ steps.edition.outputs.edition_id }}
+          WINDOW_END_DATE: ${{ steps.edition.outputs.window_end_date }}
+          DECISION_FILE: ${{ steps.edition.outputs.decision_file }}
         run: julia --project=. fetch_papers.jl
 
       - name: Stop before publishing an incomplete scrape
@@ -159,17 +165,23 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           EDITION_ID: ${{ steps.edition.outputs.edition_id }}
+          WINDOW_END_DATE: ${{ steps.edition.outputs.window_end_date }}
+          DECISION_FILE: ${{ steps.edition.outputs.decision_file }}
         run: julia --project=. filter_papers.jl
 
       - name: Repair a frozen edition without AI calls
         if: ${{ steps.edition.outputs.repaired_from_frozen == 'true' }}
         env:
           EDITION_ID: ${{ steps.edition.outputs.edition_id }}
+          WINDOW_END_DATE: ${{ steps.edition.outputs.window_end_date }}
+          DECISION_FILE: ${{ steps.edition.outputs.decision_file }}
         run: julia --project=. repair_frozen_edition.jl
 
       - name: Validate edition integrity
         env:
           EDITION_ID: ${{ steps.edition.outputs.edition_id }}
+          WINDOW_END_DATE: ${{ steps.edition.outputs.window_end_date }}
+          DECISION_FILE: ${{ steps.edition.outputs.decision_file }}
           MIN_EDITION_PAPERS: "50"
           MIN_SELECTION_FRACTION: "0.50"
         run: julia --project=. validate_edition.jl
@@ -195,8 +207,8 @@ jobs:
           ARCHIVE_FILE: ${{ steps.edition.outputs.archive_file }}
           PAPER_DATA_FILE: ${{ steps.edition.outputs.paper_data_file }}
           EDITION_ID: ${{ steps.edition.outputs.edition_id }}
+          DECISION_FILE: ${{ steps.edition.outputs.decision_file }}
         run: |
-          DECISION_FILE="TrainingData/filter_decisions_${EDITION_ID}.jsonl"
           test -s "$DECISION_FILE"
           cp papers_final.md "$ARCHIVE_FILE"
           cp papers.json "$PAPER_DATA_FILE"
