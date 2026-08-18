@@ -6,21 +6,24 @@ const INPUT_FILE = get(ENV, "EDITION_PAPERS_FILE", "papers.json")
 const OUTPUT_FILE = get(ENV, "EDITION_MARKDOWN_FILE", "papers_final.md")
 const DECISIONS_DIR = get(ENV, "EDITION_DECISIONS_DIR", "TrainingData")
 const EDITION_ID = strip(get(ENV, "EDITION_ID", ""))
+const WINDOW_END_DATE = strip(get(ENV, "WINDOW_END_DATE", EDITION_ID))
+const DECISION_FILE = strip(get(ENV, "DECISION_FILE", ""))
 const MIN_PAPERS = something(tryparse(Int, get(ENV, "MIN_EDITION_PAPERS", "50")), 50)
 const MIN_SELECTION_FRACTION = something(tryparse(Float64, get(ENV, "MIN_SELECTION_FRACTION", "0.50")), 0.50)
 
-function require_edition_date()::Date
-    isempty(EDITION_ID) && error("EDITION_ID is required for edition validation.")
+function require_window_end_date()::Date
+    isempty(WINDOW_END_DATE) && error("WINDOW_END_DATE is required for edition validation.")
     return try
-        Date(EDITION_ID)
+        Date(WINDOW_END_DATE)
     catch
-        error("EDITION_ID must use YYYY-MM-DD format, received '$EDITION_ID'.")
+        error("WINDOW_END_DATE must use YYYY-MM-DD format, received '$WINDOW_END_DATE'.")
     end
 end
 
 function main()
-    edition_date = require_edition_date()
-    decision_file = joinpath(DECISIONS_DIR, "filter_decisions_$(EDITION_ID).jsonl")
+    edition_date = require_window_end_date()
+    decision_file = isempty(DECISION_FILE) ?
+        joinpath(DECISIONS_DIR, "filter_decisions_$(WINDOW_END_DATE).jsonl") : DECISION_FILE
     isfile(INPUT_FILE) || error("Edition integrity gate: $INPUT_FILE does not exist.")
     isfile(OUTPUT_FILE) || error("Edition integrity gate: $OUTPUT_FILE does not exist.")
     isfile(decision_file) || error("Edition integrity gate: $decision_file does not exist.")

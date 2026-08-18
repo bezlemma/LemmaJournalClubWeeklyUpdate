@@ -1,0 +1,776 @@
+[
+  {
+    "title": "The coarsening of biomimetic condensates in an active fluid is non-self-similar",
+    "link": "https://doi.org/10.1038/s41567-026-03191-w",
+    "source": "doi.org",
+    "date": "2026-03-06"
+  },
+  {
+    "title": "RNA-specific local translation is patterned by condensates for multinucleate cell growth",
+    "link": "https://doi.org/10.1038/s41556-026-01887-y",
+    "source": "doi.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Dynamic Instabilities and Pattern Formation in Chemotactic Active Matter",
+    "link": "http://arxiv.org/abs/2603.02595v1",
+    "source": "arXiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Rotational 3D printing of active-passive filaments and lattices with programmable shape morphing",
+    "link": "http://arxiv.org/abs/2603.04694v1",
+    "source": "arXiv",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Autophoresis of a Janus particle near a planar wall: a lubrication limit",
+    "link": "http://arxiv.org/abs/2603.00791v1",
+    "source": "arXiv",
+    "date": "2026-02-28"
+  },
+  {
+    "title": "Stretching drives Membrane Homogenization of Phase-Separated Supported Lipid Bilayers",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.26.708304v1",
+    "source": "bioRxiv",
+    "date": "2026-02-26"
+  },
+  {
+    "title": "Large-scale simulations reveal evolutionary constraints on intrinsically disordered regions imposed by full-length protein architecture",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.27.708199v1",
+    "source": "bioRxiv",
+    "date": "2026-02-27"
+  },
+  {
+    "title": "Enhanced 2D structured illumination microscopy: super-resolution with optical sectioning and reduced reconstruction artifacts",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.26.708245v1",
+    "source": "bioRxiv",
+    "date": "2026-02-26"
+  },
+  {
+    "title": "Experimental and simulated FRAP for the quantitative determination of protein diffusion in helical cells",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.27.708671v1",
+    "source": "bioRxiv",
+    "date": "2026-02-27"
+  },
+  {
+    "title": "Mechanical regulation of cellular energy metabolism in cancer microenvironments",
+    "link": "https://www.biorxiv.org/content/10.1101/2024.04.30.591879v3",
+    "source": "bioRxiv",
+    "date": "2024-04-30"
+  },
+  {
+    "title": "High-Throughput Single-Cell Spectroscopy Using Phasor Analysis of Spectral Flow Cytometry",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.27.708623v1",
+    "source": "bioRxiv",
+    "date": "2026-02-27"
+  },
+  {
+    "title": "Scaling Relations of Multicomponent Phase Coexistence Boundaries",
+    "link": "http://link.aps.org/doi/10.1103/t2v5-49k4",
+    "source": "link.aps.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Slowing translation to avoid cellular depletion of active ribosomes at slow growth rates",
+    "link": "http://link.aps.org/doi/10.1103/3nwf-b259",
+    "source": "link.aps.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Electrorheoimaging of a nonequilibrium emulsion: Microstructures and multistate switchable viscosities",
+    "link": "http://link.aps.org/doi/10.1103/416j-vpdj",
+    "source": "link.aps.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Rupture-Repair Cycles in Regenerating Hydra Tissues",
+    "link": "http://arxiv.org/abs/2603.01851v1",
+    "source": "arXiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Anisotropic Diffusion in Lyotropic Chromonic Liquid Crystal using Fluorescence Recovery After Photobleaching",
+    "link": "http://arxiv.org/abs/2603.02147v1",
+    "source": "arXiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "ATP synthase activity boosts membrane proton acceptance and lateral diffusion",
+    "link": "https://www.pnas.org/doi/abs/10.1073/pnas.2510444123?af=R",
+    "source": "pnas.org",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Riding the Wave: Polymers in Time-dependent Nonequilibrium Baths",
+    "link": "http://arxiv.org/abs/2603.02777v1",
+    "source": "arXiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Myristoylation licenses disordered viral VP4 protein to anchor to and perforate the membrane through phase separation",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.02.708992v1",
+    "source": "bioRxiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Entropic Tug of War: Topological Constraints Spontaneously Rectify the Dynamics of a Polymer with Heterogeneous Fluctuations",
+    "link": "http://link.aps.org/doi/10.1103/rkms-2v1l",
+    "source": "link.aps.org",
+    "date": "2026-01-29"
+  },
+  {
+    "title": "Cell-Cell Adhesion as a Double-Edged Sword in Tissue Fluidity",
+    "link": "http://arxiv.org/abs/2603.04170v1",
+    "source": "arXiv",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Organization of core mitochondrial replication components into multiphasic condensates",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.03.709306v1",
+    "source": "bioRxiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Energy-precision trade-off in mitotic oscillators revealed by ATP modulation in artificial cells",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.02.709190v1",
+    "source": "bioRxiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Spatial Triple-Correlation Spectroscopy (S3CS) Reveals Heterotrimer Dynamics in Live Cells",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00179-7?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "The kinetics and mobility of a ParA ATPase drive carboxysome distribution in Halothiobacillus neapolitanus",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.03.709431v1",
+    "source": "bioRxiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "How wind and currents shape the drift velocity of macrophytes and macroplastic particles - from experiment to model",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.04.709487v1",
+    "source": "bioRxiv",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Entropic size control of self-assembled filaments",
+    "link": "http://link.aps.org/doi/10.1103/68rs-3qgn",
+    "source": "link.aps.org",
+    "date": "2026-01-06"
+  },
+  {
+    "title": "Tubulin transforms Tau and α-synuclein condensates from pathological to physiological",
+    "link": "https://www.nature.com/articles/s41467-026-69618-3",
+    "source": "nature.com",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Optimizing spatial organization of FtsZ rings for large-scale constriction in synthetic cells",
+    "link": "https://www.nature.com/articles/s41467-026-70091-1",
+    "source": "nature.com",
+    "date": "2026-03-06"
+  },
+  {
+    "title": "Quantification of Cholesterol Incorporation in Giant Unilamellar Vesicles Produced by a Modified cDICE Method",
+    "link": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01124H",
+    "source": "pubs.rsc.org",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Robust ciliary flows protect early Xenopus embryos from pathogens independent of multiciliated cell patterning",
+    "link": "https://www.biorxiv.org/content/10.64898/2025.12.19.694354v2",
+    "source": "bioRxiv",
+    "date": "2025-12-19"
+  },
+  {
+    "title": "Rheb membrane orientation dynamics and functional consequences elucidated by molecular simulations, single-molecule-FRET and signaling assays",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.27.708535v1",
+    "source": "bioRxiv",
+    "date": "2026-02-27"
+  },
+  {
+    "title": "A universal protein ladder for standardisation of diverse FRET assays",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.05.709886v1",
+    "source": "bioRxiv",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Constructing a single-objective oblique plane microscope (OPM) for fast, multi-colour, high-resolution volumetric fluorescence imaging",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.04.709686v1",
+    "source": "bioRxiv",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Adaptations in Plasmodium tubulin determine distinct microtubule architectures, mechanics and drug susceptibility",
+    "link": "https://www.nature.com/articles/s41467-026-70181-0",
+    "source": "nature.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Vesicle dynamics in synapsin-induced condensates by passive X-ray microrheology",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00178-5?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-06"
+  },
+  {
+    "title": "Clathrin is an Intrinsic Driver of Membrane Fission",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.05.709932v1",
+    "source": "bioRxiv",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Association and dissociation of Na + between bulk, cluster and micelle sites in aqueous sodium decanoate solutions elucidated by 23Na NMR relaxation experiments and quadrupolar relaxation modelling",
+    "link": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01198A",
+    "source": "pubs.rsc.org",
+    "date": "2026-03-06"
+  },
+  {
+    "title": "Dissecting Gap Junctional and Ephaptic Contributions to Electrical Conduction in a Novel Cardiomyocyte Pair Model",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.05.709926v1",
+    "source": "bioRxiv",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Mechanisms of gene regulation by SRCAP and H2A.Z",
+    "link": "https://www.nature.com/articles/s41467-026-70087-x",
+    "source": "nature.com",
+    "date": "2026-03-06"
+  },
+  {
+    "title": "Using Particle Shape to Control Defects in Colloidal Crystals on Spherical Interfaces",
+    "link": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/SM/D5SM01271F",
+    "source": "pubs.rsc.org",
+    "date": "2026-03-06"
+  },
+  {
+    "title": "Transition from traveling fronts to diffusion-limited growth in expanding populations",
+    "link": "http://link.aps.org/doi/10.1103/p3tt-gq73",
+    "source": "link.aps.org",
+    "date": "2026-02-11"
+  },
+  {
+    "title": "Theory of Rapid Behavioral Inferences Under the Pressure of Time",
+    "link": "http://link.aps.org/doi/10.1103/8m59-vf2m",
+    "source": "link.aps.org",
+    "date": "2026-02-11"
+  },
+  {
+    "title": "Compositional memory matters for early molecular systems",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.03.709225v1",
+    "source": "bioRxiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Absorption dipole effects on MINFLUX single molecule localization",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.01.11.698872v2",
+    "source": "bioRxiv",
+    "date": "2026-01-11"
+  },
+  {
+    "title": "Linker histones consolidate heterogenous nucleosome fiber contacts by linking together multiple nucleosomes",
+    "link": "https://www.nature.com/articles/s41467-026-69842-x",
+    "source": "nature.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Effects of Counter Ion Protonation on the Ultrafast Excited State Dynamics in Archaerhodopsin-3",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00156-6?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "A molecular grammar for programmable multiphase protein-RNA vesicles",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.04.709570v1",
+    "source": "bioRxiv",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Intrinsically disordered SERBP1 regulates translation through topology-driven G-quadruplex recognition.",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.03.709370v1",
+    "source": "bioRxiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Social Information Quality and Environmental Volatility Shape Collective Foraging Behavior",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.11.14.688412v2",
+    "source": "bioRxiv",
+    "date": "2025-11-14"
+  },
+  {
+    "title": "Swapped and non-swapped TRAAK states co-exist in membranes at a ratio influenced by temperature",
+    "link": "https://www.nature.com/articles/s41467-026-70027-9",
+    "source": "nature.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Chlorpromazine inhibits EAG1 channels by altering the interdomain coupling",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00182-7?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Arginine versus Lysine: Molecular Determinants of Cation-π Interactions in Biomolecular Condensates",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.10.01.679751v2",
+    "source": "bioRxiv",
+    "date": "2025-10-01"
+  },
+  {
+    "title": "Analytical Time-Dependent Dynamics of Stochastic Gene Expression with sRNA–mRNA Interactions",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00173-6?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Conformational Variability of HIV-1 Env Trimer and Viral Vulnerability",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.10.09.681376v3",
+    "source": "bioRxiv",
+    "date": "2025-10-09"
+  },
+  {
+    "title": "Adhesion differentials control the rheology of biomimetic emulsions",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00176-1?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Distributional invariance and proportional scaling in axonal conduction",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00174-8?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "Validating folding energy estimates as a method for variant interpretation",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.11.09.687451v2",
+    "source": "bioRxiv",
+    "date": "2025-11-09"
+  },
+  {
+    "title": "The Geometry of Cognitive Difficulty: A Dynamical Manifold Theory in Excitable Neural Networks",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.03.709406v1",
+    "source": "bioRxiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Noninvasive Laser SCOS Monitoring of Rat Brain Hemodynamics During Intracerebral Injection",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.03.709425v1",
+    "source": "bioRxiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Quantifying the effect of magnesium ions on nucleosome stability in chromatin fibers",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00183-9?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-05"
+  },
+  {
+    "title": "From Prefix to Path: Learning Temporally Consistent Biomolecular Dynamics from Limited Initial Data",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.02.709204v1",
+    "source": "bioRxiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Anomalous Ion Confinement Penalties and Giant Ion-Screening Effects in One-Dimensional Nanopores",
+    "link": "http://arxiv.org/abs/2603.04651v1",
+    "source": "arXiv",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Kinetic Theory of Chiral Active Disks: Odd Transport and Torque Density",
+    "link": "http://arxiv.org/abs/2603.04273v1",
+    "source": "arXiv",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Study of flow of crystals and deformable particles in a channel and the effective segregation of soft and hard particles",
+    "link": "http://arxiv.org/abs/2603.04075v1",
+    "source": "arXiv",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "How Different are Self and Nonself?",
+    "link": "http://link.aps.org/doi/10.1103/fbct-vzwm",
+    "source": "link.aps.org",
+    "date": "2026-01-21"
+  },
+  {
+    "title": "Machine-Learning-Inferred and Energy-Landscape-Guided Analyses Reveal Kinetic Determinants of CRISPR/Cas9 Gene Editing",
+    "link": "http://link.aps.org/doi/10.1103/rtxh-6fdl",
+    "source": "link.aps.org",
+    "date": "2026-02-04"
+  },
+  {
+    "title": "Bias in the AlphaFold3 prediction of ligand-induced domain motion in enzymes",
+    "link": "https://www.pnas.org/doi/abs/10.1073/pnas.2530709123?af=R",
+    "source": "pnas.org",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Stress-dependent growth in breast cancer arises from a mechano-osmotic coupling and cell-sizing checkpoint",
+    "link": "https://www.pnas.org/doi/abs/10.1073/pnas.2523159123?af=R",
+    "source": "pnas.org",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Adding noise and scaling forces to speed up the Langevin clock",
+    "link": "http://arxiv.org/abs/2603.03620v1",
+    "source": "arXiv",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Introducing a fusogenicity metric for lipid nanoparticle formulation",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.02.708638v1",
+    "source": "bioRxiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Progressive Backmapping of Highly Coarse-Grained Protein Models",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.02.709104v1",
+    "source": "bioRxiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Aromatic ring transforms DNA binding modes of an octahedral rhodium complex",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00150-5?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Mechano-sensitivity of multi-component caveolae",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.03.709391v1",
+    "source": "bioRxiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "HaloTag-based approach to quantify subcellular localization of TRPV3 channels.",
+    "link": "https://www.cell.com/biophysj/fulltext/S0006-3495(26)00175-X?rss=yes",
+    "source": "cell.com",
+    "date": "2026-03-04"
+  },
+  {
+    "title": "Molecular assembly of the KCNQ1-KCNE1-BACE1 complex",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.03.709230v1",
+    "source": "bioRxiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Deep learning linking mechanistic models to single-cell transcriptomics data reveals transcriptional bursting in response to DNA damage",
+    "link": "https://elifesciences.org/articles/100623",
+    "source": "elifesciences.org",
+    "date": "2024-12-13"
+  },
+  {
+    "title": "Characterizing the Impact of Nucleoid-Associated Proteins on HU-DNA Interactions by Live-Cell Single-Molecule Tracking",
+    "link": "https://www.biorxiv.org/content/10.64898/2025.12.19.695591v2",
+    "source": "bioRxiv",
+    "date": "2025-12-19"
+  },
+  {
+    "title": "The Integration Host Factor is a pH-responsive protein that switches from DNA bending to DNA bridging in acidic biofilm-like conditions",
+    "link": "http://arxiv.org/abs/2603.03466v1",
+    "source": "arXiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Will a Large Complex System be a Maxwell Demon?",
+    "link": "http://arxiv.org/abs/2603.03248v1",
+    "source": "arXiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Guiding isotropic active fluids with anisotropic friction",
+    "link": "http://arxiv.org/abs/2603.03232v1",
+    "source": "arXiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Flocking by stopping: A mechanism of emergent order in collective movement",
+    "link": "http://link.aps.org/doi/10.1103/lnrz-wrf4",
+    "source": "link.aps.org",
+    "date": "2026-02-10"
+  },
+  {
+    "title": "Transport-generated signals uncover geometric features of evolving branched structures",
+    "link": "http://link.aps.org/doi/10.1103/bnnl-xnm6",
+    "source": "link.aps.org",
+    "date": "2026-01-28"
+  },
+  {
+    "title": "Functional significance of morphological variation in the mechanosensory lateral line system of fishes and its biomimetic potential",
+    "link": "https://www.pnas.org/doi/abs/10.1073/pnas.2508669123?af=R",
+    "source": "pnas.org",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "The role of the tryptophan-rich allosteric network and sodium egress in GPCR activation",
+    "link": "https://www.pnas.org/doi/abs/10.1073/pnas.2525502123?af=R",
+    "source": "pnas.org",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Stochastic modeling of long-legged ant A. gracilipes locomotion in laboratory experiments",
+    "link": "http://arxiv.org/abs/2603.02665v1",
+    "source": "arXiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Base-pair scale dynamics of a repair helicase on DNA lesions reveal varied damage-sensing mechanisms",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.03.709311v1",
+    "source": "bioRxiv",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Beyond fish in formation: A two-tier approach for biomechanical studies of collective movement",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.28.708741v1",
+    "source": "bioRxiv",
+    "date": "2026-02-28"
+  },
+  {
+    "title": "High-pH NMR to Identify Macromolecular Hydrogen-Bonds and Foldons",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.28.708709v1",
+    "source": "bioRxiv",
+    "date": "2026-02-28"
+  },
+  {
+    "title": "Experimentally calibrated multiscale model predicts schedule dependent drug combination effects",
+    "link": "https://www.nature.com/articles/s41540-026-00669-4",
+    "source": "nature.com",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Velocity sensitivity of mechanotransduction in the afferent terminal underlies vibration detection in the Pacinian corpuscle",
+    "link": "https://www.nature.com/articles/s41467-026-69251-0",
+    "source": "nature.com",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "Disentangling mucus rheology and transport efficiency in human airways",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.01.10.698668v2",
+    "source": "bioRxiv",
+    "date": "2026-01-10"
+  },
+  {
+    "title": "Vimentin promotes actin assembly by stabilizing ATP-actin subunits at the barbed end",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.11.17.688760v4",
+    "source": "bioRxiv",
+    "date": "2025-11-17"
+  },
+  {
+    "title": "Morphological parameters can capture emergent properties of dynamic disordered cytoskeletal networks",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.01.708800v1",
+    "source": "bioRxiv",
+    "date": "2026-03-01"
+  },
+  {
+    "title": "Quantifying the effects of cell death and agar density on yeast colony biofilms using an extensional-flow mathematical model",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.10.04.680491v3",
+    "source": "bioRxiv",
+    "date": "2025-10-04"
+  },
+  {
+    "title": "Dynamin optimizes protein-membrane interactions for fission",
+    "link": "https://www.nature.com/articles/s44431-026-00018-9",
+    "source": "nature.com",
+    "date": "2026-03-03"
+  },
+  {
+    "title": "A simple method for computationally unstructuring proteins: some findings",
+    "link": "https://www.biorxiv.org/content/10.1101/2024.11.10.622713v2",
+    "source": "bioRxiv",
+    "date": "2024-11-10"
+  },
+  {
+    "title": "Extrapolating molecular dynamics simulations to zero time step and across thermodynamic space",
+    "link": "http://arxiv.org/abs/2603.02383v1",
+    "source": "arXiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Ionic Liquid-Driven Modulation of DNA Brush Morphology on Nanoparticle Surfaces",
+    "link": "http://arxiv.org/abs/2603.02042v1",
+    "source": "arXiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "General theory for group resetting with application to avoidance",
+    "link": "http://link.aps.org/doi/10.1103/zxff-tkq5",
+    "source": "link.aps.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Two-phase quadratic integrate-and-fire neurons: Exact low-dimensional description for ensembles of finite-voltage neurons",
+    "link": "http://link.aps.org/doi/10.1103/tq4x-8ny1",
+    "source": "link.aps.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Hyperuniformity of Weighted Particle Systems",
+    "link": "http://link.aps.org/doi/10.1103/fr99-qh7h",
+    "source": "link.aps.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Elastohydrodynamic instabilities of a soft robotic arm in a viscous fluid",
+    "link": "http://link.aps.org/doi/10.1103/c914-x8r2",
+    "source": "link.aps.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Role of chloride concentration in modulating seizure transitions in excitatory and inhibitory networks",
+    "link": "http://link.aps.org/doi/10.1103/x6qv-lzdg",
+    "source": "link.aps.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Euler-Helfrich problem for open vesicles bounded by elastic filaments",
+    "link": "http://link.aps.org/doi/10.1103/9byv-ndvs",
+    "source": "link.aps.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Influence of Bubble Lifetime on the Drying of Catalytically Active Sessile Droplets",
+    "link": "http://arxiv.org/abs/2603.01658v1",
+    "source": "arXiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Allosteric gating of radical transport in ribonucleotide reductase",
+    "link": "https://www.pnas.org/doi/abs/10.1073/pnas.2600465123?af=R",
+    "source": "pnas.org",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Ostwald's Rule of Stages in One-Dimension",
+    "link": "http://arxiv.org/abs/2603.01569v1",
+    "source": "arXiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "A hyperelastic theory for nonlinear hydrogel diffusiophoresis",
+    "link": "http://arxiv.org/abs/2603.01512v2",
+    "source": "arXiv",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Amendable decisions in living systems",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.06.03.657747v2",
+    "source": "bioRxiv",
+    "date": "2025-06-03"
+  },
+  {
+    "title": "Anomalous diffusion of nanoparticles in semidilute hyaluronic acid solutions",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.27.708659v1",
+    "source": "bioRxiv",
+    "date": "2026-02-27"
+  },
+  {
+    "title": "Temperature and intrinsic Ca2+ reshape TRPM4 pharmacology",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.01.31.703029v2",
+    "source": "bioRxiv",
+    "date": "2026-01-31"
+  },
+  {
+    "title": "Role of mechanical allostery in kindlin-mediated integrin activation",
+    "link": "https://www.nature.com/articles/s42005-026-02557-z",
+    "source": "nature.com",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Protein trafficking and synaptic demand configure complex and dynamic synaptome architectures of individual neurons",
+    "link": "https://www.nature.com/articles/s41598-026-40513-7",
+    "source": "nature.com",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Efficient sampling of large-scale transition pathways and intermediate conformations in sub-mesoscopic protein complexes",
+    "link": "https://www.nature.com/articles/s41467-026-69809-y",
+    "source": "nature.com",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "RNA i-Motif Formation at Neutral pH",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.03.01.708865v1",
+    "source": "bioRxiv",
+    "date": "2026-03-01"
+  },
+  {
+    "title": "A fast and accurate calculation method for light induced isomerization of retinal proteins in real time",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.27.707937v1",
+    "source": "bioRxiv",
+    "date": "2026-02-27"
+  },
+  {
+    "title": "Fast MAS NMR Spectroscopy Can Identify G-Quartets and Double-Stranded Structures in Aggregates Formed by GGGGCC RNA Repeats",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.09.07.674584v2",
+    "source": "bioRxiv",
+    "date": "2025-09-07"
+  },
+  {
+    "title": "Multistep loss of catalytic and ligand binding abilities of hexameric purine nucleoside phosphorylase",
+    "link": "https://www.nature.com/articles/s41598-026-41204-z",
+    "source": "nature.com",
+    "date": "2026-03-02"
+  },
+  {
+    "title": "Vibrational contribution to the sub-terahertz dielectric response of kinesin and its hydration shell",
+    "link": "https://www.nature.com/articles/s41598-026-40625-0",
+    "source": "nature.com",
+    "date": "2026-03-01"
+  },
+  {
+    "title": "Elucidating the mechanism of cefpodoxime-BSA interaction via a combination of multi-spectroscopic methods and molecular docking simulations",
+    "link": "https://www.nature.com/articles/s41598-026-39137-8",
+    "source": "nature.com",
+    "date": "2026-03-01"
+  },
+  {
+    "title": "The Role of Conformational Changes in TcmN Aromatase/Cyclase in Polyketide Biosynthesis",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.27.708631v1",
+    "source": "bioRxiv",
+    "date": "2026-02-27"
+  },
+  {
+    "title": "Altered ciliary morphology reduces mechanosensation in a cystic kidney model as indicated by a mathematical model",
+    "link": "https://www.nature.com/articles/s41598-026-39179-y",
+    "source": "nature.com",
+    "date": "2026-03-01"
+  },
+  {
+    "title": "Revealing properties for enhanced quantum sensing in engineered proteins",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.27.708212v1",
+    "source": "bioRxiv",
+    "date": "2026-02-27"
+  },
+  {
+    "title": "Local GPCR density tips the balance of μ-opioid receptor trafficking",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.26.708286v1",
+    "source": "bioRxiv",
+    "date": "2026-02-26"
+  },
+  {
+    "title": "Impact of Image Representation on Deep Learning-Based Single-Cell Classification by Holographic Imaging Flow Cytometry",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.26.708207v1",
+    "source": "bioRxiv",
+    "date": "2026-02-26"
+  },
+  {
+    "title": "Computational Synthetic Inner Membrane Reveals Cardiolipin-Leak Control of ATP Output",
+    "link": "https://www.biorxiv.org/content/10.64898/2026.02.25.708092v1",
+    "source": "bioRxiv",
+    "date": "2026-02-25"
+  },
+  {
+    "title": "Aberration-aware 3D localization microscopy via self-supervised neural-physics learning",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.02.16.638552v2",
+    "source": "bioRxiv",
+    "date": "2025-02-16"
+  },
+  {
+    "title": "Antiparallel Cell Circulation Emerging from Self-Aligned Tension Gradients",
+    "link": "https://www.biorxiv.org/content/10.1101/2025.07.28.667323v2",
+    "source": "bioRxiv",
+    "date": "2025-07-28"
+  }
+]

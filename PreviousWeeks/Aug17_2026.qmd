@@ -1,5 +1,7 @@
 ---
-title: "Aug 17 26"
+title: "Aug 10 26"
+edition_id: "2026-08-10"
+window_end_date: "2026-08-17"
 format:
   html:
     toc: false

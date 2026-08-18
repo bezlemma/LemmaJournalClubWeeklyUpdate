@@ -8,6 +8,8 @@ const INPUT_FILE = get(ENV, "EDITION_PAPERS_FILE", "papers.json")
 const OUTPUT_FILE = get(ENV, "EDITION_MARKDOWN_FILE", "papers_final.md")
 const DECISIONS_DIR = get(ENV, "EDITION_DECISIONS_DIR", "TrainingData")
 const EDITION_ID = strip(get(ENV, "EDITION_ID", ""))
+const WINDOW_END_DATE = strip(get(ENV, "WINDOW_END_DATE", EDITION_ID))
+const DECISION_FILE = strip(get(ENV, "DECISION_FILE", ""))
 const MIN_SELECTION_FRACTION = something(tryparse(Float64, get(ENV, "MIN_SELECTION_FRACTION", "0.50")), 0.50)
 
 field_text(record, field::Symbol)::String = strip(string(get(record, field, "")))
@@ -21,11 +23,13 @@ end
 
 markdown_link_target(value::AbstractString)::String = "<$(strip(value))>"
 
-function write_markdown(featured, regular, edition_date::Date)
+function write_markdown(featured, regular, edition_date::Date, window_end_date::Date)
     date_str = Dates.format(edition_date, "u d yy")
     open(OUTPUT_FILE, "w") do output
         println(output, "---")
         println(output, "title: \"$date_str\"")
+        println(output, "edition_id: \"$(Dates.format(edition_date, "yyyy-mm-dd"))\"")
+        println(output, "window_end_date: \"$(Dates.format(window_end_date, "yyyy-mm-dd"))\"")
         println(output, "format:")
         println(output, "  html:")
         println(output, "    toc: false")
@@ -64,12 +68,18 @@ function main()
     catch
         error("EDITION_ID must use YYYY-MM-DD format, received '$EDITION_ID'.")
     end
-    decision_file = joinpath(DECISIONS_DIR, "filter_decisions_$(EDITION_ID).jsonl")
+    window_end_date = try
+        Date(WINDOW_END_DATE)
+    catch
+        error("WINDOW_END_DATE must use YYYY-MM-DD format, received '$WINDOW_END_DATE'.")
+    end
+    decision_file = isempty(DECISION_FILE) ?
+        joinpath(DECISIONS_DIR, "filter_decisions_$(WINDOW_END_DATE).jsonl") : DECISION_FILE
     isfile(INPUT_FILE) || error("Frozen candidate file $INPUT_FILE does not exist.")
     isfile(decision_file) || error("Frozen decision file $decision_file does not exist.")
 
     raw_papers = collect(JSON3.read(read(INPUT_FILE, String)))
-    papers, removed = sanitize_candidates(raw_papers, edition_date)
+    papers, removed = sanitize_candidates(raw_papers, window_end_date)
     println("Frozen-edition repair retained $(length(papers))/$(length(raw_papers)) valid candidates.")
     for item in removed
         println("  • Removed $(isempty(item.title) ? "candidate #$(item.index)" : item.title)")
@@ -136,7 +146,7 @@ function main()
     selected = vcat(featured, regular)
     issues = selected_edition_issues(
         selected,
-        edition_date;
+        window_end_date;
         candidate_count=length(papers),
         min_fraction=MIN_SELECTION_FRACTION,
     )
@@ -151,7 +161,7 @@ function main()
             println(output, JSON3.write(record))
         end
     end
-    write_markdown(featured, regular, edition_date)
+    write_markdown(featured, regular, edition_date, window_end_date)
 
     dates = sort([publication_date(item.paper) for item in selected])
     println("Frozen-edition repair: PASS — $(length(selected)) papers, dates $(first(dates)) through $(last(dates)); " *
