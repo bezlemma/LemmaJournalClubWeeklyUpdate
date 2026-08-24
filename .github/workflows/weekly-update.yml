@@ -37,7 +37,7 @@ concurrency:
 jobs:
   build-edition:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
 
     steps:
       - name: Check out the paper pipeline
@@ -223,6 +223,37 @@ jobs:
           git commit -m "Save Biophysics Weekly learning data for $EDITION_ID"
           git push
 
+      - name: Require the exact edition to be live on the website
+        env:
+          ARCHIVE_FILE: ${{ steps.edition.outputs.archive_file }}
+          EDITION_ID: ${{ steps.edition.outputs.edition_id }}
+        run: |
+          EXPECTED_SOURCE_HASH="$(sed 's/\r$//' "$ARCHIVE_FILE" | sha256sum | awk '{print $1}')"
+          EDITION_URL="https://bezialemma.com/biophysicsweeklyupdate/data/editions/${EDITION_ID}.json"
+
+          for ATTEMPT in $(seq 1 120); do
+            if LIVE_JSON="$(curl --fail --silent --show-error --location \
+              --connect-timeout 10 --max-time 20 \
+              "${EDITION_URL}?run=${GITHUB_RUN_ID}&attempt=${ATTEMPT}")"; then
+              LIVE_SOURCE_HASH="$(jq -r '.sourceHash // empty' <<< "$LIVE_JSON")"
+              if [ "$LIVE_SOURCE_HASH" = "$EXPECTED_SOURCE_HASH" ]; then
+                echo "Verified that edition $EDITION_ID is live before email delivery."
+                exit 0
+              fi
+            fi
+
+            if [ "$ATTEMPT" -lt 120 ]; then
+              echo "Website does not yet contain the exact frozen edition $EDITION_ID (attempt $ATTEMPT/120); waiting 15 seconds."
+              sleep 15
+            fi
+          done
+
+          jq -n \
+            --arg reason "The edition was frozen successfully, but the public website did not publish that exact edition within 30 minutes. The newsletter was not sent, so readers cannot receive an email that points to a stale archive." \
+            '{status:"failed",reason:$reason}' > pipeline_status.json
+          echo "::error::$(jq -r '.reason' pipeline_status.json)"
+          exit 1
+
       - name: Email the edition to active subscribers
         id: newsletter
         if: ${{ inputs.skip_email != true }}
@@ -320,7 +351,7 @@ jobs:
             {
               echo "# ❌ FAILED — $REASON"
               echo
-              echo "Nothing was published or emailed after this failure."
+              echo "The newsletter was not sent. The frozen source archive may already be committed; the failure reason above identifies whether public website publication completed."
             } >> "$GITHUB_STEP_SUMMARY"
           else
             echo "# ✅ SUCCEEDED — edition validated and delivery step completed" >> "$GITHUB_STEP_SUMMARY"
@@ -343,7 +374,7 @@ jobs:
           SUBJECT="Biophysics Weekly run failed"
           DETAILS="<strong>FAILED — A workflow step did not complete.</strong> Open the linked run for the failed command."
           STATUS_HEADING="Biophysics Weekly failed"
-          FOLLOWUP="Nothing later in the pipeline was published or emailed. It is safe to re-run the workflow: an unfinished edition will be rebuilt, while a frozen edition will be reused and subscribers who already received that delivery will be skipped."
+          FOLLOWUP="The newsletter was not sent after this failure. It is safe to re-run the workflow: an unfinished edition will be rebuilt, while a frozen edition will be reused and subscribers who already received that delivery will be skipped."
           if [ "${{ steps.delivery_monitor.outcome }}" = "failure" ]; then
             REASON="$(jq -r '.reason // "Signed delivery monitoring failed."' pipeline_status.json)"
             SUBJECT="Biophysics Weekly delivery-monitoring warning"
