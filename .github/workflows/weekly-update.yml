@@ -224,6 +224,7 @@ jobs:
           git push
 
       - name: Email the edition to active subscribers
+        id: newsletter
         if: ${{ inputs.skip_email != true }}
         env:
           NEWSLETTER_API_URL: ${{ secrets.NEWSLETTER_API_URL }}
@@ -257,18 +258,61 @@ jobs:
           if ! curl --fail-with-body "$NEWSLETTER_API_URL/admin/send-edition" \
             -H "Authorization: Bearer $NEWSLETTER_ADMIN_TOKEN" \
             -H "Content-Type: application/json" \
-            --data-binary @newsletter-payload.json; then
+            --data-binary @newsletter-payload.json \
+            -o newsletter-response.json; then
+            test -s newsletter-response.json && cat newsletter-response.json
             jq -n \
               --arg reason "The edition passed validation, but the newsletter delivery API rejected or could not complete the send request." \
               '{status:"failed",reason:$reason}' > pipeline_status.json
             exit 1
           fi
+          cat newsletter-response.json
+          echo "delivery_id=$(jq -r '.deliveryId' newsletter-response.json)" >> "$GITHUB_OUTPUT"
+          echo "sent=$(jq -r '.sent // 0' newsletter-response.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Verify signed Resend delivery events arrived
+        id: delivery_monitor
+        if: ${{ success() && inputs.skip_email != true && steps.newsletter.outputs.sent != '0' }}
+        continue-on-error: true
+        env:
+          NEWSLETTER_API_URL: ${{ secrets.NEWSLETTER_API_URL }}
+          NEWSLETTER_ADMIN_TOKEN: ${{ secrets.NEWSLETTER_ADMIN_TOKEN }}
+          DELIVERY_ID: ${{ steps.newsletter.outputs.delivery_id }}
+          SENT_COUNT: ${{ steps.newsletter.outputs.sent }}
+        run: |
+          for ATTEMPT in 1 2 3 4 5 6; do
+            if curl --fail-with-body --silent --show-error \
+              "$NEWSLETTER_API_URL/admin/delivery-status?editionId=$DELIVERY_ID" \
+              -H "Authorization: Bearer $NEWSLETTER_ADMIN_TOKEN" \
+              -o delivery-status.json; then
+              SIGNED_EVENT_COUNT="$(jq '[.deliveries[] | select(((.webhook_event_count // 0) | tonumber) > 0)] | length' delivery-status.json)"
+              if [ "$SIGNED_EVENT_COUNT" -ge "$SENT_COUNT" ]; then
+                echo "Signed Resend events arrived for all $SENT_COUNT newly sent emails."
+                exit 0
+              fi
+            fi
+            [ "$ATTEMPT" -lt 6 ] && sleep 10
+          done
+
+          jq -n \
+            --arg reason "Resend accepted $SENT_COUNT email(s), but signed delivery events did not reach the Worker within 60 seconds. Email delivery may still have succeeded; the Resend webhook or its signing secret needs attention." \
+            '{status:"warning",reason:$reason}' > pipeline_status.json
+          echo "::warning::$(jq -r '.reason' pipeline_status.json)"
+          test -s delivery-status.json && cat delivery-status.json
+          exit 1
 
       - name: Put the outcome at the top of the Actions summary
         if: ${{ always() }}
         shell: bash
         run: |
-          if [ "${{ job.status }}" = "failure" ]; then
+          if [ "${{ steps.delivery_monitor.outcome }}" = "failure" ]; then
+            REASON="$(jq -r '.reason // "Signed delivery monitoring failed."' pipeline_status.json)"
+            {
+              echo "# ⚠️ EMAIL ACCEPTED, BUT DELIVERY MONITORING FAILED — $REASON"
+              echo
+              echo "The edition was published and Resend accepted the email send. This warning concerns the delivery-status webhook, not paper collection or email submission."
+            } >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ job.status }}" = "failure" ]; then
             REASON="A workflow step failed; open the failed step below for its exact command output."
             if [ -s pipeline_status.json ] && [ "$(jq -r '.status // empty' pipeline_status.json)" = "failed" ]; then
               REASON="$(jq -r '.reason // "No failure reason was recorded."' pipeline_status.json)"
@@ -283,7 +327,7 @@ jobs:
           fi
 
       - name: Email the owner if the weekly run failed
-        if: ${{ failure() }}
+        if: ${{ failure() || steps.delivery_monitor.outcome == 'failure' }}
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           WARNING_EMAIL: ${{ secrets.WARNING_EMAIL }}
@@ -298,6 +342,15 @@ jobs:
           FROM_ADDRESS="${RESEND_FROM:-Biophysics Weekly <onboarding@resend.dev>}"
           SUBJECT="Biophysics Weekly run failed"
           DETAILS="<strong>FAILED — A workflow step did not complete.</strong> Open the linked run for the failed command."
+          STATUS_HEADING="Biophysics Weekly failed"
+          FOLLOWUP="Nothing later in the pipeline was published or emailed. It is safe to re-run the workflow: an unfinished edition will be rebuilt, while a frozen edition will be reused and subscribers who already received that delivery will be skipped."
+          if [ "${{ steps.delivery_monitor.outcome }}" = "failure" ]; then
+            REASON="$(jq -r '.reason // "Signed delivery monitoring failed."' pipeline_status.json)"
+            SUBJECT="Biophysics Weekly delivery-monitoring warning"
+            STATUS_HEADING="Biophysics Weekly monitoring warning"
+            DETAILS="<strong>WARNING — $REASON</strong>"
+            FOLLOWUP="The edition was published and Resend accepted the email send. Do not resend it; inspect the Resend webhook and signing secret."
+          fi
           if [ -s pipeline_status.json ] && [ "$(jq -r '.status // empty' pipeline_status.json)" = "failed" ]; then
             REASON="$(jq -r '.reason // "No failure reason was recorded."' pipeline_status.json)"
             DETAILS="<strong>FAILED — $REASON</strong>"
@@ -311,7 +364,7 @@ jobs:
             --arg from "$FROM_ADDRESS" \
             --arg to "$WARNING_EMAIL" \
             --arg subject "$SUBJECT" \
-            --arg html "<h1>Biophysics Weekly failed</h1><p>$DETAILS</p><p>Nothing later in the pipeline was published or emailed. It is safe to re-run the workflow: an unfinished edition will be rebuilt, while a frozen edition will be reused and subscribers who already received that delivery will be skipped.</p><p><a href=\"$RUN_URL\">Open the failed GitHub run</a>.</p>" \
+            --arg html "<h1>$STATUS_HEADING</h1><p>$DETAILS</p><p>$FOLLOWUP</p><p><a href=\"$RUN_URL\">Open the GitHub run</a>.</p>" \
             '{from:$from,to:[$to],subject:$subject,html:$html}' > resend-warning.json
 
           curl --fail-with-body https://api.resend.com/emails \

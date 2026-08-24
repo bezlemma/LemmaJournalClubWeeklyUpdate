@@ -13,8 +13,11 @@ manual work. The public archive and voting interface live in the separate
 3. downloads anonymous reader feedback from the Cloudflare Worker;
 4. filters and summarizes papers with Gemini;
 5. refuses to publish when Gemini's failure rate exceeds the configured gate;
-6. commits the new edition to `PreviousWeeks` before delivery; and
-7. asks the Worker to email every active subscriber.
+6. commits the new edition to `PreviousWeeks` before delivery;
+7. asks the Worker to email every active subscriber; and
+8. confirms that signed Resend events reached the delivery ledger for every new
+   send. A missing event produces a clearly labeled monitoring warning and owner
+   email without incorrectly claiming that the scrape or submission failed.
 
 The fetch stage enforces a final seven-day publication window after all sources
 are merged. For bioRxiv, this means the original posting date encoded in the DOI,
