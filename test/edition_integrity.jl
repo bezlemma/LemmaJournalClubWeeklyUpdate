@@ -87,6 +87,34 @@ valid_item(index::Int; kwargs...) = (
     duplicate_items[2] = (paper=valid_paper(1), summary=valid_items[2].summary)
     @test any(contains("duplicate"), selected_edition_issues(duplicate_items, edition_date))
 
+    cross_source_items = copy(valid_items)
+    pnas_copy = valid_paper(1)
+    pnas_copy[:title] = "Initiation of rotational collective migration in Drosophila through tissue geometry and mechanochemical feedback"
+    pnas_copy[:link] = "https://www.pnas.org/doi/abs/10.1073/pnas.2528342123?af=R"
+    pnas_copy[:doi] = "10.1073/pnas.2528342123"
+    crossref_copy = valid_paper(2)
+    crossref_copy[:title] = "Initiation of rotational collective migration in <i>Drosophila</i> through tissue geometry and mechanochemical feedback"
+    crossref_copy[:link] = "https://doi.org/10.1073/pnas.2528342123"
+    crossref_copy[:doi] = "https://doi.org/10.1073/pnas.2528342123"
+    cross_source_items[1] = (paper=pnas_copy, summary=valid_items[1].summary)
+    cross_source_items[2] = (paper=crossref_copy, summary=valid_items[2].summary)
+    cross_source_issues = selected_edition_issues(cross_source_items, edition_date)
+    @test any(contains("duplicate DOI"), cross_source_issues)
+    @test any(contains("duplicate canonical title"), cross_source_issues)
+
+    deduplicated, duplicate_removals = sanitize_candidates([pnas_copy, crossref_copy], edition_date)
+    @test length(deduplicated) == 1
+    @test length(duplicate_removals) == 1
+    @test any(contains("duplicates an earlier candidate"), duplicate_removals[1].issues)
+
+    optica_one = valid_paper(3)
+    optica_one[:link] = "https://opg.optica.org/abstract.cfm?uri=boe-17-8-1234"
+    optica_two = valid_paper(4)
+    optica_two[:link] = "https://opg.optica.org/abstract.cfm?uri=oe-34-9-5678"
+    distinct_optica, optica_removals = sanitize_candidates([optica_one, optica_two], edition_date)
+    @test length(distinct_optica) == 2
+    @test isempty(optica_removals)
+
     substantive_unknown = "Abstract Pyrenoids perform carbon fixation, but one detailed mechanism is currently unknown. " *
                           "Experiments here resolve that mechanism quantitatively."
     @test !is_placeholder_text(substantive_unknown)

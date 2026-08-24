@@ -164,19 +164,28 @@ Paper(; source="", title="", authors="", link="", abstract_text="",
       images=String[], date=now(tz"UTC"), doi=nothing) =
     Paper(source, title, authors, link, abstract_text, images, date, doi)
 
+function normalize_title_identity(title::AbstractString)::String
+    title_without_markup = replace(String(title), r"(?is)<[^>]*>" => " ")
+    title_without_entities = replace(title_without_markup, r"(?i)&(?:[a-z]+|#\d+|#x[0-9a-f]+);" => " ")
+    return String(filter(c -> isletter(c) || isdigit(c), lowercase(title_without_entities)))
+end
+
 function paper_identity_keys(title::AbstractString, link::AbstractString, doi)::Set{String}
     keys = Set{String}()
 
-    normalized_title = filter(c -> isletter(c) || isdigit(c), lowercase(title))
+    normalized_title = normalize_title_identity(title)
     isempty(normalized_title) || push!(keys, "title:$normalized_title")
 
-    doi_text = doi === nothing ? "" : lowercase(strip(string(doi)))
-    if !isempty(doi_text) && doi_text != "nothing"
-        doi_text = replace(doi_text, r"^https?://(?:dx\.)?doi\.org/" => "")
-        doi_text = replace(doi_text, r"^doi:\s*" => "")
-        doi_text = first(split(doi_text, ['?', '#']; limit=2))
-        isempty(doi_text) || push!(keys, "doi:$doi_text")
+    for raw_doi in (doi === nothing ? "" : string(doi), String(link))
+        normalized_doi = normalize_doi(raw_doi)
+        normalized_doi === nothing || push!(keys, "doi:$normalized_doi")
     end
+
+    normalized_link = lowercase(strip(link))
+    normalized_link = replace(normalized_link, r"^<|>$" => "")
+    normalized_link = replace(normalized_link, r"#.*$" => "")
+    normalized_link = replace(normalized_link, r"/+$" => "")
+    isempty(normalized_link) || push!(keys, "link:$normalized_link")
 
     arxiv_match = match(r"arxiv\.org/(?:abs|pdf)/([^/?#]+)"i, link)
     if arxiv_match !== nothing
@@ -787,7 +796,7 @@ function normalize_doi(raw::AbstractString)::Union{String,Nothing}
     m === nothing && return nothing
     doi = strip(m.match)
     doi = replace(doi, r"[\]\).,;]+$" => "")
-    return isempty(doi) ? nothing : doi
+    return isempty(doi) ? nothing : lowercase(doi)
 end
 
 function get_entry_doi(entry::EzXML.Node)::Union{String,Nothing}
@@ -1856,6 +1865,7 @@ function _query_crossref_orcid(orcid::String, author_name::String, from_date::St
                 for item in items
                     title_parts = get(item, :title, ["No Title"])
                     title = isempty(title_parts) ? "No Title" : string(first(title_parts))
+                    title = strip(html_to_text(replace(title, "\n" => " ")))
 
                     # Authors
                     authors_raw = get(item, :author, [])
@@ -1872,7 +1882,7 @@ function _query_crossref_orcid(orcid::String, author_name::String, from_date::St
                     authors_str = isempty(authors_list) ? "Unknown" : join(authors_list, ", ")
 
                     # DOI + link
-                    doi = string(get(item, :DOI, ""))
+                    doi = something(normalize_doi(string(get(item, :DOI, ""))), "")
                     link = !isempty(doi) ? "https://doi.org/$doi" : string(get(item, :URL, ""))
 
                     # Abstract
@@ -1890,13 +1900,13 @@ function _query_crossref_orcid(orcid::String, author_name::String, from_date::St
 
                     push!(papers, Paper(
                         source="CrossRef/Featured",
-                        title=replace(title, "\n" => " "),
+                        title=title,
                         authors=authors_str,
                         link=link,
                         abstract_text=abstract_text,
                         images=String[],
                         date=pub_date,
-                        doi=!isempty(doi) ? "https://doi.org/$doi" : nothing,
+                        doi=!isempty(doi) ? doi : nothing,
                     ))
                 end
                 return papers
@@ -1946,7 +1956,7 @@ function fetch_crossref_papers()
     # Deduplicate
     unique = Dict{String, Paper}()
     for p in papers
-        key = something(p.doi, lowercase(p.title))
+        key = something(normalize_doi(something(p.doi, p.link)), lowercase(p.title))
         haskey(unique, key) || (unique[key] = p)
     end
 
@@ -2121,6 +2131,40 @@ function delete_checkpoint()
     isfile(CHECKPOINT_FILE) && rm(CHECKPOINT_FILE)
 end
 
+"""Deduplicate papers across sources using canonical DOI first, then markup-free title."""
+function deduplicate_papers(papers::Vector{Paper})::Vector{Paper}
+    is_featured(paper::Paper) = paper.source == "CrossRef/Featured"
+    function should_replace(existing::Paper, candidate::Paper)
+        is_featured(candidate) && !is_featured(existing) && return true
+        is_featured(existing) && !is_featured(candidate) && return false
+        return candidate.date < existing.date
+    end
+
+    unique_by_doi = Dict{String, Paper}()
+    no_doi_papers = Paper[]
+    for paper in papers
+        doi = paper.doi === nothing ? nothing : normalize_doi(paper.doi)
+        doi === nothing && (doi = normalize_doi(paper.link))
+        if doi === nothing
+            push!(no_doi_papers, paper)
+        else
+            paper.doi = doi
+            if !haskey(unique_by_doi, doi) || should_replace(unique_by_doi[doi], paper)
+                unique_by_doi[doi] = paper
+            end
+        end
+    end
+
+    unique_by_title = Dict{String, Paper}()
+    for paper in vcat(collect(values(unique_by_doi)), no_doi_papers)
+        title = normalize_title_identity(paper.title)
+        if !haskey(unique_by_title, title) || should_replace(unique_by_title[title], paper)
+            unique_by_title[title] = paper
+        end
+    end
+    return collect(values(unique_by_title))
+end
+
 # ─── Main orchestrator ───────────────────────────────────────────────────────
 
 function fetch_and_display_papers()
@@ -2271,39 +2315,11 @@ function fetch_and_display_papers()
     filtered_single = before_single - length(all_papers)
     filtered_single > 0 && println("  Filtered $filtered_single single-author arXiv/bioRxiv papers.")
 
-    # ─── Deduplication ───
-    # Helper: prefer CrossRef/Featured, then earliest date
-    _is_featured(p::Paper) = p.source == "CrossRef/Featured"
-    function _should_replace(existing::Paper, candidate::Paper)
-        _is_featured(candidate) && !_is_featured(existing) && return true
-        _is_featured(existing) && !_is_featured(candidate) && return false
-        return candidate.date < existing.date
-    end
-
-    # Pass 1: by DOI (normalized to lowercase)
-    unique_by_doi = Dict{String, Paper}()
-    no_doi_papers = Paper[]
-    for p in all_papers
-        if p.doi !== nothing
-            key = lowercase(p.doi)
-            if !haskey(unique_by_doi, key) || _should_replace(unique_by_doi[key], p)
-                unique_by_doi[key] = p
-            end
-        else
-            push!(no_doi_papers, p)
-        end
-    end
-
-    # Pass 2: by normalized title
-    unique_map = Dict{String, Paper}()
-    for p in vcat(collect(values(unique_by_doi)), no_doi_papers)
-        title_clean = filter(isascii, lowercase(replace(p.title, r"[^a-zA-Z0-9]" => "")))
-        if !haskey(unique_map, title_clean) || _should_replace(unique_map[title_clean], p)
-            unique_map[title_clean] = p
-        end
-    end
-
-    final_list = collect(values(unique_map))
+    # ─── Cross-source deduplication ───
+    before_deduplication = length(all_papers)
+    final_list = deduplicate_papers(all_papers)
+    removed_duplicates = before_deduplication - length(final_list)
+    removed_duplicates > 0 && println("  Removed $removed_duplicates duplicate papers across sources.")
 
     # No source-specific query or metadata quirk may bypass the newsletter's
     # defining invariant: every paper must have been first published in this

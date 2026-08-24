@@ -30,12 +30,6 @@ A positive feedback loop between Fat2-driven planar polarization and tissue moti
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-#### [Initiation of rotational collective migration in                     <i>Drosophila</i>                     through tissue geometry and mechanochemical feedback](<https://doi.org/10.1073/pnas.2528342123>)
-*Sierra Schwabach, Sreejith Santhosh, Audrey Miller Williams, Maureen Cetera, Mattia Serra, Sally Horne-Badovinac* <br>
-A positive feedback loop between Fat2 planar polarization and cell motion, coupled with tissue geometry and rigid-body constraints, breaks chiral symmetry to drive persistent, self-organized rotational migration in closed epithelia.
-:::
-
-::: {.g-col-12 .g-col-md-6}
 #### [Morphogenesis of bacterial colonies in liquid crystalline environments](<https://doi.org/10.1073/pnas.2536343123>)
 *Sebastian Gonzalez La Corte, Thomas G. J. Chandler, Saverio E. Spagnolie, Ned S. Wingreen, Sujit S. Datta* <br>
 Bacterial reproduction within nematic fluids produces single-cell-wide chains that undergo localized buckling when growth-induced viscous stresses overcome the elastic forces of the surrounding medium.

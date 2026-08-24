@@ -110,7 +110,7 @@
         ]
     },
     {
-        "doi": "https://doi.org/10.1038/s41467-026-76967-6",
+        "doi": "10.1038/s41467-026-76967-6",
         "link": "https://doi.org/10.1038/s41467-026-76967-6",
         "abstract": "Abstract\n                  Myoblast fusion into multinucleated myotubes is essential for skeletal muscle development and repair, yet how tissue-scale mechanics contributes to this process remains poorly understood. Here, we show that primary myoblasts behave as an evolving active nematic system in which actomyosin-dependent stresses, extracellular-matrix (ECM) remodeling and fusion-driven myotube growth are dynamically coupled. As myoblasts fuse into elongated myotubes, orientational order increases and the nematic field is progressively reshaped. We identify a strong coupling between cellular and ECM nematic organization, whereby cytoskeleton-dependent ECM remodeling stabilizes topological defects and reinforces their associated stress patterns. Fusion events preferentially accumulate near comet-shaped +1/2 defects, which correspond to regions of high compressive stress predicted by our theoretical model. Our findings support a model in which the intrinsic fusion machinery provides fusion competence, while ECM-stabilized nematic stress patterns spatially bias the localization of fusion events. Fusion-driven myotube growth then feeds back on the mechanical landscape, increasing nematogen length and stress magnitude. Together, these results reveal a self-reinforcing biomechanical mechanism that contributes to the organization of myoblast fusion and myotube growth, with potential relevance for developmental and regenerative morphogenesis.",
         "authors": "Yoann Le Toquin, Sushil Dubey, Aleksandra Ardaševa, Lakshmi Balasubramaniam, Emilie Delaune, Valérie Morin, Amin Doostmohammadi, Christophe Marcelle, Benoît Ladoux",
@@ -334,7 +334,7 @@
         ]
     },
     {
-        "doi": "10.1364/OE.609782",
+        "doi": "10.1364/oe.609782",
         "link": "https://opg.optica.org/abstract.cfm?URI=oe-34-17-32875",
         "abstract": "High-energy Raman lasers in plane-mirror cavities scale pulse energy easily but degrade in beam quality, and the responsible mechanisms ...",
         "authors": "Yongrui Guo, Chenxi Wang, Jiaming Kong, Zhe Yang, Xu Zhou, Lirong Chen, Yaohui Zheng",
@@ -367,7 +367,7 @@
         ]
     },
     {
-        "doi": "10.1364/OPTICA.604255",
+        "doi": "10.1364/optica.604255",
         "link": "https://opg.optica.org/abstract.cfm?URI=optica-13-9-1658",
         "abstract": "Polariton condensates provide a versatile platform for exploring non-equilibrium phase transitions and collective phenomena in open quantum ...",
         "authors": "Elena Rozas, Wojciech Bukalski, Yannik Brune, Adbhut Gupta, Kirk Baldwin, Loren N. Pfeiffer, Hassan Alnatah, Jonathan Beaumariage, David W. Snoke, Paolo Comaron, Marzena H. Szymańska, Marc Aßmann",
@@ -400,7 +400,7 @@
         ]
     },
     {
-        "doi": "https://doi.org/10.1002/advs.77115",
+        "doi": "10.1002/advs.77115",
         "link": "https://doi.org/10.1002/advs.77115",
         "abstract": "ABSTRACT\n                  Condensates at synapses organize synaptic vesicle (SV) clusters and are essential for efficient neurotransmitter release. While it is established that RNA granules traffic along axons, the function of RNA at the presynapse remains unclear. Here, we uncover a direct structural role of coding RNAs in organizing presynaptic condensates by focusing on SV clusters, condensates between synapsin‐1 and lipid vesicles. Using in vitro reconstitution systems, we show that RNA drives synapsin‐1 coacervation, with structured RNAs being more effective at promoting phase transitions. The importance of RNA was confirmed in living synapses, where acute disruption of native RNA induces a dispersion of SVs and synapsin. Conversely, ectopically expressed SV‐like condensates contained the translational machinery. The microscopy‐based in vitro translation assay demonstrates increased translation efficiency within synapsin‐1/RNA condensates. Together, our work indicates a novel structural role of RNAs in modulating SV condensates.",
         "authors": "Branislava Rankovic, Zachary M. Geisterfer, Akshita Chhabra, Vladimir M. Jovanovic, Ian Seim, Christian Hoffmann, Antonela Condric, Gerard Aguilar Pérez, Rinse de Boer, Lars T. Hofstede, Jingao Sun, Kiara Freitag, Katja Nowick, Marina Jendrach, Frank L. Heppner, Vladimir Despic, Michaela Müller‐McNicoll, Stephan Sigrist, Geert van den Bogaart, Sofiia Reshetniak, Amy S. Gladfelter, Dragomir Milovanovic",
@@ -777,7 +777,7 @@
         ]
     },
     {
-        "doi": "10.1364/OE.607057",
+        "doi": "10.1364/oe.607057",
         "link": "https://opg.optica.org/abstract.cfm?URI=oe-34-17-32728",
         "abstract": "Cylindrical-mirror field-of-view modulation enables detector-multiplexed infrared imaging by encoding object-space information into ...",
         "authors": "Zibo Yu, Yishi Qiao, Zhenyuan Guo, Guanyu Mu, Guoxiu Zhang, Yingming Zhao, Jiale Chen, Chunyu Liu",
@@ -788,7 +788,7 @@
         ]
     },
     {
-        "doi": "10.1364/OME.610108",
+        "doi": "10.1364/ome.610108",
         "link": "https://opg.optica.org/abstract.cfm?URI=ome-16-9-2999",
         "abstract": "Ferroelectric nematic liquid crystals (FNLCs) are promising soft platforms for nonlinear optics, but quantitative determination of their ...",
         "authors": "Hirokazu Kamifuji, Jigen Furukawa, Kazuma Nakajima, Hirotsugu Kikuchi, Kenjiro Fukuda, Masanori Ozaki",
@@ -898,7 +898,7 @@
         ]
     },
     {
-        "doi": "10.1364/BOE.601548",
+        "doi": "10.1364/boe.601548",
         "link": "https://opg.optica.org/abstract.cfm?URI=boe-17-9-4679",
         "abstract": "The attenuation coefficient µ_t of biological tissue could serve as an indicator of structural and functional changes related to the ...",
         "authors": "Gijs Buist, Arjen Amelink, Johannes F. De Boer",
@@ -931,7 +931,7 @@
         ]
     },
     {
-        "doi": "10.1364/PRJ.604604",
+        "doi": "10.1364/prj.604604",
         "link": "https://opg.optica.org/abstract.cfm?URI=prj-14-9-3992",
         "abstract": "High-energy, high-repetition-rate few-cycle mid-infrared (MIR) pulses near 3 μm are essential for extending high-order ...",
         "authors": "Tongyu Feng, Hao Yuan, Tianzhi Guo, Yahui Ma, Keyang Liu, Bing Xue, Huabao Cao, Wei Zhao, Pei Huang, Yuxi Fu",
@@ -1211,7 +1211,7 @@
         ]
     },
     {
-        "doi": "10.1364/OE.606625",
+        "doi": "10.1364/oe.606625",
         "link": "https://opg.optica.org/abstract.cfm?URI=oe-34-17-32557",
         "abstract": "Compact visible-near-infrared (VIS-NIR) sensors require a few optical passbands that remain informative under source and acquisition ...",
         "authors": "Mingkun Zhang, Chao Ma, Yuxiang Li, Jiayu Huang, Mingtong Du, Huawei Niu, Jianwei Ma",
@@ -1222,7 +1222,7 @@
         ]
     },
     {
-        "doi": "10.1364/OL.601278",
+        "doi": "10.1364/ol.601278",
         "link": "https://opg.optica.org/abstract.cfm?URI=ol-51-17-4793",
         "abstract": "Optical Coherence Tomography (OCT) speckle degrades the contrast and impairs automated analysis. Classical speckle suppression methods blur ...",
         "authors": "S. Kethavath, Vasundhara, M. K. Manepalli, B. R. Chintada, P. K. Yalavarthy",
@@ -1255,7 +1255,7 @@
         ]
     },
     {
-        "doi": "10.1364/OL.603961",
+        "doi": "10.1364/ol.603961",
         "link": "https://opg.optica.org/abstract.cfm?URI=ol-51-17-4801",
         "abstract": "Because of the high robustness, superior spatial resolution, and rapid thermal response, luminescence lifetime-based nanothermometry has ...",
         "authors": "Wei Xu, Mingjing Xiang, Chunhai Hu, Peng Wang, Zhen Sun",
@@ -1677,7 +1677,7 @@
         ]
     },
     {
-        "doi": "https://doi.org/10.1002/cm.70187",
+        "doi": "10.1002/cm.70187",
         "link": "https://doi.org/10.1002/cm.70187",
         "abstract": "ABSTRACT\n                  The assembly of actin and myosin to the paracrystalline arrangement of myofibrils in striated muscle, that is, heart and skeletal, has puzzled many a cell biologist. Different models, based on cultured cardiomyocytes, were proposed for the last 30 years to explain the sequence of events. These were then evaluated during heart development in embryos in situ and more recently in cardiomyocytes that were derived from human induced pluripotent stem cells (iPSC‐CMs). A lot of the initial work was quite descriptive but recent advances in gene editing technology and in super resolution microscopy allow a more targeted functional analysis and will give unprecedented insight. This review will discuss the general principles of myofibril assembly in the heart and cover new findings on myofibril maintenance and turnover.",
         "authors": "Elisabeth Ehler",
@@ -1699,7 +1699,7 @@
         ]
     },
     {
-        "doi": "10.1364/OE.596030",
+        "doi": "10.1364/oe.596030",
         "link": "https://opg.optica.org/abstract.cfm?URI=oe-34-17-32179",
         "abstract": "A quantum entanglement source distributing entangled photons to multiple users is an indispensable component of a quantum network. ...",
         "authors": "Rong Xue Christopher J. Chunnilall",
@@ -1721,17 +1721,6 @@
         ]
     },
     {
-        "doi": "https://doi.org/10.1073/pnas.2528342123",
-        "link": "https://doi.org/10.1073/pnas.2528342123",
-        "abstract": "Collective migration of epithelial cells drives diverse tissue remodeling processes. In many cases, a free tissue edge works alone or in combination with other external cues to align the cells for collective movement, but how edge-free or closed epithelia become polarized for directed migration without these cues is unclear. Here, we use the rotational migration of the follicular epithelial cells in the\n                    Drosophila\n                    egg chamber to explore how cells in an edgeless epithelium initiate rotational collective migration, and how the rotational axis is specified. By employing methods for long-term live imaging and delaying the onset of rotation, we show that symmetry breaking can occur at multiple developmental stages and that the atypical cadherin Fat2 promotes local motility at the basal epithelial surface before rotation begins. We then combine experiments with theoretical modeling to identify a positive feedback loop in which planar polarization of Fat2 aligns the front–rear axes of the individual cells in a common direction and the resulting tissue motion leads to the planar polarization of Fat2. This mechanosensitive feedback, coupled with rigid-body dynamics of the egg chamber, can break chiral symmetry and produce sustained rotation in silico. We further propose that mechanical constraints arising from intertissue interactions and tissue geometry ensure that rotation occurs around the anterior–posterior axis. Our findings suggest a biophysical mechanism—combining Fat2-mediated velocity–polarity alignment, rigid-body dynamics, and tissue geometry—by which a closed epithelial tissue can self-organize into persistent, large-scale rotational migration in vivo, expanding current flocking theories.",
-        "authors": "Sierra Schwabach, Sreejith Santhosh, Audrey Miller Williams, Maureen Cetera, Mattia Serra, Sally Horne-Badovinac",
-        "title": "Initiation of rotational collective migration in                     <i>Drosophila</i>                     through tissue geometry and mechanochemical feedback",
-        "date": "2026-08-18T00:00:00+00:00",
-        "source": "CrossRef/Featured",
-        "images": [
-        ]
-    },
-    {
         "doi": "10.1038/s41594-026-01865-w",
         "link": "https://www.nature.com/articles/s41594-026-01865-w",
         "abstract": "Zhang et al. show that FG-nucleoporins self-assemble through hydrophobic interactions to dilate newly assembling nuclear pores after mitosis, enabling nuclear import and nuclear expansion, which in turn remodel the nuclear envelope.",
@@ -1743,7 +1732,7 @@
         ]
     },
     {
-        "doi": "https://doi.org/10.1073/pnas.2536343123",
+        "doi": "10.1073/pnas.2536343123",
         "link": "https://doi.org/10.1073/pnas.2536343123",
         "abstract": "Natural bacterial habitats are often complex fluids with viscoelastic and anisotropic responses to stress; for example, they can take the form of liquid crystals (LCs), with elongated microscopic constituents that collectively align while still retaining the ability to flow. However, laboratory studies typically focus on cells in simple liquids or complex fluids with randomly oriented constituents. Here, we show how interactions with LCs shape bacterial proliferation in multicellular colonies. Using experiments, we find that in a nematic LC, cells of the multiple species we tested all form aligned single-cell-wide “chains” as they reproduce. As these chains lengthen, they eventually buckle in a highly localized manner. By combining our measurements with a continuum mechanical theory, we demonstrate that this distinctive morphogenetic program emerges because cells are kept in alignment due to the LC’s elasticity; as each chain lengthens, growth-induced viscous stresses along its contour eventually overcome the elasticity of the surrounding nematic, leading to buckling. Our work thus reveals and provides mechanistic insight into the previously overlooked role of LCs in sculpting bacterial life in complex environments.",
         "authors": "Sebastian Gonzalez La Corte, Thomas G. J. Chandler, Saverio E. Spagnolie, Ned S. Wingreen, Sujit S. Datta",
@@ -1765,7 +1754,7 @@
         ]
     },
     {
-        "doi": "https://doi.org/10.21203/rs.3.rs-10327289/v1",
+        "doi": "10.21203/rs.3.rs-10327289/v1",
         "link": "https://doi.org/10.21203/rs.3.rs-10327289/v1",
         "abstract": "Abstract\n                Generative models are increasingly used to capture correlations in many-body systems, but the representations they learn remain largely opaque to physical interpretation. Here, we establish an intuitive  criterion that quantifies the capacity of a variational autoencoder (VAE) to faithfully reconstruct the joint probability distribution of a many body system. In a nutshell, a bound on the VAE capacity is obtained by comparing the rate of the latent channel to the bipartite mutual information of the data. Using this bound, we show that the conditionally independent decoder of any successful VAE is structurally identical to a finite-size mean-field factorization. Hence, a successful reconstruction is direct evidence for a latent mean-field theory and the microscopic parameters of that theory can be read off the trained decoder. We validate these conclusions on a hierarchy of solvable models with scalar (Curie-Weiss), vector (Hopfield) and tensor (Maier-Saupe) order parameters, recovering the full Hopfield pattern matrix from equilibrium samples alone. We find that, when applied to Salamander retinal recordings, a two-latent VAE reproduces the population statistics with only two effective collective variables allowing us to recover the `stored patterns' of the neural population and write a generalized Hopfield model which correctly models the experimental data.",
         "authors": "Vincenzo Vitelli, Marco Biroli, Max Welling",
@@ -2087,7 +2076,7 @@
         ]
     },
     {
-        "doi": "10.1364/BOE.614205",
+        "doi": "10.1364/boe.614205",
         "link": "https://opg.optica.org/abstract.cfm?URI=boe-17-9-4660",
         "abstract": "This publisher’s note contains a correction to the funding of [Biomed. Opt. Express16, 3027 (2025)10.1364/BOE.563310]. The article ...",
         "authors": "Szymon Tamborski, Marta K. Skrok, Matt S. Hepburn, Mateusz Maniewski, Marek Zdrenka, Adam Kowalewski, Łukasz Szylberg, Brendan F. Kennedy",
@@ -2120,7 +2109,7 @@
         ]
     },
     {
-        "doi": "10.1364/OE.608784",
+        "doi": "10.1364/oe.608784",
         "link": "https://opg.optica.org/abstract.cfm?URI=oe-34-17-32130",
         "abstract": "We report the first Kerr-lens modelocked Tm:KYW bulk laser oscillator. Using compact multimode diode in-band pumping, also for the first ...",
         "authors": "Firas Trawi, Marin Hamrouni, Zekican Ertürk, Lukas W. Perner, Alexandre Parriaux, Valentin J. Wittwer, Thomas Südmeyer",
