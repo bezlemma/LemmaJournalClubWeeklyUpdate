@@ -89,7 +89,9 @@ const JOURNAL_FEEDS = [
     (url="https://www.nature.com/ncb.rss", name="Nature Cell Biology", group=:green_filter, section_filter=nothing),
     (url="https://www.cell.com/current-biology/inpress.rss", name="Current Biology", group=:green_filter, section_filter=nothing),
     (url="https://rupress.org/rss/site_1000001/LatestArticles_1000003.xml", name="Journal of Cell Biology", group=:green_filter, section_filter=nothing),
-    (url="https://link.springer.com/search.rss?search-within=Journal&facet-journal-id=44318&query=", name="EMBO Journal", group=:green_filter, section_filter=nothing),
+    # Springer currently serves a browser challenge from its nominal RSS URL.
+    # EMBO is therefore fetched from Europe PMC as a structured primary source.
+    (url="", name="EMBO Journal", group=:green_filter, section_filter=nothing),
 ]
 
 # Journals without RSS feeds — queried via CrossRef ISSN
@@ -106,7 +108,13 @@ const JOURNAL_EUROPEPMC_BACKUP_ISSNS = Dict(
     "Cell" => "0092-8674",
     "iScience" => "2589-0042",
     "Current Biology" => "0960-9822",
+)
+const JOURNAL_EUROPEPMC_PRIMARY_ISSNS = Dict(
     "EMBO Journal" => "0261-4189",
+)
+const JOURNAL_CROSSREF_BACKUP_ISSNS = Dict(
+    # Crossref indexes current EMBO papers under the electronic ISSN.
+    "EMBO Journal" => "1460-2075",
 )
 const EUROPEPMC_API_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
 const EUROPEPMC_MAX_RETRIES = 3
@@ -860,6 +868,56 @@ function get_entry_authors(entry::EzXML.Node)
     return deduped
 end
 
+struct FeedResponseError <: Exception
+    message::String
+    permanent::Bool
+end
+
+Base.showerror(io::IO, err::FeedResponseError) = print(io, err.message)
+
+function parse_rss_response(resp::HTTP.Response, source_name::AbstractString)
+    content_type = HTTP.header(resp, "Content-Type", "")
+    resp.status == 200 || throw(FeedResponseError(
+        "$source_name returned HTTP $(resp.status) (Content-Type: $(isempty(content_type) ? "unknown" : content_type))",
+        false,
+    ))
+
+    body = String(resp.body)
+    if occursin(r"(?is)^\s*(?:<!doctype\s+html|<html\b)", body)
+        challenge = occursin(r"(?is)<title>\s*Client Challenge\s*</title>", body) ||
+                    occursin("_fs_ch_", body)
+        reason = challenge ? "an anti-bot client challenge" : "an HTML page"
+        throw(FeedResponseError(
+            "$source_name returned HTTP 200 but served $reason instead of RSS/Atom (Content-Type: $(isempty(content_type) ? "unknown" : content_type))",
+            true,
+        ))
+    end
+
+    xmldoc = try
+        EzXML.parsexml(body)
+    catch
+        # Some feeds are not valid XML — try cleaning unescaped ampersands.
+        body_clean = replace(body, r"&(?!amp;|lt;|gt;|quot;|apos;|#)" => "&amp;")
+        try
+            EzXML.parsexml(body_clean)
+        catch e
+            throw(FeedResponseError("Failed to parse $source_name feed XML: $(sprint(showerror, e))", false))
+        end
+    end
+
+    root_name = lowercase(last(split(EzXML.nodename(EzXML.root(xmldoc)), ':')))
+    root_name in ("rss", "feed", "rdf") || throw(FeedResponseError(
+        "$source_name returned XML with unexpected root element '$root_name'",
+        false,
+    ))
+    entries = extract_feed_entries(xmldoc)
+    isempty(entries) && throw(FeedResponseError(
+        "$source_name returned a syntactically valid feed with no entries",
+        false,
+    ))
+    return xmldoc, entries
+end
+
 function fetch_rss(url::AbstractString, source_name::AbstractString, group_type::Symbol;
                    section_filter::Union{AbstractString,Nothing}=nothing)
     println("Fetching $source_name...")
@@ -868,38 +926,22 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
     try
         # Cookie jar needed for Nature.com's idp.nature.com cookie gate (303→302→302 redirect chain)
         jar = HTTP.Cookies.CookieJar()
-        resp = nothing
+        xmldoc = nothing
+        entries = EzXML.Node[]
         for attempt in 1:RSS_MAX_RETRIES
             try
                 candidate = HTTP.get(url; headers=RSS_HEADERS, readtimeout=30, status_exception=false, redirect=true, cookies=jar)
-                if candidate.status == 200
-                    resp = candidate
-                    break
-                end
-                attempt == RSS_MAX_RETRIES && error("$source_name returned HTTP $(candidate.status)")
-                println("  $source_name returned HTTP $(candidate.status); retrying ($attempt/$RSS_MAX_RETRIES)...")
+                xmldoc, entries = parse_rss_response(candidate, source_name)
+                break
             catch e
-                attempt == RSS_MAX_RETRIES && rethrow(e)
-                println("  $source_name request failed; retrying ($attempt/$RSS_MAX_RETRIES)...")
+                if (e isa FeedResponseError && e.permanent) || attempt == RSS_MAX_RETRIES
+                    rethrow()
+                end
+                println("  $source_name request/feed validation failed ($(sprint(showerror, e))); retrying ($attempt/$RSS_MAX_RETRIES)...")
             end
             sleep(2 * attempt)
         end
-        resp === nothing && error("$source_name did not return a usable response")
-
-        body = String(resp.body)
-        xmldoc = try
-            EzXML.parsexml(body)
-        catch
-            # Some feeds are not valid XML — try cleaning
-            body_clean = replace(body, r"&(?!amp;|lt;|gt;|quot;|apos;|#)" => "&amp;")
-            try
-                EzXML.parsexml(body_clean)
-            catch e
-                error("Failed to parse $source_name feed XML: $e")
-            end
-        end
-
-        entries = extract_feed_entries(xmldoc)
+        xmldoc === nothing && error("$source_name did not return a usable RSS/Atom document")
 
         for entry in entries
             # Date
@@ -1096,10 +1138,14 @@ end
 
 function europepmc_item_to_paper(item, source_name::AbstractString, group_type::Symbol;
                                  section_filter::Union{AbstractString,Nothing}=nothing,
-                                 oldest_date::ZonedDateTime=OLDEST_DATE)
+                                 oldest_date::ZonedDateTime=OLDEST_DATE,
+                                 window_end_date::Date=WINDOW_END_DATE,
+                                 metadata_lookup::Union{Nothing,Function}=nothing)
     published = parse_europepmc_date(item)
     published === nothing && error("Europe PMC record for $source_name has no usable publication date")
-    published < oldest_date && return nothing
+    published_date = publication_date_utc(published)
+    published_date < publication_date_utc(oldest_date) && return nothing
+    published_date > window_end_date && return nothing
 
     title = clean_europepmc_text(get(item, :title, ""))
     abstract_text = clean_europepmc_text(get(item, :abstractText, ""))
@@ -1113,6 +1159,28 @@ function europepmc_item_to_paper(item, source_name::AbstractString, group_type::
     link = !isempty(doi) ? "https://doi.org/$doi" :
            (!isempty(record_id) ? "https://europepmc.org/article/$record_source/$record_id" : "")
 
+    # Reject out-of-scope records before requiring expensive or occasionally
+    # unavailable metadata. An irrelevant review with no abstract must not
+    # poison an otherwise complete journal response.
+    if group_type == :section_filter && section_filter !== nothing
+        sf = lowercase(section_filter)
+        text_match = occursin(sf, lowercase(title)) || occursin(sf, lowercase(abstract_text))
+        !text_match && return nothing
+    elseif group_type == :green_filter
+        !matches_green_filter(authors, title, abstract_text) && return nothing
+    end
+
+    if metadata_lookup !== nothing && !isempty(doi) &&
+       (isempty(strip(authors)) || length(abstract_text) < MIN_ABSTRACT_CHARS)
+        lookup_authors, lookup_abstract = metadata_lookup(doi)
+        if isempty(strip(authors)) && lookup_authors !== nothing
+            authors = lookup_authors isa AbstractVector ? join(string.(lookup_authors), ", ") : string(lookup_authors)
+        end
+        if length(abstract_text) < MIN_ABSTRACT_CHARS && lookup_abstract !== nothing
+            abstract_text = clean_europepmc_text(lookup_abstract)
+        end
+    end
+
     missing = String[]
     isempty(title) && push!(missing, "title")
     isempty(strip(authors)) && push!(missing, "authors")
@@ -1121,14 +1189,6 @@ function europepmc_item_to_paper(item, source_name::AbstractString, group_type::
     if !isempty(missing)
         label = isempty(title) ? record_id : first(title, min(80, length(title)))
         error("Europe PMC research record for $source_name is missing $(join(missing, ", ")): $label")
-    end
-
-    if group_type == :section_filter && section_filter !== nothing
-        sf = lowercase(section_filter)
-        text_match = occursin(sf, lowercase(title)) || occursin(sf, lowercase(abstract_text))
-        !text_match && return nothing
-    elseif group_type == :green_filter
-        !matches_green_filter(authors, title, abstract_text) && return nothing
     end
 
     return Paper(
@@ -1143,11 +1203,46 @@ function europepmc_item_to_paper(item, source_name::AbstractString, group_type::
     )
 end
 
+function europepmc_record_label(item)::String
+    title = clean_europepmc_text(get(item, :title, ""))
+    !isempty(title) && return first(title, min(100, length(title)))
+    doi = strip(string(get(item, :doi, "")))
+    !isempty(doi) && return doi
+    return strip(string(get(item, :id, "unknown record")))
+end
+
+function screen_europepmc_items(items, source_name::AbstractString, group_type::Symbol;
+                                section_filter::Union{AbstractString,Nothing}=nothing,
+                                metadata_lookup::Union{Nothing,Function}=nothing,
+                                warning_sink::Union{Nothing,Vector{String}}=nothing,
+                                oldest_date::ZonedDateTime=OLDEST_DATE,
+                                window_end_date::Date=WINDOW_END_DATE)
+    papers = Paper[]
+    for item in items
+        try
+            paper = europepmc_item_to_paper(
+                item, source_name, group_type;
+                section_filter=section_filter,
+                metadata_lookup=metadata_lookup,
+                oldest_date=oldest_date,
+                window_end_date=window_end_date,
+            )
+            paper !== nothing && push!(papers, paper)
+        catch e
+            warning = "Journal source '$source_name' could not use in-window record '$(europepmc_record_label(item))': $(sprint(showerror, e))"
+            warning_sink !== nothing && push!(warning_sink, warning)
+            println("  ⚠ $warning")
+        end
+    end
+    return papers
+end
+
 function fetch_europepmc_issn_papers(issn::AbstractString, source_name::AbstractString,
                                      group_type::Symbol;
-                                     section_filter::Union{AbstractString,Nothing}=nothing)
+                                     section_filter::Union{AbstractString,Nothing}=nothing,
+                                     warning_sink::Union{Nothing,Vector{String}}=FETCH_WARNINGS)
     from_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
-    to_date = Dates.format(DateTime(now(tz"UTC"), UTC), "yyyy-mm-dd")
+    to_date = Dates.format(WINDOW_END_DATE, "yyyy-mm-dd")
     query = "ISSN:$issn AND FIRST_PDATE:[$from_date TO $to_date]"
     full_url = "$EUROPEPMC_API_URL?query=$(HTTP.escapeuri(query))&format=json&pageSize=1000&resultType=core"
     headers = ["User-Agent" => "LemmaJournalClubWeeklyUpdate/1.0 ($CROSSREF_MAILTO)"]
@@ -1177,12 +1272,12 @@ function fetch_europepmc_issn_papers(issn::AbstractString, source_name::Abstract
     items = get(result_list, :result, [])
     hit_count > length(items) && error("Europe PMC returned only $(length(items)) of $hit_count records for $source_name")
 
-    papers = Paper[]
-    for item in items
-        paper = europepmc_item_to_paper(item, source_name, group_type;
-                                        section_filter=section_filter)
-        paper !== nothing && push!(papers, paper)
-    end
+    papers = screen_europepmc_items(
+        items, source_name, group_type;
+        section_filter=section_filter,
+        metadata_lookup=fetch_crossref_metadata,
+        warning_sink=warning_sink,
+    )
     println("  ✓ Europe PMC backup screened $hit_count $source_name records and retained $(length(papers)) papers.")
     return papers
 end
@@ -1964,96 +2059,139 @@ function fetch_crossref_papers()
     return collect(values(unique))
 end
 
-# ─── CrossRef ISSN Fetching (for journals without RSS feeds) ─────────────────
+# ─── CrossRef ISSN Fetching (journal source / independent fallback) ──────────
+
+function crossref_item_to_paper(item, source_name::AbstractString, group_type::Symbol;
+                                section_filter::Union{AbstractString,Nothing}=nothing)
+    pub_date = crossref_effective_date(item)
+    pub_date === nothing && error("Crossref record for $source_name has no usable publication date")
+    publication_is_in_window(pub_date) || return nothing
+
+    title_parts = get(item, :title, String[])
+    title = isempty(title_parts) ? "" : clean_europepmc_text(first(title_parts))
+    abstract_text = clean_europepmc_text(get(item, :abstract, ""))
+    article_type = string(get(item, :type, ""))
+    !is_research_article(title, abstract_text; article_type=article_type) && return nothing
+
+    authors_list = String[]
+    for author in get(item, :author, [])
+        given = strip(string(get(author, :given, "")))
+        family = strip(string(get(author, :family, "")))
+        name = strip(join(filter(!isempty, [given, family]), " "))
+        !isempty(name) && push!(authors_list, name)
+    end
+    authors = join(authors_list, ", ")
+    doi = something(normalize_doi(string(get(item, :DOI, ""))), "")
+    link = !isempty(doi) ? "https://doi.org/$doi" : strip(string(get(item, :URL, "")))
+
+    if group_type == :section_filter && section_filter !== nothing
+        sf = lowercase(section_filter)
+        (occursin(sf, lowercase(title)) || occursin(sf, lowercase(abstract_text))) || return nothing
+    elseif group_type == :green_filter
+        matches_green_filter(authors, title, abstract_text) || return nothing
+    end
+
+    missing = String[]
+    isempty(title) && push!(missing, "title")
+    isempty(authors) && push!(missing, "authors")
+    isempty(link) && push!(missing, "link")
+    length(abstract_text) < MIN_ABSTRACT_CHARS && push!(missing, "abstract")
+    if !isempty(missing)
+        label = isempty(title) ? something(normalize_doi(doi), "unknown record") : first(title, min(100, length(title)))
+        error("Crossref research record for $source_name is missing $(join(missing, ", ")): $label")
+    end
+
+    return Paper(
+        source=source_name,
+        title=title,
+        authors=authors,
+        link=link,
+        abstract_text=abstract_text,
+        images=String[],
+        date=pub_date,
+        doi=isempty(doi) ? nothing : doi,
+    )
+end
+
+function fetch_crossref_issn_source(issn::AbstractString, source_name::AbstractString,
+                                    group_type::Symbol;
+                                    section_filter::Union{AbstractString,Nothing}=nothing,
+                                    warning_sink::Union{Nothing,Vector{String}}=FETCH_WARNINGS)
+    println("  Querying Crossref for $source_name (ISSN: $issn)...")
+    from_date = Dates.format(OLDEST_PUBLICATION_DATE, "yyyy-mm-dd")
+    to_date = Dates.format(WINDOW_END_DATE, "yyyy-mm-dd")
+    params = Dict(
+        "filter" => "issn:$issn,from-pub-date:$from_date,until-pub-date:$to_date",
+        "rows" => "1000",
+        "sort" => "published",
+        "order" => "desc",
+        "mailto" => CROSSREF_MAILTO,
+    )
+    query_str = join(["$key=$(HTTP.escapeuri(value))" for (key, value) in params], "&")
+    full_url = "https://api.crossref.org/works?$query_str"
+
+    data = nothing
+    max_retries = 3
+    for attempt in 1:max_retries
+        try
+            resp = HTTP.get(full_url; readtimeout=15, status_exception=false)
+            if resp.status == 200
+                data = JSON3.read(String(resp.body))
+                break
+            end
+            attempt == max_retries && error("Crossref returned HTTP $(resp.status)")
+            println("  $source_name Crossref request returned HTTP $(resp.status); retrying ($attempt/$max_retries)...")
+        catch e
+            attempt == max_retries && rethrow()
+            println("  $source_name Crossref request failed ($(sprint(showerror, e))); retrying ($attempt/$max_retries)...")
+        end
+        sleep(3 * attempt)
+    end
+    data === nothing && error("Crossref did not return a usable response for $source_name")
+
+    message = get(data, :message, nothing)
+    message === nothing && error("Crossref response for $source_name has no message object")
+    items = get(message, :items, [])
+    total_results = Int(get(message, Symbol("total-results"), length(items)))
+    total_results == 0 && error("Crossref returned 0 records for $source_name; completeness cannot be confirmed")
+    total_results > length(items) && error("Crossref returned only $(length(items)) of $total_results records for $source_name")
+
+    papers = Paper[]
+    for item in items
+        try
+            paper = crossref_item_to_paper(item, source_name, group_type;
+                                            section_filter=section_filter)
+            paper !== nothing && push!(papers, paper)
+        catch e
+            label = begin
+                titles = get(item, :title, String[])
+                isempty(titles) ? string(get(item, :DOI, "unknown record")) : first(string(first(titles)), min(100, length(string(first(titles)))))
+            end
+            warning = "Journal source '$source_name' could not use in-window Crossref record '$label': $(sprint(showerror, e))"
+            warning_sink !== nothing && push!(warning_sink, warning)
+            println("  ⚠ $warning")
+        end
+    end
+    println("  ✓ Crossref screened $total_results $source_name records and retained $(length(papers)) papers.")
+    return papers
+end
 
 function fetch_crossref_issn_papers()
     isempty(CROSSREF_JOURNAL_ISSNS) && return Paper[]
-    println("Fetching papers from journals without RSS (via CrossRef ISSN)...")
-
-    from_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
+    println("Fetching papers from journals without RSS (via Crossref ISSN)...")
     papers = Paper[]
-
     for (issn, journal_name) in CROSSREF_JOURNAL_ISSNS
-        println("  Querying CrossRef for $journal_name (ISSN: $issn)...")
-        url = "https://api.crossref.org/works"
-        params = Dict(
-            "filter" => "issn:$issn,from-pub-date:$from_date",
-            "rows" => "25",
-            "sort" => "published",
-            "order" => "desc",
-            "mailto" => CROSSREF_MAILTO,
-        )
-        query_str = join(["$k=$(HTTP.escapeuri(v))" for (k,v) in params], "&")
-        full_url = "$url?$query_str"
-
-        max_retries = 3
-        for attempt in 1:max_retries
-            try
-                resp = HTTP.get(full_url; readtimeout=15, status_exception=false)
-                if resp.status == 200
-                    data = JSON3.read(String(resp.body))
-                    items = get(get(data, :message, Dict()), :items, [])
-                    for item in items
-                        title_parts = get(item, :title, ["No Title"])
-                        title = isempty(title_parts) ? "No Title" : string(first(title_parts))
-
-                        authors_raw = get(item, :author, [])
-                        authors_list = String[]
-                        for a in authors_raw
-                            given = string(get(a, :given, ""))
-                            family = string(get(a, :family, ""))
-                            if !isempty(given) && !isempty(family)
-                                push!(authors_list, "$given $family")
-                            elseif !isempty(family)
-                                push!(authors_list, family)
-                            end
-                        end
-                        authors_str = isempty(authors_list) ? "Unknown" : join(authors_list, ", ")
-
-                        doi = string(get(item, :DOI, ""))
-                        link = !isempty(doi) ? "https://doi.org/$doi" : string(get(item, :URL, ""))
-
-                        abstract_text = string(get(item, :abstract, ""))
-                        if !isempty(abstract_text)
-                            abstract_text = replace(abstract_text, r"<[^>]+>" => "")
-                            abstract_text = strip(abstract_text)
-                        end
-                        isempty(abstract_text) && (abstract_text = "Abstract not available via CrossRef API.")
-
-                        pub_date = crossref_effective_date(item)
-                        pub_date === nothing && continue
-
-                        push!(papers, Paper(
-                            source=journal_name,
-                            title=replace(title, "\n" => " "),
-                            authors=authors_str,
-                            link=link,
-                            abstract_text=abstract_text,
-                            images=String[],
-                            date=pub_date,
-                            doi=!isempty(doi) ? "https://doi.org/$doi" : nothing,
-                        ))
-                    end
-                    println("    Found $(length(items)) papers from $journal_name.")
-                    break
-                elseif resp.status == 429 && attempt < max_retries
-                    sleep(5 * attempt)
-                    continue
-                else
-                    println("  ⚠ CrossRef ISSN query for $journal_name failed: HTTP $(resp.status)")
-                    break
-                end
-            catch e
-                if attempt < max_retries
-                    sleep(3 * attempt)
-                else
-                    println("  ⚠ CrossRef ISSN query for $journal_name failed: $e")
-                end
-            end
+        try
+            append!(papers, fetch_crossref_issn_source(
+                issn, journal_name, :green_filter; warning_sink=FETCH_WARNINGS,
+            ))
+        catch e
+            warning = "Journal source '$journal_name' failed through Crossref ISSN $issn: $(sprint(showerror, e))"
+            push!(FETCH_WARNINGS, warning)
+            println("  ⚠ $warning")
         end
         sleep(0.3)
     end
-
     println("  Found $(length(papers)) total papers from ISSN queries.")
     return papers
 end
@@ -2170,7 +2308,7 @@ end
 function fetch_and_display_papers()
     empty!(FETCH_WARNINGS)
     isfile(FETCH_WARNINGS_FILE) && rm(FETCH_WARNINGS_FILE)
-    println("Fetching papers from $(Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")) to Now...")
+    println("Fetching papers from $(Dates.format(OLDEST_PUBLICATION_DATE, "yyyy-mm-dd")) through $(Dates.format(WINDOW_END_DATE, "yyyy-mm-dd"))...")
     FETCH_CLEAN && println("  FETCH_CLEAN=1: ignoring any checkpoint.")
 
     checkpoint = load_checkpoint()
@@ -2229,26 +2367,59 @@ function fetch_and_display_papers()
         @sync begin
             for (i, feed) in enumerate(JOURNAL_FEEDS)
                 @async begin
-                    try
-                        rss_results[i] = fetch_rss(feed.url, feed.name, feed.group;
-                                                   section_filter=feed.section_filter)
-                    catch primary_error
-                        backup_issn = get(JOURNAL_EUROPEPMC_BACKUP_ISSNS, feed.name, nothing)
-                        if backup_issn === nothing
-                            rss_errors[i] = primary_error
-                        else
-                            println("  ⚠ $(feed.name) primary RSS failed after retries. Trying Europe PMC (ISSN $backup_issn)...")
-                            try
-                                rss_results[i] = fetch_europepmc_issn_papers(
-                                    backup_issn, feed.name, feed.group;
-                                    section_filter=feed.section_filter,
-                                )
-                                println("  ✓ $(feed.name) recovered through Europe PMC; no source warning needed.")
-                            catch backup_error
-                                rss_errors[i] = ErrorException(
-                                    "primary RSS failed ($(sprint(showerror, primary_error))); " *
-                                    "Europe PMC backup failed ($(sprint(showerror, backup_error)))"
-                                )
+                    primary_europepmc_issn = get(JOURNAL_EUROPEPMC_PRIMARY_ISSNS, feed.name, nothing)
+                    if primary_europepmc_issn !== nothing
+                        try
+                            rss_results[i] = fetch_europepmc_issn_papers(
+                                primary_europepmc_issn, feed.name, feed.group;
+                                section_filter=feed.section_filter,
+                                warning_sink=FETCH_WARNINGS,
+                            )
+                            println("  ✓ $(feed.name) fetched through its structured Europe PMC primary source.")
+                        catch primary_error
+                            backup_issn = get(JOURNAL_CROSSREF_BACKUP_ISSNS, feed.name, nothing)
+                            if backup_issn === nothing
+                                rss_errors[i] = primary_error
+                            else
+                                println("  ⚠ $(feed.name) Europe PMC primary failed. Trying Crossref (ISSN $backup_issn)...")
+                                try
+                                    rss_results[i] = fetch_crossref_issn_source(
+                                        backup_issn, feed.name, feed.group;
+                                        section_filter=feed.section_filter,
+                                        warning_sink=FETCH_WARNINGS,
+                                    )
+                                    println("  ✓ $(feed.name) recovered through Crossref; no source warning needed.")
+                                catch backup_error
+                                    rss_errors[i] = ErrorException(
+                                        "Europe PMC primary failed ($(sprint(showerror, primary_error))); " *
+                                        "Crossref backup failed ($(sprint(showerror, backup_error)))"
+                                    )
+                                end
+                            end
+                        end
+                    else
+                        try
+                            rss_results[i] = fetch_rss(feed.url, feed.name, feed.group;
+                                                       section_filter=feed.section_filter)
+                        catch primary_error
+                            backup_issn = get(JOURNAL_EUROPEPMC_BACKUP_ISSNS, feed.name, nothing)
+                            if backup_issn === nothing
+                                rss_errors[i] = primary_error
+                            else
+                                println("  ⚠ $(feed.name) primary RSS failed after validation/retries. Trying Europe PMC (ISSN $backup_issn)...")
+                                try
+                                    rss_results[i] = fetch_europepmc_issn_papers(
+                                        backup_issn, feed.name, feed.group;
+                                        section_filter=feed.section_filter,
+                                        warning_sink=FETCH_WARNINGS,
+                                    )
+                                    println("  ✓ $(feed.name) recovered through Europe PMC; no source warning needed.")
+                                catch backup_error
+                                    rss_errors[i] = ErrorException(
+                                        "primary RSS failed ($(sprint(showerror, primary_error))); " *
+                                        "Europe PMC backup failed ($(sprint(showerror, backup_error)))"
+                                    )
+                                end
                             end
                         end
                     end
@@ -2259,8 +2430,7 @@ function fetch_and_display_papers()
         if !isempty(failed_feeds)
             for (name, e) in failed_feeds
                 println("  ❌ RSS feed '$name' failed: $e")
-                backup_note = haskey(JOURNAL_EUROPEPMC_BACKUP_ISSNS, name) ? " and its Europe PMC backup" : ""
-                push!(FETCH_WARNINGS, "Journal source '$name' failed after RSS retries$backup_note; that source may be incomplete this week.")
+                push!(FETCH_WARNINGS, "Journal source '$name' remained unavailable after its configured primary and fallback paths: $(sprint(showerror, e))")
             end
             println("  Continuing with the remaining sources; the owner warning will identify the failed feeds.")
         end

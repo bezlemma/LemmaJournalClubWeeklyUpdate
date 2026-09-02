@@ -7,6 +7,29 @@ isdefined(@__MODULE__, :Paper) || include(joinpath(@__DIR__, "..", "fetch_papers
 @testset "Europe PMC journal fallback" begin
     oldest = ZonedDateTime(DateTime(2026, 8, 3), tz"UTC")
 
+    challenge = HTTP.Response(
+        200,
+        ["Content-Type" => "text/html; charset=utf-8"],
+        "<!DOCTYPE html><html><head><title>Client Challenge</title></head><body></body></html>",
+    )
+    challenge_error = try
+        parse_rss_response(challenge, "EMBO Journal")
+        nothing
+    catch e
+        e
+    end
+    @test challenge_error isa FeedResponseError
+    @test challenge_error.permanent
+    @test occursin("anti-bot client challenge", sprint(showerror, challenge_error))
+
+    valid_feed = HTTP.Response(
+        200,
+        ["Content-Type" => "application/rss+xml"],
+        """<?xml version="1.0"?><rss version="2.0"><channel><item><title>Test</title><pubDate>Mon, 03 Aug 2026 00:00:00 GMT</pubDate></item></channel></rss>""",
+    )
+    _, valid_entries = parse_rss_response(valid_feed, "Test Journal")
+    @test length(valid_entries) == 1
+
     research = JSON3.read("""
     {
       "id": "42568184",
@@ -40,24 +63,79 @@ isdefined(@__MODULE__, :Paper) || include(joinpath(@__DIR__, "..", "fetch_papers
     @test europepmc_item_to_paper(editorial, "Cell", :green_filter;
                                   oldest_date=oldest) === nothing
 
+    irrelevant_incomplete = JSON3.read("""
+    {
+      "id": "42668274",
+      "source": "MED",
+      "doi": "10.1038/s44318-026-00906-w",
+      "title": "From gatekeepers to regenerators: the plasticity of Paneth cells.",
+      "authorString": "De Beul S, Libert C, Vanderhaeghen T.",
+      "firstPublicationDate": "2026-08-08",
+      "pubTypeList": {"pubType": ["Journal Article"]}
+    }
+    """)
+    @test europepmc_item_to_paper(
+        irrelevant_incomplete, "EMBO Journal", :green_filter;
+        oldest_date=oldest, window_end_date=Date(2026, 8, 10),
+    ) === nothing
+
     incomplete_research = JSON3.read("""
     {
       "id": "missing-abstract",
       "source": "MED",
       "doi": "10.1016/incomplete",
-      "title": "A research article with unavailable metadata.",
+      "title": "Mechanics of an experimental system with unavailable metadata.",
       "authorString": "Researcher A.",
       "firstPublicationDate": "2026-08-08",
       "pubTypeList": {"pubType": ["Journal Article"]}
     }
     """)
     @test_throws ErrorException europepmc_item_to_paper(
-        incomplete_research, "Cell", :green_filter; oldest_date=oldest,
+        incomplete_research, "Cell", :green_filter;
+        oldest_date=oldest, window_end_date=Date(2026, 8, 10),
     )
 
+    enriched = europepmc_item_to_paper(
+        incomplete_research, "Cell", :green_filter;
+        oldest_date=oldest,
+        window_end_date=Date(2026, 8, 10),
+        metadata_lookup=doi -> (["Researcher A"], repeat("Mechanics metadata recovered by DOI. ", 4)),
+    )
+    @test enriched isa Paper
+    @test length(enriched.abstract) >= MIN_ABSTRACT_CHARS
+
+    @test europepmc_item_to_paper(
+        research, "Biophysical Journal", :include_all;
+        oldest_date=oldest, window_end_date=Date(2026, 8, 7),
+    ) === nothing
+
+    malformed_relevant = JSON3.read("""
+    {
+      "id": "missing-date",
+      "source": "MED",
+      "doi": "10.1016/missing-date",
+      "title": "Mechanics of a malformed record.",
+      "authorString": "Researcher A.",
+      "abstractText": "This sufficiently long abstract describes mechanics in a malformed record without a publication date.",
+      "pubTypeList": {"pubType": ["Journal Article"]}
+    }
+    """)
+    record_warnings = String[]
+    screened = screen_europepmc_items(
+        [malformed_relevant, research], "Biophysical Journal", :include_all;
+        warning_sink=record_warnings,
+        oldest_date=oldest,
+        window_end_date=Date(2026, 8, 10),
+    )
+    @test length(screened) == 1
+    @test length(record_warnings) == 1
+    @test occursin("no usable publication date", only(record_warnings))
+
     @test Set(keys(JOURNAL_EUROPEPMC_BACKUP_ISSNS)) == Set([
-        "Biophysical Journal", "Cell", "iScience", "Current Biology", "EMBO Journal",
+        "Biophysical Journal", "Cell", "iScience", "Current Biology",
     ])
+    @test JOURNAL_EUROPEPMC_PRIMARY_ISSNS == Dict("EMBO Journal" => "0261-4189")
+    @test JOURNAL_CROSSREF_BACKUP_ISSNS == Dict("EMBO Journal" => "1460-2075")
 
     pnas_copy = Paper(
         source="PNAS",

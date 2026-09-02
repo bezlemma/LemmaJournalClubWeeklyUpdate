@@ -135,6 +135,19 @@ jobs:
             '{status:"failed",reason:$reason}' > pipeline_status.json
           exit 1
 
+      - name: Save failed-scrape diagnostics
+        if: ${{ failure() && hashFiles('fetch_warnings.json') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: biophysics-weekly-scrape-diagnostics-${{ github.run_number }}
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            fetch_warnings.json
+            pipeline_status.json
+            papers.json
+            fetch_checkpoint.json
+
       - name: Download anonymous reader voting feedback
         if: ${{ steps.edition.outputs.reused != 'true' && steps.edition.outputs.repaired_from_frozen != 'true' }}
         env:
