@@ -136,6 +136,58 @@ isdefined(@__MODULE__, :Paper) || include(joinpath(@__DIR__, "..", "fetch_papers
     ])
     @test JOURNAL_EUROPEPMC_PRIMARY_ISSNS == Dict("EMBO Journal" => "0261-4189")
     @test JOURNAL_CROSSREF_BACKUP_ISSNS == Dict("EMBO Journal" => "1460-2075")
+    @test CROSSREF_JOURNAL_EUROPEPMC_BACKUP_ISSNS == Dict("Cytoskeleton" => "1949-3592")
+
+    empty_response = JSON3.read("""{"hitCount":0,"resultList":{"result":[]}}""")
+    empty_count, empty_items = europepmc_response_items(
+        empty_response, "Cytoskeleton"; allow_empty=true,
+    )
+    @test empty_count == 0
+    @test isempty(empty_items)
+    @test_throws ErrorException europepmc_response_items(empty_response, "Cytoskeleton")
+
+    crossref_calls = Ref(0)
+    europepmc_calls = Ref(0)
+    function zero_crossref(issn, source_name, group_type; warning_sink=nothing)
+        crossref_calls[] += 1
+        error("Crossref returned 0 records for $source_name; completeness cannot be confirmed")
+    end
+    function confirmed_empty_europepmc(issn, source_name, group_type;
+                                       warning_sink=nothing, allow_empty=false)
+        europepmc_calls[] += 1
+        @test allow_empty
+        return Paper[]
+    end
+
+    confirmed_empty_warnings = String[]
+    confirmed_empty = fetch_crossref_issn_papers(
+        sources=[(issn="1949-3592", name="Cytoskeleton")],
+        crossref_fetcher=zero_crossref,
+        europepmc_fetcher=confirmed_empty_europepmc,
+        warning_sink=confirmed_empty_warnings,
+        sleep_fn=_ -> nothing,
+    )
+    @test isempty(confirmed_empty)
+    @test isempty(confirmed_empty_warnings)
+    @test crossref_calls[] == 1
+    @test europepmc_calls[] == 1
+
+    function unavailable_europepmc(issn, source_name, group_type;
+                                   warning_sink=nothing, allow_empty=false)
+        error("Europe PMC unavailable")
+    end
+    unavailable_warnings = String[]
+    unavailable = fetch_crossref_issn_papers(
+        sources=[(issn="1949-3592", name="Cytoskeleton")],
+        crossref_fetcher=zero_crossref,
+        europepmc_fetcher=unavailable_europepmc,
+        warning_sink=unavailable_warnings,
+        sleep_fn=_ -> nothing,
+    )
+    @test isempty(unavailable)
+    @test length(unavailable_warnings) == 1
+    @test occursin("Crossref primary failed", only(unavailable_warnings))
+    @test occursin("Europe PMC backup failed", only(unavailable_warnings))
 
     pnas_copy = Paper(
         source="PNAS",

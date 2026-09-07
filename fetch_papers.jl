@@ -99,6 +99,13 @@ const CROSSREF_JOURNAL_ISSNS = [
     (issn="1949-3592", name="Cytoskeleton"),
 ]
 
+# Independent verification for journals whose primary Crossref query returns no
+# records. A valid empty response from both services confirms a genuinely quiet
+# week; an unavailable or contradictory backup still fails closed.
+const CROSSREF_JOURNAL_EUROPEPMC_BACKUP_ISSNS = Dict(
+    "Cytoskeleton" => "1949-3592",
+)
+
 # Independent journal backups used only when a primary RSS feed exhausts its
 # retries. Europe PMC supplies structured publication metadata and abstracts,
 # which lets us apply the same research/article and green-list filters without
@@ -1237,10 +1244,27 @@ function screen_europepmc_items(items, source_name::AbstractString, group_type::
     return papers
 end
 
+function europepmc_response_items(data, source_name::AbstractString; allow_empty::Bool=false)
+    hit_count = Int(get(data, :hitCount, 0))
+    result_list = get(data, :resultList, nothing)
+    result_list === nothing && error("Europe PMC response for $source_name has no result list")
+    items = get(result_list, :result, [])
+
+    if hit_count == 0
+        allow_empty || error("Europe PMC returned 0 records for $source_name; completeness cannot be confirmed")
+        isempty(items) || error("Europe PMC reported 0 records but returned $(length(items)) items for $source_name")
+        return hit_count, items
+    end
+
+    hit_count > length(items) && error("Europe PMC returned only $(length(items)) of $hit_count records for $source_name")
+    return hit_count, items
+end
+
 function fetch_europepmc_issn_papers(issn::AbstractString, source_name::AbstractString,
                                      group_type::Symbol;
                                      section_filter::Union{AbstractString,Nothing}=nothing,
-                                     warning_sink::Union{Nothing,Vector{String}}=FETCH_WARNINGS)
+                                     warning_sink::Union{Nothing,Vector{String}}=FETCH_WARNINGS,
+                                     allow_empty::Bool=false)
     from_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
     to_date = Dates.format(WINDOW_END_DATE, "yyyy-mm-dd")
     query = "ISSN:$issn AND FIRST_PDATE:[$from_date TO $to_date]"
@@ -1265,12 +1289,11 @@ function fetch_europepmc_issn_papers(issn::AbstractString, source_name::Abstract
     end
     data === nothing && error("Europe PMC did not return a usable response for $source_name")
 
-    hit_count = Int(get(data, :hitCount, 0))
-    hit_count == 0 && error("Europe PMC returned 0 records for $source_name; completeness cannot be confirmed")
-    result_list = get(data, :resultList, nothing)
-    result_list === nothing && error("Europe PMC response for $source_name has no result list")
-    items = get(result_list, :result, [])
-    hit_count > length(items) && error("Europe PMC returned only $(length(items)) of $hit_count records for $source_name")
+    hit_count, items = europepmc_response_items(data, source_name; allow_empty=allow_empty)
+    if hit_count == 0
+        println("  ✓ Europe PMC independently confirmed 0 $source_name records in the publication window.")
+        return Paper[]
+    end
 
     papers = screen_europepmc_items(
         items, source_name, group_type;
@@ -2176,21 +2199,45 @@ function fetch_crossref_issn_source(issn::AbstractString, source_name::AbstractS
     return papers
 end
 
-function fetch_crossref_issn_papers()
-    isempty(CROSSREF_JOURNAL_ISSNS) && return Paper[]
-    println("Fetching papers from journals without RSS (via Crossref ISSN)...")
+function fetch_crossref_issn_papers(;
+        sources=CROSSREF_JOURNAL_ISSNS,
+        crossref_fetcher=fetch_crossref_issn_source,
+        europepmc_fetcher=fetch_europepmc_issn_papers,
+        warning_sink=FETCH_WARNINGS,
+        sleep_fn=sleep)
+    isempty(sources) && return Paper[]
+    println("Fetching papers from journals without RSS (via structured ISSN sources)...")
     papers = Paper[]
-    for (issn, journal_name) in CROSSREF_JOURNAL_ISSNS
+    for (issn, journal_name) in sources
         try
-            append!(papers, fetch_crossref_issn_source(
-                issn, journal_name, :green_filter; warning_sink=FETCH_WARNINGS,
+            append!(papers, crossref_fetcher(
+                issn, journal_name, :green_filter; warning_sink=warning_sink,
             ))
-        catch e
-            warning = "Journal source '$journal_name' failed through Crossref ISSN $issn: $(sprint(showerror, e))"
-            push!(FETCH_WARNINGS, warning)
-            println("  ⚠ $warning")
+        catch primary_error
+            backup_issn = get(CROSSREF_JOURNAL_EUROPEPMC_BACKUP_ISSNS, journal_name, nothing)
+            if backup_issn === nothing
+                warning = "Journal source '$journal_name' failed through Crossref ISSN $issn: $(sprint(showerror, primary_error))"
+                push!(warning_sink, warning)
+                println("  ⚠ $warning")
+            else
+                println("  ⚠ $journal_name Crossref primary failed. Checking Europe PMC (ISSN $backup_issn)...")
+                try
+                    append!(papers, europepmc_fetcher(
+                        backup_issn, journal_name, :green_filter;
+                        warning_sink=warning_sink,
+                        allow_empty=true,
+                    ))
+                    println("  ✓ $journal_name recovered or independently confirmed empty through Europe PMC.")
+                catch backup_error
+                    warning = "Journal source '$journal_name' remained unavailable after Crossref ISSN $issn and Europe PMC ISSN $backup_issn: " *
+                              "Crossref primary failed ($(sprint(showerror, primary_error))); " *
+                              "Europe PMC backup failed ($(sprint(showerror, backup_error)))"
+                    push!(warning_sink, warning)
+                    println("  ⚠ $warning")
+                end
+            end
         end
-        sleep(0.3)
+        sleep_fn(0.3)
     end
     println("  Found $(length(papers)) total papers from ISSN queries.")
     return papers

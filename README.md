@@ -55,10 +55,13 @@ The newsletter API URL is currently the Cloudflare Worker URL ending in
 - Journal responses are validated as RSS/Atom before they count as successful,
   and transient request or feed-validation failures retry three times. EMBO uses
   Europe PMC as its structured primary source with Crossref as an independent
-  fallback. A persistently unavailable source or an unresolved relevant record
-  is recorded with its underlying error in `fetch_warnings.json`; the run stops
-  before freezing or emailing, preserves a diagnostic artifact, and sends those
-  details to the owner.
+  fallback. A zero-result Crossref window for Cytoskeleton is independently
+  checked against Europe PMC: two valid empty responses confirm a quiet week,
+  while disagreement or backup failure still fails closed. A persistently
+  unavailable source or an unresolved relevant record is recorded with its
+  underlying error in `fetch_warnings.json`; the run stops before freezing or
+  emailing, preserves a diagnostic artifact, and sends those details to the
+  owner.
 - Excessive Gemini classification or summary failures stop the run before an
   edition is committed or emailed.
 - Every edition must contain at least 50 papers; every selected paper must fall
