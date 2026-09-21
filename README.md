@@ -53,7 +53,13 @@ The newsletter API URL is currently the Cloudflare Worker URL ending in
 
 - arXiv or bioRxiv returning no papers stops the run.
 - Journal responses are validated as RSS/Atom before they count as successful,
-  and transient request or feed-validation failures retry three times. EMBO uses
+  and transient request or feed-validation failures retry three times. Access
+  denials (HTTP 401/403), missing/retired feeds (404/410), and HTML challenges
+  move directly to configured backups. PNAS falls back from its subject RSS
+  feed to Europe PMC, then Crossref, using independent ISSN queries for the
+  edition's publication window. These whole-journal backups use the existing
+  author/keyword prefilter before AI selection. Empty or truncated responses
+  cannot count as successful recovery. EMBO uses
   Europe PMC as its structured primary source with Crossref as an independent
   fallback. A zero-result Crossref window for Cytoskeleton is independently
   checked against Europe PMC: two valid empty responses confirm a quiet week,
@@ -62,6 +68,9 @@ The newsletter API URL is currently the Cloudflare Worker URL ending in
   underlying error in `fetch_warnings.json`; the run stops before freezing or
   emailing, preserves a diagnostic artifact, and sends those details to the
   owner.
+- Incomplete journal stages are never checkpointed; retries must fetch them
+  again. Checkpoints from older versions that could cache partial journal
+  results are ignored.
 - Excessive Gemini classification or summary failures stop the run before an
   edition is committed or emailed.
 - Every edition must contain at least 50 papers; every selected paper must fall

@@ -111,6 +111,7 @@ const CROSSREF_JOURNAL_EUROPEPMC_BACKUP_ISSNS = Dict(
 # which lets us apply the same research/article and green-list filters without
 # silently accepting a title-only result.
 const JOURNAL_EUROPEPMC_BACKUP_ISSNS = Dict(
+    "PNAS" => "0027-8424",
     "Biophysical Journal" => "0006-3495",
     "Cell" => "0092-8674",
     "iScience" => "2589-0042",
@@ -120,9 +121,13 @@ const JOURNAL_EUROPEPMC_PRIMARY_ISSNS = Dict(
     "EMBO Journal" => "0261-4189",
 )
 const JOURNAL_CROSSREF_BACKUP_ISSNS = Dict(
+    "PNAS" => "1091-6490",
     # Crossref indexes current EMBO papers under the electronic ISSN.
     "EMBO Journal" => "1460-2075",
 )
+# The PNAS RSS feed is subject-specific; ISSN searches cover the whole journal.
+# Apply the same broad relevance prefilter used for other general journals.
+const JOURNAL_STRUCTURED_GROUPS = Dict("PNAS" => :green_filter)
 const EUROPEPMC_API_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
 const EUROPEPMC_MAX_RETRIES = 3
 
@@ -886,7 +891,7 @@ function parse_rss_response(resp::HTTP.Response, source_name::AbstractString)
     content_type = HTTP.header(resp, "Content-Type", "")
     resp.status == 200 || throw(FeedResponseError(
         "$source_name returned HTTP $(resp.status) (Content-Type: $(isempty(content_type) ? "unknown" : content_type))",
-        false,
+        resp.status in (401, 403, 404, 410),
     ))
 
     body = String(resp.body)
@@ -926,7 +931,8 @@ function parse_rss_response(resp::HTTP.Response, source_name::AbstractString)
 end
 
 function fetch_rss(url::AbstractString, source_name::AbstractString, group_type::Symbol;
-                   section_filter::Union{AbstractString,Nothing}=nothing)
+                   section_filter::Union{AbstractString,Nothing}=nothing,
+                   http_get=HTTP.get, sleep_fn=sleep)
     println("Fetching $source_name...")
     papers = Paper[]
 
@@ -937,7 +943,7 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
         entries = EzXML.Node[]
         for attempt in 1:RSS_MAX_RETRIES
             try
-                candidate = HTTP.get(url; headers=RSS_HEADERS, readtimeout=30, status_exception=false, redirect=true, cookies=jar)
+                candidate = http_get(url; headers=RSS_HEADERS, readtimeout=30, status_exception=false, redirect=true, cookies=jar)
                 xmldoc, entries = parse_rss_response(candidate, source_name)
                 break
             catch e
@@ -946,7 +952,7 @@ function fetch_rss(url::AbstractString, source_name::AbstractString, group_type:
                 end
                 println("  $source_name request/feed validation failed ($(sprint(showerror, e))); retrying ($attempt/$RSS_MAX_RETRIES)...")
             end
-            sleep(2 * attempt)
+            sleep_fn(2 * attempt)
         end
         xmldoc === nothing && error("$source_name did not return a usable RSS/Atom document")
 
@@ -1264,7 +1270,8 @@ function fetch_europepmc_issn_papers(issn::AbstractString, source_name::Abstract
                                      group_type::Symbol;
                                      section_filter::Union{AbstractString,Nothing}=nothing,
                                      warning_sink::Union{Nothing,Vector{String}}=FETCH_WARNINGS,
-                                     allow_empty::Bool=false)
+                                     allow_empty::Bool=false,
+                                     http_get=HTTP.get, sleep_fn=sleep)
     from_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
     to_date = Dates.format(WINDOW_END_DATE, "yyyy-mm-dd")
     query = "ISSN:$issn AND FIRST_PDATE:[$from_date TO $to_date]"
@@ -1274,7 +1281,7 @@ function fetch_europepmc_issn_papers(issn::AbstractString, source_name::Abstract
     data = nothing
     for attempt in 1:EUROPEPMC_MAX_RETRIES
         try
-            resp = HTTP.get(full_url; headers=headers, readtimeout=30, status_exception=false)
+            resp = http_get(full_url; headers=headers, readtimeout=30, status_exception=false)
             if resp.status == 200
                 data = JSON3.read(String(resp.body))
                 break
@@ -1285,7 +1292,7 @@ function fetch_europepmc_issn_papers(issn::AbstractString, source_name::Abstract
             attempt == EUROPEPMC_MAX_RETRIES && rethrow(e)
             println("  $source_name Europe PMC backup request failed; retrying ($attempt/$EUROPEPMC_MAX_RETRIES)...")
         end
-        sleep(2 * attempt)
+        sleep_fn(2 * attempt)
     end
     data === nothing && error("Europe PMC did not return a usable response for $source_name")
 
@@ -2139,7 +2146,8 @@ end
 function fetch_crossref_issn_source(issn::AbstractString, source_name::AbstractString,
                                     group_type::Symbol;
                                     section_filter::Union{AbstractString,Nothing}=nothing,
-                                    warning_sink::Union{Nothing,Vector{String}}=FETCH_WARNINGS)
+                                    warning_sink::Union{Nothing,Vector{String}}=FETCH_WARNINGS,
+                                    http_get=HTTP.get, sleep_fn=sleep)
     println("  Querying Crossref for $source_name (ISSN: $issn)...")
     from_date = Dates.format(OLDEST_PUBLICATION_DATE, "yyyy-mm-dd")
     to_date = Dates.format(WINDOW_END_DATE, "yyyy-mm-dd")
@@ -2157,7 +2165,7 @@ function fetch_crossref_issn_source(issn::AbstractString, source_name::AbstractS
     max_retries = 3
     for attempt in 1:max_retries
         try
-            resp = HTTP.get(full_url; readtimeout=15, status_exception=false)
+            resp = http_get(full_url; readtimeout=15, status_exception=false)
             if resp.status == 200
                 data = JSON3.read(String(resp.body))
                 break
@@ -2168,7 +2176,7 @@ function fetch_crossref_issn_source(issn::AbstractString, source_name::AbstractS
             attempt == max_retries && rethrow()
             println("  $source_name Crossref request failed ($(sprint(showerror, e))); retrying ($attempt/$max_retries)...")
         end
-        sleep(3 * attempt)
+        sleep_fn(3 * attempt)
     end
     data === nothing && error("Crossref did not return a usable response for $source_name")
 
@@ -2243,9 +2251,96 @@ function fetch_crossref_issn_papers(;
     return papers
 end
 
+"""Try independently hosted journal sources, preserving the errors if all fail."""
+function fetch_journal_feed(feed;
+                            rss_fetcher=fetch_rss,
+                            europepmc_fetcher=fetch_europepmc_issn_papers,
+                            crossref_fetcher=fetch_crossref_issn_source,
+                            warning_sink=FETCH_WARNINGS)
+    structured_group = get(JOURNAL_STRUCTURED_GROUPS, feed.name, feed.group)
+    routes = Pair{String,Function}[]
+    primary_issn = get(JOURNAL_EUROPEPMC_PRIMARY_ISSNS, feed.name, nothing)
+    if primary_issn === nothing
+        push!(routes, "RSS" => warnings -> rss_fetcher(
+            feed.url, feed.name, feed.group; section_filter=feed.section_filter,
+        ))
+    end
+    europepmc_issn = something(primary_issn, get(JOURNAL_EUROPEPMC_BACKUP_ISSNS, feed.name, ""))
+    if !isempty(europepmc_issn)
+        push!(routes, "Europe PMC (ISSN $europepmc_issn)" => warnings -> europepmc_fetcher(
+            europepmc_issn, feed.name, structured_group;
+            section_filter=feed.section_filter, warning_sink=warnings,
+        ))
+    end
+    crossref_issn = get(JOURNAL_CROSSREF_BACKUP_ISSNS, feed.name, nothing)
+    if crossref_issn !== nothing
+        push!(routes, "Crossref (ISSN $crossref_issn)" => warnings -> crossref_fetcher(
+            crossref_issn, feed.name, structured_group;
+            section_filter=feed.section_filter, warning_sink=warnings,
+        ))
+    end
+
+    failures = String[]
+    for (label, fetcher) in routes
+        route_warnings = String[]
+        try
+            papers = fetcher(route_warnings)
+            # Unresolved records still block publication, even if the request
+            # itself succeeded. A backup must not silently erase these warnings.
+            append!(warning_sink, route_warnings)
+            println("  ✓ $(feed.name) fetched through $label ($(length(papers)) papers).")
+            return papers
+        catch e
+            append!(warning_sink, route_warnings)
+            push!(failures, "$label failed ($(sprint(showerror, e)))")
+            println("  ⚠ $(feed.name) $(last(failures))")
+        end
+    end
+    error(join(failures, "; "))
+end
+
+"""Cache the journal stage only after every source passes its completeness checks."""
+function fetch_journal_papers!(checkpoint;
+                               feeds=JOURNAL_FEEDS,
+                               fetcher=fetch_journal_feed,
+                               warning_sink=FETCH_WARNINGS,
+                               save_fn=save_checkpoint)
+    if haskey(checkpoint, "rss")
+        papers = checkpoint["rss"]
+        println("  ↺ RSS feeds: $(length(papers)) papers (from checkpoint)")
+        return papers
+    end
+
+    results = [Paper[] for _ in feeds]
+    source_warnings = [String[] for _ in feeds]
+    @sync for (i, feed) in enumerate(feeds)
+        @async try
+            results[i] = fetcher(feed; warning_sink=source_warnings[i])
+        catch e
+            warning = "Journal source '$(feed.name)' remained unavailable after its configured primary and fallback paths: $(sprint(showerror, e))"
+            push!(source_warnings[i], warning)
+            println("  ❌ $warning")
+        end
+    end
+    papers = Paper[]
+    for (result, warnings) in zip(results, source_warnings)
+        append!(papers, result)
+        append!(warning_sink, warnings)
+    end
+    if all(isempty, source_warnings)
+        checkpoint["rss"] = papers
+        save_fn(checkpoint)
+    else
+        println("  Journal stage is incomplete; leaving it uncached so the next run retries it.")
+    end
+    println("  ✓ RSS feeds: $(length(papers)) papers")
+    return papers
+end
+
 # ─── Checkpoint system ────────────────────────────────────────────────────────
 
 const CHECKPOINT_FILE = "fetch_checkpoint.json"
+const CHECKPOINT_VERSION = 2 # Earlier versions could cache incomplete journal stages.
 const FETCH_CLEAN = get(ENV, "FETCH_CLEAN", "0") == "1"
 
 function _papers_to_dicts(papers::Vector{Paper})
@@ -2283,6 +2378,7 @@ function load_checkpoint()::Dict{String, Vector{Paper}}
     !isfile(CHECKPOINT_FILE) && return Dict{String, Vector{Paper}}()
     try
         data = JSON3.read(read(CHECKPOINT_FILE, String))
+        get(data, :version, 0) == CHECKPOINT_VERSION || return Dict{String, Vector{Paper}}()
         # Check if checkpoint is from the current date range
         cp_date = string(get(data, :from_date, ""))
         current_from = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
@@ -2306,7 +2402,7 @@ end
 function save_checkpoint(checkpoint::Dict{String, Vector{Paper}})
     from_date = Dates.format(DateTime(OLDEST_DATE, UTC), "yyyy-mm-dd")
     stages_dict = Dict(k => _papers_to_dicts(v) for (k, v) in checkpoint)
-    out = Dict("from_date" => from_date, "stages" => stages_dict)
+    out = Dict("version" => CHECKPOINT_VERSION, "from_date" => from_date, "stages" => stages_dict)
     open(CHECKPOINT_FILE, "w") do f
         JSON3.pretty(f, out)
     end
@@ -2403,93 +2499,8 @@ function fetch_and_display_papers()
     end
     append!(all_papers, biorxiv_papers)
 
-    # 3. Journal RSS feeds — parallel
-    if haskey(checkpoint, "rss")
-        rss_papers = checkpoint["rss"]
-        println("  ↺ RSS feeds: $(length(rss_papers)) papers (from checkpoint)")
-        append!(all_papers, rss_papers)
-    else
-        rss_results = [Paper[] for _ in JOURNAL_FEEDS]
-        rss_errors = Vector{Union{Nothing,Exception}}(fill(nothing, length(JOURNAL_FEEDS)))
-        @sync begin
-            for (i, feed) in enumerate(JOURNAL_FEEDS)
-                @async begin
-                    primary_europepmc_issn = get(JOURNAL_EUROPEPMC_PRIMARY_ISSNS, feed.name, nothing)
-                    if primary_europepmc_issn !== nothing
-                        try
-                            rss_results[i] = fetch_europepmc_issn_papers(
-                                primary_europepmc_issn, feed.name, feed.group;
-                                section_filter=feed.section_filter,
-                                warning_sink=FETCH_WARNINGS,
-                            )
-                            println("  ✓ $(feed.name) fetched through its structured Europe PMC primary source.")
-                        catch primary_error
-                            backup_issn = get(JOURNAL_CROSSREF_BACKUP_ISSNS, feed.name, nothing)
-                            if backup_issn === nothing
-                                rss_errors[i] = primary_error
-                            else
-                                println("  ⚠ $(feed.name) Europe PMC primary failed. Trying Crossref (ISSN $backup_issn)...")
-                                try
-                                    rss_results[i] = fetch_crossref_issn_source(
-                                        backup_issn, feed.name, feed.group;
-                                        section_filter=feed.section_filter,
-                                        warning_sink=FETCH_WARNINGS,
-                                    )
-                                    println("  ✓ $(feed.name) recovered through Crossref; no source warning needed.")
-                                catch backup_error
-                                    rss_errors[i] = ErrorException(
-                                        "Europe PMC primary failed ($(sprint(showerror, primary_error))); " *
-                                        "Crossref backup failed ($(sprint(showerror, backup_error)))"
-                                    )
-                                end
-                            end
-                        end
-                    else
-                        try
-                            rss_results[i] = fetch_rss(feed.url, feed.name, feed.group;
-                                                       section_filter=feed.section_filter)
-                        catch primary_error
-                            backup_issn = get(JOURNAL_EUROPEPMC_BACKUP_ISSNS, feed.name, nothing)
-                            if backup_issn === nothing
-                                rss_errors[i] = primary_error
-                            else
-                                println("  ⚠ $(feed.name) primary RSS failed after validation/retries. Trying Europe PMC (ISSN $backup_issn)...")
-                                try
-                                    rss_results[i] = fetch_europepmc_issn_papers(
-                                        backup_issn, feed.name, feed.group;
-                                        section_filter=feed.section_filter,
-                                        warning_sink=FETCH_WARNINGS,
-                                    )
-                                    println("  ✓ $(feed.name) recovered through Europe PMC; no source warning needed.")
-                                catch backup_error
-                                    rss_errors[i] = ErrorException(
-                                        "primary RSS failed ($(sprint(showerror, primary_error))); " *
-                                        "Europe PMC backup failed ($(sprint(showerror, backup_error)))"
-                                    )
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-        failed_feeds = [(JOURNAL_FEEDS[i].name, rss_errors[i]) for i in 1:length(JOURNAL_FEEDS) if rss_errors[i] !== nothing]
-        if !isempty(failed_feeds)
-            for (name, e) in failed_feeds
-                println("  ❌ RSS feed '$name' failed: $e")
-                push!(FETCH_WARNINGS, "Journal source '$name' remained unavailable after its configured primary and fallback paths: $(sprint(showerror, e))")
-            end
-            println("  Continuing with the remaining sources; the owner warning will identify the failed feeds.")
-        end
-        rss_papers = Paper[]
-        for r in rss_results
-            append!(rss_papers, r)
-        end
-        println("  ✓ RSS feeds: $(length(rss_papers)) papers")
-        checkpoint["rss"] = rss_papers
-        save_checkpoint(checkpoint)
-        append!(all_papers, rss_papers)
-    end
+    # 3. Journal feeds and independent structured fallbacks — parallel
+    append!(all_papers, fetch_journal_papers!(checkpoint))
 
     # 4. CrossRef ISSN journals (no RSS feed available) — green_filter applied
     if haskey(checkpoint, "issn")

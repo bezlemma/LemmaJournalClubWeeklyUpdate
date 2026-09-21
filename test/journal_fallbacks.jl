@@ -4,6 +4,185 @@ using Dates, TimeZones
 
 isdefined(@__MODULE__, :Paper) || include(joinpath(@__DIR__, "..", "fetch_papers.jl"))
 
+@testset "PNAS feed denial and independent recovery" begin
+    feed = only(filter(f -> f.name == "PNAS", JOURNAL_FEEDS))
+    no_sleep = _ -> nothing
+    unexpected = (args...; kwargs...) -> error("Unexpected backup call")
+    requests = String[]
+    denial_get = function(url; kwargs...)
+        push!(requests, url)
+        HTTP.Response(403, ["Content-Type" => "text/html; charset=UTF-8"], "<html>Forbidden</html>")
+    end
+    denied_rss = (args...; kwargs...) -> fetch_rss(
+        args...; kwargs..., http_get=denial_get, sleep_fn=no_sleep,
+    )
+
+    publication_day = string(WINDOW_END_DATE - Day(1))
+    record = Dict(
+        "id" => "12345", "source" => "MED", "doi" => "10.1073/pnas.test",
+        "title" => "Mechanics of a model membrane", "authorString" => "One A, Two B",
+        "firstPublicationDate" => publication_day,
+        "abstractText" => repeat("Membrane mechanics and biophysical force measurements. ", 4),
+        "pubTypeList" => Dict("pubType" => ["Journal Article"]),
+    )
+    unrelated = merge(record, Dict("title" => "A historical account of ancient languages",
+                                   "abstractText" => repeat("Ancient languages and written records. ", 4)))
+    future = merge(record, Dict("firstPublicationDate" => string(WINDOW_END_DATE + Day(1))))
+    old = merge(record, Dict("firstPublicationDate" => string(OLDEST_PUBLICATION_DATE - Day(1))))
+    epmc_data = Dict("hitCount" => 4, "resultList" => Dict("result" => [record, unrelated, future, old]))
+    epmc_get = function(url; kwargs...)
+        push!(requests, HTTP.unescapeuri(url))
+        HTTP.Response(200, JSON3.write(epmc_data))
+    end
+    epmc = (args...; kwargs...) -> fetch_europepmc_issn_papers(
+        args...; kwargs..., http_get=epmc_get, sleep_fn=no_sleep,
+    )
+    warnings = String[]
+    recovered = fetch_journal_feed(feed; rss_fetcher=denied_rss,
+        europepmc_fetcher=epmc, crossref_fetcher=unexpected, warning_sink=warnings)
+    @test length(recovered) == 1
+    @test only(recovered).source == "PNAS"
+    @test only(recovered).doi == record["doi"]
+    @test isempty(warnings)
+    @test length(requests) == 2 # A 403 goes straight to the independent backup.
+    @test occursin("ISSN:0027-8424", requests[2])
+    @test occursin("FIRST_PDATE:[$OLDEST_PUBLICATION_DATE TO $WINDOW_END_DATE]", requests[2])
+
+    # A healthy primary still avoids all backup requests.
+    primary_papers = fetch_journal_feed(feed;
+        rss_fetcher=(args...; kwargs...) -> recovered,
+        europepmc_fetcher=unexpected, crossref_fetcher=unexpected, warning_sink=warnings)
+    @test primary_papers === recovered
+
+    # Temporary rate limits and server failures still get bounded retries.
+    for status in (429, 503)
+        calls = Ref(0)
+        waits = Int[]
+        temporary_get = function(url; kwargs...)
+            calls[] += 1
+            HTTP.Response(status)
+        end
+        @test_throws FeedResponseError fetch_rss(feed.url, feed.name, feed.group;
+            http_get=temporary_get, sleep_fn=delay -> push!(waits, delay))
+        @test calls[] == RSS_MAX_RETRIES
+        @test length(waits) == RSS_MAX_RETRIES - 1
+    end
+
+    # Europe PMC failures (including empty/truncated successful responses) must
+    # reach the third source, which also screens the whole journal by relevance.
+    crossref_record = Dict(
+        "DOI" => record["doi"], "title" => [record["title"]],
+        "abstract" => record["abstractText"], "type" => "journal-article",
+        "author" => [Dict("given" => "A", "family" => "One")],
+        "published-online" => Dict("date-parts" => [[year(WINDOW_END_DATE), month(WINDOW_END_DATE), day(WINDOW_END_DATE)]]),
+    )
+    cr_unrelated = merge(crossref_record, Dict("title" => [unrelated["title"]], "abstract" => unrelated["abstractText"]))
+    cr_data = Dict("message" => Dict("total-results" => 2, "items" => [crossref_record, cr_unrelated]))
+    cr_get = function(url; kwargs...)
+        push!(requests, HTTP.unescapeuri(url))
+        HTTP.Response(200, JSON3.write(cr_data))
+    end
+    crossref = (args...; kwargs...) -> fetch_crossref_issn_source(
+        args...; kwargs..., http_get=cr_get, sleep_fn=no_sleep,
+    )
+    for response in (
+        () -> HTTP.Response(503),
+        () -> HTTP.Response(200, "not json"),
+        () -> HTTP.Response(200, "{}"),
+        () -> HTTP.Response(200, JSON3.write(Dict("hitCount" => 0, "resultList" => Dict("result" => [])))),
+        () -> HTTP.Response(200, JSON3.write(Dict("hitCount" => 2, "resultList" => Dict("result" => [record])))),
+    )
+        broken_epmc = (args...; kwargs...) -> fetch_europepmc_issn_papers(
+            args...; kwargs..., http_get=(url; kw...) -> response(), sleep_fn=no_sleep,
+        )
+        empty!(requests)
+        recovered_cr = fetch_journal_feed(feed; rss_fetcher=denied_rss,
+            europepmc_fetcher=broken_epmc, crossref_fetcher=crossref, warning_sink=warnings)
+        @test length(recovered_cr) == 1
+        @test only(recovered_cr).doi == record["doi"]
+        @test isempty(warnings)
+        @test occursin("issn:1091-6490", last(requests))
+        @test occursin("from-pub-date:$OLDEST_PUBLICATION_DATE,until-pub-date:$WINDOW_END_DATE", last(requests))
+    end
+
+    # The exact production failure must stay visible if every route is down.
+    all_failed = try
+        fetch_journal_feed(feed; rss_fetcher=denied_rss,
+            europepmc_fetcher=(args...; kwargs...) -> error("Europe PMC unavailable"),
+            crossref_fetcher=(args...; kwargs...) -> error("Crossref unavailable"),
+            warning_sink=warnings)
+        nothing
+    catch e
+        e
+    end
+    @test all_failed isa ErrorException
+    for detail in ("HTTP 403", "Europe PMC", "Crossref")
+        @test occursin(detail, sprint(showerror, all_failed))
+    end
+
+    # Refactoring the route runner must preserve EMBO's structured primary.
+    embo = only(filter(f -> f.name == "EMBO Journal", JOURNAL_FEEDS))
+    embo_recovered = fetch_journal_feed(embo; rss_fetcher=unexpected,
+        europepmc_fetcher=(args...; kwargs...) -> error("temporary outage"),
+        crossref_fetcher=crossref, warning_sink=warnings)
+    @test only(embo_recovered).source == "EMBO Journal"
+end
+
+@testset "Incomplete journal stages are retried, not cached" begin
+    feed = only(filter(f -> f.name == "PNAS", JOURNAL_FEEDS))
+    checkpoint = Dict{String,Vector{Paper}}()
+    saves = Ref(0)
+    calls = Ref(0)
+    save_fn = _ -> saves[] += 1
+    warnings = String[]
+    fetcher = function(feed; warning_sink)
+        calls[] += 1
+        calls[] == 1 && error("PNAS returned HTTP 403; both backups unavailable")
+        return [Paper(source="PNAS")]
+    end
+    fetch_journal_papers!(checkpoint; feeds=[feed], fetcher=fetcher,
+                          warning_sink=warnings, save_fn=save_fn)
+    @test length(warnings) == 1
+    @test occursin("PNAS returned HTTP 403", only(warnings))
+    @test !haskey(checkpoint, "rss")
+    @test saves[] == 0
+
+    empty!(warnings) # Next run begins with a fresh warning sink.
+    recovered = fetch_journal_papers!(checkpoint; feeds=[feed], fetcher=fetcher,
+                                     warning_sink=warnings, save_fn=save_fn)
+    @test isempty(warnings)
+    @test length(recovered) == 1
+    @test calls[] == 2
+    @test saves[] == 1
+    @test fetch_journal_papers!(checkpoint; feeds=[feed], fetcher=fetcher,
+                               warning_sink=warnings, save_fn=save_fn) === recovered
+    @test calls[] == 2
+
+    # A successful HTTP request with incomplete records is still incomplete.
+    empty!(checkpoint)
+    incomplete_fetcher = function(feed; warning_sink)
+        push!(warning_sink, "PNAS research record is missing abstract")
+        return [Paper(source="PNAS")]
+    end
+    fetch_journal_papers!(checkpoint; feeds=[feed], fetcher=incomplete_fetcher,
+                          warning_sink=warnings, save_fn=save_fn)
+    @test !haskey(checkpoint, "rss")
+    @test saves[] == 1
+    @test only(warnings) == "PNAS research record is missing abstract"
+
+    mktempdir() do dir
+        cd(dir) do
+            legacy = Dict("from_date" => string(OLDEST_PUBLICATION_DATE), "stages" => Dict("rss" => []))
+            write(CHECKPOINT_FILE, JSON3.write(legacy))
+            @test isempty(load_checkpoint())
+            save_checkpoint(Dict("rss" => Paper[]))
+            if !FETCH_CLEAN
+                @test haskey(load_checkpoint(), "rss")
+            end
+        end
+    end
+end
+
 @testset "Europe PMC journal fallback" begin
     oldest = ZonedDateTime(DateTime(2026, 8, 3), tz"UTC")
 
@@ -132,10 +311,10 @@ isdefined(@__MODULE__, :Paper) || include(joinpath(@__DIR__, "..", "fetch_papers
     @test occursin("no usable publication date", only(record_warnings))
 
     @test Set(keys(JOURNAL_EUROPEPMC_BACKUP_ISSNS)) == Set([
-        "Biophysical Journal", "Cell", "iScience", "Current Biology",
+        "Biophysical Journal", "Cell", "iScience", "Current Biology", "PNAS",
     ])
     @test JOURNAL_EUROPEPMC_PRIMARY_ISSNS == Dict("EMBO Journal" => "0261-4189")
-    @test JOURNAL_CROSSREF_BACKUP_ISSNS == Dict("EMBO Journal" => "1460-2075")
+    @test JOURNAL_CROSSREF_BACKUP_ISSNS == Dict("EMBO Journal" => "1460-2075", "PNAS" => "1091-6490")
     @test CROSSREF_JOURNAL_EUROPEPMC_BACKUP_ISSNS == Dict("Cytoskeleton" => "1949-3592")
 
     empty_response = JSON3.read("""{"hitCount":0,"resultList":{"result":[]}}""")
