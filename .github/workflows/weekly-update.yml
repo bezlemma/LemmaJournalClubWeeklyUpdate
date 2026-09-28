@@ -236,6 +236,22 @@ jobs:
           git commit -m "Save Biophysics Weekly learning data for $EDITION_ID"
           git push
 
+      - name: Trigger website archive publication
+        env:
+          GH_TOKEN: ${{ secrets.WEBSITE_SYNC_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::WEBSITE_SYNC_TOKEN is missing. Relying on backup website polling, which GitHub can delay beyond the publication deadline. Configure a fine-grained token with Actions write access to bezlemma/website."
+            exit 0
+          fi
+          if ! gh workflow run sync-biophysics-weekly.yml --repo bezlemma/website --ref main; then
+            jq -n \
+              --arg reason "The edition is frozen, but dispatching the website sync failed. Check WEBSITE_SYNC_TOKEN has Actions write access to bezlemma/website. No newsletter was sent." \
+              '{status:"failed",reason:$reason}' > pipeline_status.json
+            echo "::error::$(jq -r '.reason' pipeline_status.json)"
+            exit 1
+          fi
+
       - name: Require the exact edition to be live on the website
         env:
           ARCHIVE_FILE: ${{ steps.edition.outputs.archive_file }}

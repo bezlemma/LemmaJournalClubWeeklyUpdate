@@ -2,7 +2,7 @@
 
 This repository builds and emails the weekly paper edition without routine
 manual work. The public archive and voting interface live in the separate
-`bezialemma/website` repository.
+`bezlemma/website` repository.
 
 ## Automated Monday run
 
@@ -14,8 +14,10 @@ manual work. The public archive and voting interface live in the separate
 4. filters and summarizes papers with Gemini;
 5. refuses to publish when Gemini's failure rate exceeds the configured gate;
 6. commits the new edition to `PreviousWeeks` before delivery;
-7. asks the Worker to email every active subscriber; and
-8. confirms that signed Resend events reached the delivery ledger for every new
+7. triggers the website archive sync and verifies the exact frozen source hash
+   is publicly available before delivery;
+8. asks the Worker to email every active subscriber; and
+9. confirms that signed Resend events reached the delivery ledger for every new
    send. A missing event produces a clearly labeled monitoring warning and owner
    email without incorrectly claiming that the scrape or submission failed.
 
@@ -34,8 +36,14 @@ An explicit regeneration re-filters the edition's frozen candidate set; it does
 not scrape again or discard that edition's papers as previously sent. The
 `skip_email` dispatch option publishes a website-only correction.
 
-The website repository polls this archive every six hours and publishes any new
-edition automatically.
+The paper workflow directly dispatches `sync-biophysics-weekly.yml` in
+`bezlemma/website` after freezing, including on retries that reuse an edition.
+The website sync commits the generated archive and explicitly requests a GitHub
+Pages rebuild, even on an unchanged sync when the latest commit is not published.
+The website also polls every 15 minutes as a backup. GitHub can delay or drop
+scheduled runs, so polling alone cannot guarantee publication within the paper
+workflow's 30-minute deadline. Email remains blocked until the public edition's
+source hash matches the frozen archive exactly.
 
 ## Required GitHub secrets
 
@@ -45,6 +53,15 @@ edition automatically.
 - `RESEND_API_KEY` (owner warning emails)
 - `RESEND_FROM`
 - `WARNING_EMAIL`
+- `WEBSITE_SYNC_TOKEN` (a fine-grained GitHub token restricted to
+  `bezlemma/website` with **Actions: Read and write**; store it in this paper
+  repository's Actions secrets)
+
+The built-in `GITHUB_TOKEN` is scoped to this repository and cannot dispatch the
+website repository's workflow. If `WEBSITE_SYNC_TOKEN` is missing, the run warns
+and falls back to scheduled polling; configure it to avoid schedule-dependent
+publication failures. An invalid or expired configured token fails with a clear
+dispatch error while preserving the frozen edition for a retry.
 
 The newsletter API URL is currently the Cloudflare Worker URL ending in
 `/api/biophysics-weekly`. Its admin token must match the Worker's `ADMIN_TOKEN`.
