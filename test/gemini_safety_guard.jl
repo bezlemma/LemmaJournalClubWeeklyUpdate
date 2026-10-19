@@ -57,6 +57,9 @@ function reset_gemini_guard_for_test!()
     GEMINI_BUDGET_EXHAUSTED[] = false
     GEMINI_BUDGET_REASON[] = ""
     GEMINI_COOLDOWN_UNTIL[] = 0.0
+    GEMINI_FATAL_ERROR[] = nothing
+    GEMINI_LAST_ERROR[] = nothing
+    empty!(GEMINI_ERROR_COUNTS)
 end
 
 @testset "Gemini safety guard accounting" begin

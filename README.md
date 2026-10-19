@@ -68,6 +68,25 @@ The newsletter API URL is currently the Cloudflare Worker URL ending in
 
 ## Failure behavior
 
+- Gemini is checked with a small classification request before paper collection
+  and again before concurrent filtering. Billing, authentication, unavailable
+  model, and other permanent request errors stop further API calls across all
+  workers; they are never retried for every paper or treated as genuine paper
+  rejections. Temporary timeouts, rate limits, and server failures retain bounded
+  retries and the shared rate-limit cooldown.
+- HTTP 402 means Gemini billing must be resolved. The October 19 failure was
+  caused by depleted **Gemini API prepaid credits**, not this repository's $5
+  per-run safety limit. Replenish the balance for the API key's project at
+  <https://aistudio.google.com/billing>, then rerun the workflow. A different model
+  or another key on the same depleted billing account will not restore access.
+  To prevent another balance-related interruption, configure a suitable
+  low-balance notification or optional auto-reload in AI Studio. Auto-reload is a
+  billing choice, not something this repository enables.
+- Failed runs preserve sanitized provider status, message, and remediation in
+  `pipeline_status.json` and `gemini_diagnostics.json`. A failure artifact also
+  retains any fetched candidates, scores, and fetch checkpoint. Provider error
+  details appear in the Actions summary and owner alert; API keys and raw error
+  responses are not logged.
 - arXiv or bioRxiv returning no papers stops the run.
 - Journal responses are validated as RSS/Atom before they count as successful,
   and transient request or feed-validation failures retry three times. Access
@@ -118,6 +137,12 @@ with new decisions so frozen editions are not reinterpreted when the learning
 scale changes.
 
 ## Local preview
+
+Check the configured Gemini project without scraping or sending email:
+
+```bash
+julia --project=. filter_papers.jl --preflight
+```
 
 With `GEMINI_API_KEY` configured:
 

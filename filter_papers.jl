@@ -13,6 +13,7 @@ const OUTPUT_FILE = "papers_final.md"
 const PREVIOUS_WEEKS_DIR = "PreviousWeeks"
 const SCORE_OUTPUT_FILE = "paper_scores.json"
 const PIPELINE_STATUS_FILE = "pipeline_status.json"
+const GEMINI_DIAGNOSTICS_FILE = "gemini_diagnostics.json"
 const DECISIONS_DIR = "TrainingData"
 const READER_FEEDBACK_FILE = joinpath(DECISIONS_DIR, "reader_feedback.json")
 const MANUAL_FEATURED_FILE = "featured_papers.txt"
@@ -58,6 +59,9 @@ const GEMINI_REPORTED_COST_USD = Ref(0.0)
 const GEMINI_REQUEST_COUNT = Ref(0)
 const GEMINI_BUDGET_EXHAUSTED = Ref(false)
 const GEMINI_BUDGET_REASON = Ref("")
+const GEMINI_FATAL_ERROR = Ref{Union{Nothing, Dict{String, Any}}}(nothing)
+const GEMINI_LAST_ERROR = Ref{Union{Nothing, Dict{String, Any}}}(nothing)
+const GEMINI_ERROR_COUNTS = Dict{String, Int}()
 const GEMINI_COOLDOWN_LOCK = ReentrantLock()
 const GEMINI_COOLDOWN_UNTIL = Ref(0.0)
 const CLASSIFICATION_AUDIT_LOCK = ReentrantLock()
@@ -278,6 +282,71 @@ end
 
 # ─── Gemini API calls ───────────────────────────────────────────────────────
 
+"""Keep provider diagnostics useful without exposing credentials or raw responses."""
+function sanitize_gemini_error(value; api_key=GEMINI_API_KEY)::String
+    message = string(value)
+    !isempty(api_key) && (message = replace(message, api_key => "[REDACTED]"))
+    message = replace(message, r"AIza[A-Za-z0-9_-]+" => "[REDACTED]")
+    message = replace(message, r"(?i)(?:key|api_key|x-goog-api-key)\s*[=:]\s*[^\s&\"<>]+" => "key=[REDACTED]")
+    message = replace(message, r"(?i)Bearer\s+[^\s\"<>]+" => "Bearer [REDACTED]")
+    return String(first(strip(replace(message, r"[\x00-\x1f\x7f]+" => " ")), 800))
+end
+
+function gemini_api_error(status::Integer, body; api_key=GEMINI_API_KEY)
+    payload = try JSON3.read(String(body)) catch; nothing end
+    provider_error = payload isa JSON3.Object ? get(payload, :error, nothing) : nothing
+    message = provider_error isa JSON3.Object ?
+        sanitize_gemini_error(get(provider_error, :message, "No provider error message supplied."); api_key) :
+        "Provider returned a non-JSON error response; the raw body was not logged."
+    provider_status = provider_error isa JSON3.Object ?
+        sanitize_gemini_error(get(provider_error, :status, ""); api_key) : ""
+    # Some billing endpoints have historically reported depleted credits as 429.
+    depleted = status == 429 && occursin(r"(?i)(prepay|prepaid|prepayment).*?(depleted|exhausted|no credits)", message)
+    kind, action = if status == 402 || depleted
+        ("billing", "Replenish the Gemini API prepaid balance or resolve billing for this key's project at https://aistudio.google.com/billing, then rerun. Changing models or retrying cannot fix depleted account credits.")
+    elseif status in (401, 403)
+        ("authentication", "Check GEMINI_API_KEY, its project permissions, and API restrictions, then rerun.")
+    elseif status == 404
+        ("model", "Check that GEMINI_MODEL is available to this project, then rerun.")
+    elseif status == 429
+        ("rate_limit", "Check the project's Gemini rate limits and quota; retry after the provider cooldown.")
+    elseif status == 408 || 500 <= status < 600
+        ("transient", "The provider timed out or is temporarily unavailable; retry after backoff.")
+    else
+        ("request", "Check the Gemini request configuration and provider message before retrying.")
+    end
+    retryable = kind in ("rate_limit", "transient")
+    return Dict{String, Any}(
+        "http_status" => Int(status), "provider_status" => provider_status,
+        "message" => message, "kind" => kind, "retryable" => retryable,
+        "action" => action,
+    )
+end
+
+function record_gemini_error!(detail::Dict{String, Any})
+    lock(GEMINI_BUDGET_LOCK) do
+        key = string(detail["http_status"])
+        GEMINI_ERROR_COUNTS[key] = get(GEMINI_ERROR_COUNTS, key, 0) + 1
+        GEMINI_LAST_ERROR[] = detail
+        if !detail["retryable"] && GEMINI_FATAL_ERROR[] === nothing
+            GEMINI_FATAL_ERROR[] = detail
+            println("  Gemini stopped further requests: $(gemini_error_reason(detail))")
+        end
+    end
+end
+
+function gemini_error_reason(detail)::String
+    return "Gemini $(detail["kind"]) error (HTTP $(detail["http_status"])): " *
+           "$(detail["message"]) $(detail["action"])"
+end
+
+function require_gemini_available!()
+    fatal = lock(GEMINI_BUDGET_LOCK) do
+        GEMINI_FATAL_ERROR[]
+    end
+    fatal === nothing || error(gemini_error_reason(fatal))
+end
+
 """Estimate one request only while it is in flight; this never limits output length."""
 function estimate_gemini_request_cost(prompt::String)::Float64
     input_token_upper_bound = max(1, ncodeunits(prompt))
@@ -292,6 +361,7 @@ function begin_gemini_request!(prompt::String)::Union{Nothing, Float64}
     reservation = estimate_gemini_request_cost(prompt)
 
     lock(GEMINI_BUDGET_LOCK) do
+        GEMINI_FATAL_ERROR[] === nothing || return nothing
         guarded_cost = GEMINI_REPORTED_COST_USD[] + GEMINI_UNREPORTED_COST_USD[] + GEMINI_IN_FLIGHT_COST_USD[]
         over_cost = guarded_cost + reservation > GEMINI_MAX_RUN_COST_USD
         over_requests = GEMINI_REQUEST_COUNT[] >= GEMINI_MAX_REQUESTS
@@ -362,8 +432,10 @@ function extend_gemini_cooldown!(seconds::Real)::Float64
 end
 
 """Call Gemini API with a prompt and return the text response."""
-function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
-    isempty(GEMINI_API_KEY) && return ""
+function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES,
+                         api_key=GEMINI_API_KEY, transport=HTTP.post,
+                         sleep_fn=sleep, cooldown_fn=wait_for_gemini_cooldown!)::String
+    isempty(api_key) && return ""
 
     body = Dict(
         "contents" => [Dict(
@@ -372,28 +444,33 @@ function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
     )
 
     for attempt in 1:max_retries
-        wait_for_gemini_cooldown!()
+        cooldown_fn()
         reservation = begin_gemini_request!(prompt)
         reservation === nothing && return ""
         request_finished = false
         try
-            resp = HTTP.post(GEMINI_URL_BASE,
-                ["Content-Type" => "application/json", "x-goog-api-key" => GEMINI_API_KEY],
+            resp = transport(GEMINI_URL_BASE,
+                ["Content-Type" => "application/json", "x-goog-api-key" => api_key],
                 JSON3.write(body);
                 readtimeout=GEMINI_READ_TIMEOUT,
+                connect_timeout=10,
+                retry=false,
                 status_exception=false)
 
-            if resp.status == 408 || resp.status == 429 || 500 <= resp.status < 600
+            if resp.status != 200
                 finish_gemini_request!(reservation)
                 request_finished = true
+                detail = gemini_api_error(resp.status, resp.body; api_key)
+                record_gemini_error!(detail)
+                detail["retryable"] || return ""
                 attempt == max_retries && (println("  Gemini API request failed after $max_retries attempts: HTTP $(resp.status)"); return "")
                 if resp.status == 429
                     retry_after = tryparse(Float64, strip(string(HTTP.header(resp, "Retry-After"))))
                     wait_seconds = extend_gemini_cooldown!(something(retry_after, 12.0 * 2^(attempt - 1)))
                     println("  Gemini rate-limited this request; all workers are cooling down for $(round(wait_seconds; digits=1))s before retry $attempt/$max_retries.")
-                    wait_for_gemini_cooldown!()
+                    cooldown_fn()
                 else
-                    sleep(min(30.0, 3.0 * 2^(attempt - 1)) + rand())
+                    sleep_fn(min(30.0, 3.0 * 2^(attempt - 1)) + rand())
                 end
                 continue
             end
@@ -419,12 +496,7 @@ function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
                     end
                 end
                 attempt == max_retries && (println("  Gemini API returned no text after $max_retries attempts."); return "")
-                sleep(min(30, 3 * 2^(attempt - 1)))
-            else
-                finish_gemini_request!(reservation)
-                request_finished = true
-                println("  Gemini API request failed with non-retryable HTTP $(resp.status).")
-                return ""
+                sleep_fn(min(30, 3 * 2^(attempt - 1)))
             end
         catch e
             if !request_finished
@@ -432,10 +504,29 @@ function gemini_generate(prompt::String; max_retries=GEMINI_MAX_RETRIES)::String
                 request_finished = true
             end
             attempt == max_retries && (println("  Gemini API request failed after $max_retries attempts: $(typeof(e))"); return "")
-            sleep(min(30.0, 3.0 * 2^(attempt - 1)) + rand())
+            sleep_fn(min(30.0, 3.0 * 2^(attempt - 1)) + rand())
         end
     end
     return ""
+end
+
+"""Exercise the actual model before fetching papers or starting concurrent workers."""
+function preflight_gemini(; generate=gemini_generate)
+    isempty(GEMINI_API_KEY) && generate === gemini_generate && error("GEMINI_API_KEY environment variable not set.")
+    result = generate("""
+    This is an API health check for a scientific paper classifier.
+    Classify a paper measuring forces and mechanical deformation in living cells.
+    Reply with JSON only: {"score": 90, "category": "cell mechanics", "explanation": "Measures physical forces in living cells."}
+    """)
+    require_gemini_available!()
+    _, reason, score, _, _ = parse_scored_classification(result)
+    if score === nothing
+        last_error = GEMINI_LAST_ERROR[]
+        detail = last_error === nothing ? reason : gemini_error_reason(last_error)
+        error("Gemini preflight failed: $detail. No papers were processed; retry after resolving provider availability.")
+    end
+    println("Gemini preflight passed for $GEMINI_MODEL.")
+    return nothing
 end
 
 function reader_feedback_context(filename::AbstractString)::String
@@ -712,6 +803,7 @@ function main()
     if isempty(GEMINI_API_KEY)
         error("GEMINI_API_KEY environment variable not set.")
     end
+    preflight_gemini()
 
     println("Loading papers from $INPUT_FILE...")
     if !isfile(INPUT_FILE)
@@ -801,6 +893,7 @@ function main()
         end
     end
 
+    require_gemini_available!()
     retry_indices = Int[]
     for (i, result) in enumerate(results)
         isassigned(results, i) || continue
@@ -825,6 +918,7 @@ function main()
         end
     end
 
+    require_gemini_available!()
     # A single binary pass proved too prone to silently excluding plausible
     # biophysics papers. Re-review every explicit rejection once with a
     # recall-focused prompt. This is intentionally bounded: there is exactly
@@ -864,6 +958,7 @@ function main()
         end
     end
 
+    require_gemini_available!()
     classification_attempts = 0
     classification_failures = 0
     summary_attempts = 0
@@ -1054,6 +1149,16 @@ function write_pipeline_status(status::String, reason::String)
             "provider_reported_cost_usd" => GEMINI_REPORTED_COST_USD[],
             "unreported_cost_exposure_usd" => GEMINI_UNREPORTED_COST_USD[],
             "request_count" => GEMINI_REQUEST_COUNT[],
+            "provider_error" => GEMINI_FATAL_ERROR[] === nothing ? GEMINI_LAST_ERROR[] : GEMINI_FATAL_ERROR[],
+        ))
+    end
+    open(GEMINI_DIAGNOSTICS_FILE, "w") do io
+        JSON3.pretty(io, Dict(
+            "model" => GEMINI_MODEL,
+            "request_count" => GEMINI_REQUEST_COUNT[],
+            "http_error_counts" => GEMINI_ERROR_COUNTS,
+            "fatal_error" => GEMINI_FATAL_ERROR[],
+            "last_error" => GEMINI_LAST_ERROR[],
         ))
     end
 end
@@ -1061,8 +1166,15 @@ end
 # ─── Entry point ─────────────────────────────────────────────────────────────
 if abspath(PROGRAM_FILE) == @__FILE__
     try
-        main()
-        write_pipeline_status("success", "Edition generated and validated by the filter.")
+        if ARGS == ["--preflight"]
+            preflight_gemini()
+            write_pipeline_status("success", "Gemini preflight passed.")
+        elseif isempty(ARGS)
+            main()
+            write_pipeline_status("success", "Edition generated and validated by the filter.")
+        else
+            error("Usage: julia --project=. filter_papers.jl [--preflight]")
+        end
     catch e
         reason = sprint(showerror, e)
         write_pipeline_status("failed", reason)
