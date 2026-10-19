@@ -88,6 +88,10 @@ The newsletter API URL is currently the Cloudflare Worker URL ending in
   details appear in the Actions summary and owner alert; API keys and raw error
   responses are not logged.
 - arXiv or bioRxiv returning no papers stops the run.
+- Featured-author Crossref queries retry temporary HTTP 408/429/5xx and
+  connection failures up to four attempts, with bounded delays and timeouts.
+  Permanent errors and exhausted retries still stop publication; collection
+  failures include their specific cause in the Actions summary and owner alert.
 - Journal responses are validated as RSS/Atom before they count as successful,
   and transient request or feed-validation failures retry three times. Access
   denials (HTTP 401/403), missing/retired feeds (404/410), and HTML challenges

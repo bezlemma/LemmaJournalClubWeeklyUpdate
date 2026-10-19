@@ -4,6 +4,66 @@ using Dates, TimeZones
 
 isdefined(@__MODULE__, :Paper) || include(joinpath(@__DIR__, "..", "fetch_papers.jl"))
 
+@testset "Featured Crossref transient recovery and failure bounds" begin
+    day = WINDOW_END_DATE - Day(1)
+    record = Dict(
+        "title" => ["Membrane mechanics after transient recovery"],
+        "DOI" => "10.1234/recovered",
+        "author" => [Dict("given" => "Test", "family" => "Researcher")],
+        "abstract" => repeat("A study of membrane forces and mechanics. ", 4),
+        "published-online" => Dict("date-parts" => [[year(day), month(day), Dates.day(day)]]),
+    )
+    success_body = JSON3.write(Dict("message" => Dict("items" => [record])))
+    for status in (408, 429, 500, 502, 503, 504)
+        calls = Ref(0)
+        waits = Int[]
+        transport = function(url; kwargs...)
+            calls[] += 1
+            @test kwargs[:retry] == false
+            calls[] == 1 && return HTTP.Response(status, ["Retry-After" => "7"], "Temporary failure")
+            return HTTP.Response(200, success_body)
+        end
+        papers = _query_crossref_orcid("0000-test", "Test Author", string(OLDEST_PUBLICATION_DATE);
+            http_get=transport, sleep_fn=s -> push!(waits, s))
+        @test calls[] == 2
+        @test waits == [7]
+        @test only(papers).doi == "10.1234/recovered"
+    end
+
+    for failure in (HTTP.TimeoutError(15), HTTP.ConnectError("https://api.crossref.org", EOFError()),
+                    HTTP.RequestError(nothing, EOFError()))
+        calls = Ref(0)
+        transport = function(url; kwargs...)
+            calls[] += 1
+            calls[] == 1 && throw(failure)
+            HTTP.Response(200, success_body)
+        end
+        @test length(_query_crossref_orcid("0000-test", "Test Author", string(day);
+            http_get=transport, sleep_fn=_ -> nothing)) == 1
+        @test calls[] == 2
+    end
+
+    for (status, expected_calls) in ((500, 4), (429, 4), (403, 1), (404, 1))
+        calls = Ref(0)
+        waits = Int[]
+        transport = function(url; kwargs...)
+            calls[] += 1
+            HTTP.Response(status, ["Retry-After" => "9999"], "Unavailable")
+        end
+        failure = try
+            _query_crossref_orcid("0000-test", "Test Author", string(day);
+                http_get=transport, sleep_fn=s -> push!(waits, s))
+        catch e
+            e
+        end
+        @test failure isa ErrorException
+        @test occursin("HTTP $status", sprint(showerror, failure))
+        @test calls[] == expected_calls
+        @test length(waits) == expected_calls - 1
+        @test all(s -> 0 < s <= 60, waits)
+    end
+end
+
 @testset "PNAS feed denial and independent recovery" begin
     feed = only(filter(f -> f.name == "PNAS", JOURNAL_FEEDS))
     no_sleep = _ -> nothing

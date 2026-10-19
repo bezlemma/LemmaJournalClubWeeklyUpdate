@@ -1966,7 +1966,8 @@ end
 
 # ─── CrossRef ORCID Fetching ────────────────────────────────────────────────
 
-function _query_crossref_orcid(orcid::String, author_name::String, from_date::String)
+function _query_crossref_orcid(orcid::String, author_name::String, from_date::String;
+                               http_get=HTTP.get, sleep_fn=sleep)
     papers = Paper[]
     max_retries = 4
     url = "https://api.crossref.org/works"
@@ -1983,7 +1984,8 @@ function _query_crossref_orcid(orcid::String, author_name::String, from_date::St
 
     for attempt in 1:max_retries
         try
-            resp = HTTP.get(full_url; readtimeout=15, status_exception=false)
+            resp = http_get(full_url; connect_timeout=10, readtimeout=15,
+                            status_exception=false, retry=false)
             if resp.status == 200
                 data = JSON3.read(String(resp.body))
                 items = get(get(data, :message, Dict()), :items, [])
@@ -2035,22 +2037,27 @@ function _query_crossref_orcid(orcid::String, author_name::String, from_date::St
                     ))
                 end
                 return papers
-            elseif resp.status == 429
-                wait_secs = 5 * attempt
+            elseif resp.status in (408, 429) || 500 <= resp.status <= 599
+                retry_after = tryparse(Int, strip(HTTP.header(resp, "Retry-After", "")))
+                wait_secs = retry_after === nothing ? 5 * attempt : clamp(retry_after, 1, 60)
                 if attempt < max_retries
-                    println("  ⚠ CrossRef rate-limited for $author_name. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
-                    sleep(wait_secs)
+                    println("  ⚠ CrossRef HTTP $(resp.status) for $author_name. Waiting $(wait_secs)s (attempt $attempt/$max_retries)...")
+                    sleep_fn(wait_secs)
                     continue
                 else
-                    error("CrossRef rate-limited (429) for $author_name after $max_retries attempts")
+                    error("CrossRef failed for $author_name: HTTP $(resp.status) after $max_retries attempts")
                 end
             else
                 error("CrossRef failed for $author_name: HTTP $(resp.status)")
             end
         catch e
+            e isa InterruptException && rethrow()
             e isa ErrorException && rethrow()
-            if e isa HTTP.TimeoutError && attempt < max_retries
-                sleep(3 * attempt)
+            transient = e isa HTTP.TimeoutError || e isa HTTP.ConnectError ||
+                        e isa HTTP.RequestError || e isa EOFError || e isa Base.IOError
+            if transient && attempt < max_retries
+                println("  ⚠ CrossRef connection failed for $author_name; retrying (attempt $attempt/$max_retries)...")
+                sleep_fn(3 * attempt)
             else
                 error("CrossRef failed for $author_name: $e")
             end
@@ -2625,6 +2632,15 @@ end
 
 # ─── Entry point ─────────────────────────────────────────────────────────────
 if abspath(PROGRAM_FILE) == @__FILE__
-    fetch_and_display_papers()
-    try; HTTP.Connections.closeall() catch; end; # additional cleanup just in case
+    try
+        fetch_and_display_papers()
+    catch e
+        e isa InterruptException && rethrow()
+        open("pipeline_status.json", "w") do io
+            JSON3.pretty(io, Dict("status" => "failed", "reason" => sprint(showerror, e)))
+        end
+        rethrow()
+    finally
+        try; HTTP.Connections.closeall() catch; end
+    end
 end
