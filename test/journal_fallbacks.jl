@@ -464,3 +464,29 @@ end
     )
     @test length(deduplicate_papers([optica_one, optica_two])) == 2
 end
+
+@testset "featured ORCID discovery recovers the abstract for the same DOI" begin
+    doi = "10.1038/s41567-026-03505-y"
+    primary = "https://www.nature.com/articles/s41567-026-03505-y"
+    day = WINDOW_END_DATE
+    record = (; title=["Active-flow-driven DNA remodelling generates millimetre-scale mechanical oscillations"],
+              DOI=doi, author=[(; given="Alexandra M.", family="Tayar")], resource=(; primary=(; URL=primary)),
+              published=Dict("date-parts" => [[year(day), month(day), Dates.day(day)]]))
+    transport(url; kwargs...) = HTTP.Response(200, JSON3.write((; message=(; items=[record]))))
+    abstract_text = repeat("Microtubule flows stretch DNA and couple motion across the sample. ", 3)
+    function fetch(page_doi)
+        scrape = function(url; abstract_only)
+            @test url == primary && abstract_only
+            (nothing, abstract_text, nothing, page_doi)
+        end
+        only(_query_crossref_orcid("0000-0002-1418-2058", "Alexandra M. Tayar", string(day);
+                                   http_get=transport, scrape=scrape))
+    end
+    recovered = fetch(doi)
+    @test recovered.source == "CrossRef/Featured" && recovered.abstract == abstract_text
+    wrong = fetch("10.1234/different")
+    @test isempty(wrong.abstract)
+    rss = Paper(; source="Nature", doi, title=wrong.title, abstract_text)
+    merged = only(deduplicate_papers([rss, wrong]))
+    @test merged.source == "CrossRef/Featured" && merged.abstract == abstract_text
+end

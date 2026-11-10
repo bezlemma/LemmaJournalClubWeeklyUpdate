@@ -1,14 +1,19 @@
+# Verified lab rosters (9 November 2026):
+# Dogic: https://dogiclab.physics.ucsb.edu/people/
+# Needleman: https://needleman.seas.harvard.edu/people/
+# Jonikas: https://jonikaslab.princeton.edu/people
+# Additional roster sources are noted on individual entries.
 
-0000-0003-3542-069X - Bezia Lemma
-0000-0003-3642-9864 - Daniel J. Needleman
+0000-0003-3542-069X - Bezia Lemma | Bez Lemma  # Dogic; Needleman; https://doi.org/10.1038/s41567-019-0642-1
+0000-0003-3642-9864 - Daniel J. Needleman | Daniel Needleman | Dan Needleman  # Needleman; https://doi.org/10.1101/2024.01.10.574250
 0000-0002-2304-9486 - Celeste M. Nelson
-0000-0003-0142-1838 - Zvonimir Dogic
+0000-0003-0142-1838 - Zvonimir Dogic  # Dogic; https://doi.org/10.7554/elife.34695
 0000-0001-9864-0089 - Paul M. Chaikin
 0000-0001-6137-9200 - Andrej Kosmrlj
 0000-0003-1716-2754 - Mark J. Bowick
 0000-0002-6541-6643 - David Nelson
-0000-0003-1922-8470 - Noah P. Mitchell
-0000-0003-1818-5886 - Peter J. Foster
+0000-0003-1922-8470 - Noah P. Mitchell  # Dogic; https://doi.org/10.1073/pnas.2204453119
+0000-0003-1818-5886 - Peter J. Foster | Peter Foster  # Needleman; https://doi.org/10.1073/pnas.2207662120
 0000-0003-1846-9854 - Margaret L. Gardel
 0000-0001-6788-2077 - Michael Murrell
 0000-0002-7378-2133 - Claire Walczak
@@ -16,12 +21,12 @@
 0000-0002-3011-9403 - Radhika Subramanian
 0000-0002-8399-3524 - Stefano Sacanna
 0000-0002-4823-7491 - Katharine Goodwin
-0000-0001-9581-5963 - Sebastian Furthauer
+0000-0001-9581-5963 - Sebastian Fürthauer  # Needleman; https://doi.org/10.1038/s41567-019-0642-1
 0000-0002-4835-0339 - Michael Shelley
-0000-0002-0353-9752 - Che-Hang Yu
+0000-0002-0353-9752 - Che-Hang Yu  # Needleman; https://doi.org/10.7554/elife.36392
 0000-0002-2536-069X - Jinhye Bae
-0000-0001-5223-8908 - Maya Anjur-Dietrich
-0000-0001-6000-540X - Colm P. Kelleher
+0000-0001-5223-8908 - Maya I. Anjur-Dietrich | Maya Anjur-Dietrich  # Needleman; https://doi.org/10.1101/2021.11.11.468239
+0000-0002-3326-5924, 0000-0001-6000-540X - Colm P. Kelleher | Colm Kelleher  # Needleman; https://doi.org/10.1126/sciadv.adq7540
 0000-0002-3883-0654 - Carrie Adler
 0000-0001-8792-3358 - Erwin Frey
 0000-0003-4731-9185 - Frank Jülicher
@@ -45,16 +50,16 @@
 0000-0002-8601-3501 - Jennifer Lippincott‐Schwartz
 0000-0003-2391-4965 - Stanislav Y. Shvartsman
 0000-0001-9998-4596 - Rikki Garner
-0000-0003-2792-5380 - Reza Farhadifar
+0000-0003-2792-5380 - Reza Farhadifar  # Needleman; https://doi.org/10.7554/elife.55877
 0000-0003-4563-4835 - Julia Schwartzman
 0000-0002-3904-7169 - Daniel M. Sussman
 0000-0001-9082-1870 - Thomas Surrey
 0009-0006-6593-6477 - Harry McNamara
 0000-0002-1890-5364 - Daniel Fletcher
-0000-0002-6731-4130 - Jan Bruges
+0000-0002-6731-4130 - Jan Brugués  # Needleman; https://doi.org/10.1016/j.cell.2012.03.027
 0000-0003-0558-9099 - Lauren Dreier
 0000-0003-3057-995X - Daniel Alber
-0000-0003-1607-5632 - Sebastian Gonzalez La Corte
+0000-0003-1607-5632 - Sebastian Gonzalez La Corte  # Needleman
 0000-0003-4452-9048 - Kai Mesa
 0000-0002-6492-4603 - Valentina Greco
 0000-0002-7811-6041 - Louis Prahl
@@ -67,8 +72,8 @@
 0000-0002-7399-8348 - Melanie D. White
 0000-0002-9549-1089 - Crystal Rogers
 
-0000-0001-8482-4573 - Linnea Lemma
-0000-0002-9519-6055 - Martin C. Jonikas
+0000-0001-8482-4573 - Linnea Lemma  # Dogic; Jonikas; https://doi.org/10.1039/d3sm00270e
+0000-0002-9519-6055 - Martin C. Jonikas | Martin Jonikas  # Jonikas; https://doi.org/10.1038/s41556-026-01908-w
 0000-0002-1350-9960 - Clifford P Brangwynne
 0000-0001-7384-2821 - Ned S. Wingreen
 0000-0003-3583-4999 - M Cristina Marchetti
@@ -78,14 +83,14 @@
 0000-0001-7740-5960 - Luca Giomi
 0000-0003-1899-9978 - Aparna Baskaran
 0000-0002-9211-2434 - Michael F. Hagan
-0000-0002-4261-7311 - Sattvic Ray
-0000-0001-8423-5031 - Raymond Adkins
-0000-0001-9010-8952 - Guillaume Duclos
-0000-0002-6869-1245 - Itamar Kolvin
+0000-0002-4261-7311 - Sattvic Ray  # Dogic; https://doi.org/10.1103/physrevlett.129.258001
+0000-0002-2393-6114, 0000-0001-7622-2812, 0000-0001-8423-5031 - Raymond Adkins  # Dogic; https://doi.org/10.1073/pnas.2016708118
+0000-0001-9010-8952 - Guillaume Duclos  # Dogic; https://doi.org/10.1126/science.aaz4547
+0000-0002-6869-1245 - Itamar Kolvin  # Dogic; https://doi.org/10.1126/science.aaz4547
 0000-0003-3432-8226 - Thomas R Powers
 0000-0002-6105-9087 - Sebastian J Streichan
 0000-0002-5114-0519 - L. Mahadevan
-0000-0002-7503-5721 - Aastha Garde
+0000-0002-7503-5721 - Aastha Garde  # Jonikas; https://doi.org/10.1111/nph.70669
 0000-0002-3091-5039 - Eric R. Dufresne
 0000-0003-2866-5963 - Oliver Mueller-Cajar
 0000-0002-6314-3565 - Omar Saleh
@@ -108,3 +113,238 @@
 0000-0003-2568-5491 - John Bechhoefer
 0000-0003-4815-4722 - David Sivak
 0000-0002-5479-7073 - Nancy Forde
+
+0009-0006-3016-4278 - Aaron Bohn  # Jonikas; https://orcid.org/0009-0006-3016-4278
+Aaron Wu @ University of California Santa Barbara | Brandeis | Massachusetts General Hospital  # Dogic
+Achini Opathalage  # Dogic
+Adam Strandberg  # Needleman
+0009-0009-4838-5644 - Alana Hartsell-White  # Dogic; https://orcid.org/0009-0009-4838-5644
+Alan K. Itakura | Alan Itakura  # Jonikas
+0000-0002-1418-2058 - Alexandra M. Tayar | Alexandra Tayar | Alex Tayar  # Dogic; https://doi.org/10.1038/s41567-026-03505-y
+0000-0002-1676-000X - Alexandra T. Wilson | Alexandra Wilson  # Jonikas; https://doi.org/10.1038/s41477-022-01153-7
+0000-0002-8193-3771 - Alice Lunardon  # Jonikas; https://doi.org/10.1111/nph.70669
+0009-0002-8565-1322 - Aliza Lam  # Dogic; https://orcid.org/0009-0002-8565-1322
+0000-0003-1747-5005 - Amr Sobeh  # Jonikas; https://orcid.org/0000-0003-1747-5005
+Ana Benveniste  # Jonikas
+Andrew J. Balchunas | Andrew Balchunas  # Dogic
+Andrew Truttman  # Dogic
+0000-0001-5147-4140 - Andrew R. Ward | Andrew Ward  # Dogic; https://orcid.org/0000-0001-5147-4140
+Angela Berry  # Dogic
+0009-0002-2930-0974 - Angelo Kayser-Browne  # Jonikas; https://orcid.org/0009-0002-2930-0974
+0000-0002-7704-7240 - Anson E. Braun | Anson Braun  # Dogic; https://orcid.org/0000-0002-7704-7240
+Arosheny Puvanenthirarajah  # Jonikas
+Arsema Berhanu  # Jonikas
+0009-0008-5327-7878 - Arthur K. Sirkejyan | Arthur Sirkejyan  # Jonikas; https://orcid.org/0009-0008-5327-7878
+0000-0002-0041-0662 - Ashwani K. Rai | Ashwani Rai  # Jonikas; https://doi.org/10.1101/2025.10.09.681382
+Audrey Dallmeyer  # Needleman; https://www.mcb.harvard.edu/resources/directory/
+0000-0003-3682-5189 - Audrey Goh  # Jonikas; https://orcid.org/0000-0003-3682-5189
+0000-0003-3222-1724 - Augustine Chemparathy  # Jonikas; https://orcid.org/0000-0003-3222-1724
+Basak Gonen  # Needleman
+0000-0002-0504-4331 - Benjamin F. Lonial | Benjamin Lonial | Ben Lonial  # Dogic; https://orcid.org/0000-0002-0504-4331
+0000-0002-7750-2274 - Jean Bernard Hishamunda | Bernard Hishamunda  # Dogic; https://doi.org/10.1126/science.aal1979
+0000-0003-2605-0973 - Bernardo Gouveia  # Needleman; https://orcid.org/0000-0003-2605-0973
+0000-0003-0971-2904 - William Ireland | Bill Ireland  # Needleman; https://doi.org/10.1073/pnas.2207662120
+Bradley Spicher  # Jonikas
+0000-0002-0070-0985 - Brian D. Leahy | Brian Leahy  # Needleman; https://doi.org/10.1098/rsif.2021.0475
+Bryan Kaye  # Needleman
+0009-0007-5432-9601 - Changyuan Wang  # Dogic; https://orcid.org/0009-0007-5432-9601
+Charlotte Philp  # Jonikas
+Chris Chen @ Princeton | Carnegie Institution | Carnegie Science | Stanford  # Jonikas
+Christopher Ramirez | Chris Ramirez @ University of California Santa Barbara | Brandeis  # Dogic
+Chunlong Huang @ University of California Santa Barbara | Brandeis | Bunker Hill Community College  # Dogic; https://www.brandeis.edu/mrsec/events/past-news.html
+Claire Atkinson @ University of California Santa Barbara | Brandeis | University of Washington  # Dogic
+0009-0002-6701-7803 - Claire Dignazio  # Jonikas; https://orcid.org/0009-0002-6701-7803
+0000-0001-7346-3047 - Claire D. McWhite | Claire McWhite  # Jonikas; https://orcid.org/0000-0001-7346-3047
+Cole Bentley  # Dogic
+0009-0003-4482-9187 - Cole Cooper Harris | Cole Harris  # Dogic; https://orcid.org/0009-0003-4482-9187
+0009-0007-0183-0742 - Cole Pacini  # Jonikas; https://doi.org/10.1111/nph.70669
+Colton Wang  # Jonikas
+0000-0001-7609-0290 - Cornelia Spetea | Cornelia Spetea Wiklund  # Jonikas; https://orcid.org/0000-0001-7609-0290
+0000-0003-1957-164X - Daniel A. Beller | Daniel Beller  # Dogic; https://doi.org/10.1126/science.aaz4547
+Daniel T. N. Chen | Daniel T.-N. Chen | Daniel Chen @ University of California Santa Barbara | Brandeis | Confer Health  # Dogic
+0009-0003-2139-9858 - Daniel Ravicz  # Dogic; https://orcid.org/0009-0003-2139-9858
+Daniyar Nurgaliev  # Needleman
+David Kwon @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+David Suslik @ University of California Santa Barbara | Brandeis  # Dogic
+David Welch @ University of California Santa Barbara | Brandeis  # Dogic
+Devon Crittenden  # Dogic
+0009-0008-5358-7315 - Doogie Oh  # Needleman; https://doi.org/10.1016/j.bpj.2011.08.013
+0009-0000-4205-7062 - Easun Arunachalam  # Needleman; https://doi.org/10.1101/2024.07.04.601975
+Edward Barry @ University of California Santa Barbara | Brandeis | Argonne  # Dogic
+Elisabeth Schmidtmann  # Jonikas
+Elizabeth S. Freeman Rosenzweig | Elizabeth Freeman-Rosenzweig | Elizabeth S. Freeman @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+0009-0005-8812-4589 - Ellen Brindle-Clark  # Jonikas; https://jonikaslab.princeton.edu/s/210701b_Jonikas_CV_web.pdf; https://orcid.org/0009-0005-8812-4589
+0000-0002-8084-0071 - Emily R. Singer | Emily Singer  # Jonikas; https://doi.org/10.1016/j.cell.2023.06.008
+0000-0001-7365-6447 - Eric Franklin  # Jonikas; https://doi.org/10.1111/nph.70669
+0000-0001-5629-1407 - Feodor Hilitski  # Dogic; https://doi.org/10.7554/elife.34695
+Frank Costanzo  # Needleman
+0000-0002-5772-4814 - Friedrich Fauser  # Jonikas; https://doi.org/10.1101/2020.12.11.420950
+0000-0003-4838-9134 - Gil Henkin  # Dogic; https://doi.org/10.1098/rsta.2014.0142
+Gillian Gomer  # Jonikas
+0000-0002-4076-5337 - Gloria Ha  # Needleman; https://doi.org/10.7554/elife.73808
+0009-0005-6992-920X - Grace Luettgen  # Needleman; https://orcid.org/0009-0005-6992-920X
+Graciela Watrous  # Jonikas
+0000-0002-8181-2929 - Graham Sharp  # Dogic; https://doi.org/10.1103/physrevlett.129.258001
+0000-0002-3474-8960 - Gregory Reeves  # Jonikas; https://doi.org/10.1073/pnas.1904587116
+0000-0002-5200-1975 - Guanhua He  # Jonikas; https://doi.org/10.1038/s42003-022-04373-x
+0000-0003-3017-0978 - Gunar Fabig  # Needleman; https://doi.org/10.7554/elife.75459
+0000-0001-8123-069X - Hai-Yin Wu | Haiyin Wu  # Needleman; https://doi.org/10.1038/s41467-026-76360-3
+0009-0007-8892-9189 - Haoyu Wu  # Jonikas; https://doi.org/10.64898/2026.07.31.742166
+0000-0001-6257-266X - Helen Yu Yang | Helen Y. Yang | Helen Yang  # Dogic; Needleman; https://doi.org/10.1109/tvcg.2025.3634780
+Henry R. Harrigan | Henry Harrigan  # Jonikas
+Ian Maskiewicz  # Dogic
+Ibrahim Abu-Hijleh  # Dogic
+Isabella Silveira @ Harvard  # Needleman
+Isabel Ruffin  # Dogic
+Izabela Szymanski  # Jonikas
+0009-0004-5185-4986 - Izaiah Alvarado  # Dogic; https://orcid.org/0009-0004-5185-4986
+0000-0001-5139-8707 - Jacob M. Robertson | Jacob Robertson  # Jonikas; https://doi.org/10.1105/tpc.15.00465
+Jacqueline Osaki | Jackie Osaki  # Jonikas
+Jason Middleton @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+Jason I. Punskovsky | Jason Punskovsky  # Jonikas
+Jasper Reid  # Dogic
+Jennifer Ayer @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+0000-0002-8024-0957 - Jerome Fung  # Dogic; https://doi.org/10.1039/c9sm01064e
+0000-0002-6221-2311 - Jessica H. Hennacy | Jessica Hennacy  # Jonikas; https://doi.org/10.64898/2026.07.31.742166
+Jessie Bacha  # Jonikas
+0000-0002-6509-228X - Jie Zhang  # Dogic; https://doi.org/10.1103/physrevlett.130.238301
+0000-0002-1536-1103 - Joanna Robaszewski  # Dogic; https://doi.org/10.1126/sciadv.aba2331
+0000-0002-2768-1868 - John P. Berezney | John Berezney  # Dogic; https://doi.org/10.1039/d3sm00270e
+John Nguyen @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+0000-0002-9826-7787 - Joia M. Miller | Joia Miller  # Dogic; https://doi.org/10.1126/sciadv.aba2331
+Joi Malone  # Dogic
+Jose Soto @ Harvard  # Needleman
+0009-0001-2001-1570 - Judas Strayer  # Dogic; https://orcid.org/0009-0001-2001-1570
+0000-0002-0651-3689 - Katerina Kanevche  # Jonikas; https://orcid.org/0000-0002-0651-3689
+Katia Larina @ University of California Santa Barbara | Brandeis | Cornell  # Dogic
+Katie Kavanaugh  # Jonikas
+0000-0001-7222-5813 - Keenan Duggal  # Jonikas; https://doi.org/10.1111/nph.70669
+0000-0002-4305-8056 - Kelly A. Van Baalen | Kelly Van Baalen  # Jonikas; https://doi.org/10.1016/j.cell.2023.06.008
+Kenzo Salazar  # Jonikas
+Kevin Zhang @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+Kira Collins  # Dogic
+0000-0002-7705-693X, 0000-0002-1901-9516 - Kun-Ta Wu  # Dogic; https://doi.org/10.1126/science.aal1979
+Kylie Ray Lee @ Harvard  # Needleman
+Kyssia Mendoza  # Jonikas
+0009-0008-3844-2492 - LaNell Williams  # Jonikas; https://orcid.org/0009-0008-3844-2492
+Leif Pallesen  # Jonikas
+0000-0003-2135-5276 - Leslie Beh  # Needleman; https://orcid.org/0000-0003-2135-5276
+0009-0001-9758-801X - Liam Leeming  # Needleman; https://orcid.org/0009-0001-9758-801X
+0009-0006-8138-7535 - Liang Zhao  # Dogic; https://doi.org/10.1073/pnas.2410345121
+0000-0003-0906-8346 - Lianyong Wang  # Jonikas; https://doi.org/10.1073/pnas.1904587116
+Lily Raesler  # Dogic
+0000-0002-5691-8959 - Link Morgan  # Dogic; https://doi.org/10.1073/pnas.2016708118
+0009-0002-5063-256X - Linnea D. Hartz | Linnea Hartz  # Jonikas; https://orcid.org/0009-0002-5063-256X
+Liz Cam  # Needleman
+Luke Bunday  # Jonikas
+0000-0003-1440-3233 - Luke C. M. Mackinder | Luke Mackinder  # Jonikas; https://doi.org/10.1101/2020.07.04.188128
+0000-0002-3978-6720 - Madeline Mitchell  # Jonikas; https://doi.org/10.1073/pnas.1522866113
+Madison McNeal-Martinis  # Jonikas
+0000-0002-6815-7157 - Mahsa Siavashpouri  # Dogic; https://doi.org/10.1039/c9sm01064e
+Manqi Deng  # Needleman
+0000-0002-3840-8656 - Mara D. Casebeer | Mara Casebeer  # Needleman; https://orcid.org/0000-0002-3840-8656
+0000-0003-2399-6552 - Margaret Morris  # Dogic; https://orcid.org/0000-0003-2399-6552
+0000-0003-4333-648X - Mark J. Zakhary | Mark Zakhary  # Dogic; https://orcid.org/0000-0003-4333-648X
+Mark Zhao @ University of California Santa Barbara | Brandeis | Northwestern  # Dogic
+0000-0003-3977-0152 - Marta Venturas  # Needleman; https://doi.org/10.1093/humrep/dez210
+Mason Hooks  # Jonikas
+Matthew Millican  # Jonikas
+0009-0001-1224-9116 - Matthew Nemeth  # Jonikas; https://doi.org/10.1038/s41588-022-01052-9
+0000-0003-2246-7974 - Matthew J. Prior | Matthew Prior  # Jonikas; https://doi.org/10.1094/mpmi-11-20-0310-r
+Matthew Rodman  # Jonikas
+0000-0001-6989-4223 - Maya Waarts  # Needleman; https://orcid.org/0000-0001-6989-4223
+0000-0001-5876-8141 - Mia Terashima  # Jonikas; https://pubmed.ncbi.nlm.nih.gov/30298689/
+0000-0002-4206-9992 - Micah I. Burton | Micah Burton  # Jonikas; https://doi.org/10.64898/2026.07.31.742166
+Michael Hill-Oliva  # Jonikas
+Michael P. N. Juniper | Michael Juniper  # Dogic
+0000-0002-7342-4520 - Michael J. O’Brien | Michael O’Brien  # Needleman; https://doi.org/10.1101/2025.10.23.682564
+Michelle Han @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+Michelle Warren-Williams  # Jonikas
+0000-0002-3723-990X - Michael van der Naald | Mike van der Naald  # Needleman; https://pubmed.ncbi.nlm.nih.gov/39081238/
+0000-0002-3789-9924 - Mohamed Amine Gharbi  # Dogic; https://pages.jh.edu/dbeller3/resources/Papers/Gharbi--Langmuir--2018.pdf
+0000-0001-8516-2591 - Moritz T. Meyer | Moritz Meyer  # Jonikas; https://doi.org/10.1126/sciadv.abd2408
+0000-0002-9416-5513 - Moshe Kafri  # Jonikas; https://doi.org/10.1038/s41477-024-01847-0
+0000-0002-1895-254X - Mustafa Basaran  # Needleman; https://orcid.org/0000-0002-1895-254X
+Nate Tavakolian  # Dogic
+0000-0002-3585-1628 - Nicholas L. Cuccia | Nicholas Cuccia  # Dogic; https://orcid.org/0000-0002-3585-1628
+Nilay Kuşcu  # Needleman
+Nina Ivanova @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+Noah Langowitz  # Needleman
+Nurayda Albeez  # Needleman; https://www.mcb.harvard.edu/resources/directory/
+0000-0001-5191-9103 - Olenka Jain | Alexandra Jain  # Needleman; https://orcid.org/0000-0001-5191-9103
+0000-0001-8235-0503 - Oliver Caspari  # Jonikas; https://doi.org/10.1073/pnas.1904587116
+Olivia Stiehl  # Needleman
+Onasis Mora  # Dogic
+0009-0008-1375-8909 - Oscair Page  # Jonikas; https://orcid.org/0009-0008-1375-8909
+0009-0003-7995-2556 - Panyu Chen  # Dogic; https://orcid.org/0009-0003-7995-2556
+0009-0005-0049-5992 - Paul Kreymborg  # Dogic; https://orcid.org/0009-0005-0049-5992
+Philip Kang @ Harvard  # Needleman
+0000-0003-1985-3057 - Pooja Chandrakar  # Dogic; https://doi.org/10.1073/pnas.2207662120
+0000-0003-4988-9560 - Prerna Sharma  # Dogic; https://doi.org/10.1126/sciadv.aba2331
+0000-0002-1195-5852 - Qi Zhang  # Dogic; https://orcid.org/0000-0002-1195-5852
+Rachel Purdon  # Jonikas
+Rachel Rose @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+Rachel Vasquez @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+Rebecca Yue  # Jonikas
+0009-0002-9215-253X - Reef Sweeney  # Dogic; https://orcid.org/0009-0002-9215-253X
+Rémi Boros  # Dogic
+0000-0001-9399-1613 - Robert E. Jinkerson | Robert Jinkerson  # Jonikas; https://doi.org/10.1038/s41477-024-01847-0
+Robert Keane @ University of California Santa Barbara | Brandeis | University of Massachusetts Amherst  # Dogic; https://www.brandeis.edu/mrsec/events/past-news.html
+Rommell Pennell  # Dogic
+0000-0002-4860-7800 - Ru Zhang  # Jonikas; https://doi.org/10.1105/tpc.114.124099
+0000-0002-6539-8764 - Sabrina L. Ergun | Sabrina Ergun  # Jonikas; https://doi.org/10.1101/2025.10.09.681382
+Saman Parsa  # Jonikas
+0000-0002-4433-7946 - Samar Alqatari  # Dogic; https://doi.org/10.1126/sciadv.aeb2907
+Sasha Toole  # Dogic
+Seamus Kenna  # Dogic
+Sean R. Blum | Sean Blum @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+0000-0002-9072-5149 - Seungwoo Shin  # Dogic; https://doi.org/10.1073/pnas.2427024122
+0000-0003-1616-7094 - Sevim Yardimci  # Dogic; https://doi.org/10.1073/pnas.2215766120
+0000-0003-2958-9659 - Shan He  # Jonikas; https://doi.org/10.1093/plcell/koad157
+Shriya Ghosh  # Jonikas
+Sitara Chapman  # Needleman
+0000-0001-5584-2676 - Soichi Hirokawa  # Needleman; https://orcid.org/0000-0001-5584-2676
+Sophia E. Gavrilenko | Sophia Gavrilenko  # Jonikas; https://molbio.princeton.edu/document/5266
+0000-0001-5494-6377 - Sophie Skanchy  # Jonikas; https://orcid.org/0000-0001-5494-6377
+0000-0002-5907-0631 - Spencer S. Gang | Spencer Gang  # Jonikas; https://orcid.org/0000-0002-5907-0631
+0000-0001-7002-7370 - Stephen J. DeCamp | Stephen DeCamp  # Dogic; https://doi.org/10.1126/science.aal1979
+0000-0002-5560-1052 - Sven Witthaus  # Dogic; https://doi.org/10.1126/science.abo5423
+0000-0002-8145-1051 - Tae Yeon Yoo  # Needleman; https://doi.org/10.7554/elife.36392
+Tarik Phillips  # Dogic; https://www.brandeis.edu/mrsec/events/past-news.html
+Tarjinder Sing  # Needleman
+0000-0003-4826-8025 - Thomas Gibaud  # Dogic; https://doi.org/10.1073/pnas.2215766120
+Tim Campion  # Needleman
+Timothy Sanchez | Tim Sanchez @ University of California Santa Barbara | Brandeis | Harvard  # Dogic; Needleman
+Timur Gatanov  # Needleman
+Toby Hess  # Dogic
+Toluwalase Olusola  # Jonikas
+Trent Ruiz  # Dogic
+0009-0004-3003-2289 - Trevor Anderberg  # Dogic; https://orcid.org/0009-0004-3003-2289
+0009-0004-4264-6069 - Trey Dold  # Dogic; https://orcid.org/0009-0004-4264-6069
+0000-0002-8814-8207 - Ute Armbruster  # Jonikas; https://doi.org/10.1093/pcp/pcw085
+Yutong Hu | Vicky Hu @ University of California Santa Barbara | Brandeis  # Dogic
+0009-0004-4841-6918 - Victor Chardès  # Needleman; https://www.mcb.harvard.edu/resources/directory/; https://pmc.ncbi.nlm.nih.gov/articles/PMC12452938/
+0000-0002-0726-7838 - Victoria L. Crans | Victoria Crans | Tori Crans  # Jonikas; https://doi.org/10.1093/plcell/koad157
+Vidalia Ariza  # Jonikas
+0000-0002-2329-5468 - Vinh T.N.P. Ton | Vinh Ton  # Jonikas; https://doi.org/10.1016/j.cell.2023.06.008
+Vivian Chen @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+Vivian Chen Wong | Vivian K. Chen @ Princeton | Carnegie Institution | Carnegie Science | Stanford  # Jonikas
+0009-0006-7130-0678 - Walter Schwenger  # Dogic; https://doi.org/10.1073/pnas.2215766120
+Warham Martin | Lance Martin @ Princeton | Carnegie Institution | Carnegie Science | NJBio  # Jonikas; https://molbio.princeton.edu/document/5266
+0000-0002-8388-1303 - Weronika Patena  # Jonikas; https://doi.org/10.1105/tpc.114.124099
+0000-0001-7532-4331 - William Conway | Will Conway  # Needleman; https://doi.org/10.7554/elife.75459
+0000-0003-3951-9646 - Xiaobo Li  # Jonikas; https://doi.org/10.1073/pnas.1515240112
+Xiaofei Ge @ Princeton | Carnegie Institution | Carnegie Science  # Jonikas
+0000-0002-5798-4448 - Xingbo Yang  # Needleman; https://doi.org/10.7554/elife.73808
+0000-0003-3613-4177 - Yana Kazachkova  # Jonikas; https://orcid.org/0000-0003-3613-4177
+Yang Gao @ Harvard  # Needleman
+0009-0009-2698-7599 - Yash P. Rana | Yash Rana  # Needleman; https://doi.org/10.1126/sciadv.adq7540
+Yihua Xie  # Jonikas
+Yong Hyun Song  # Needleman
+Younes Sherkat  # Needleman
+0009-0000-3669-1278 - Yu-Chuan Cheng  # Dogic; https://orcid.org/0009-0000-3669-1278
+Yuefeng Yang | Eric Yang @ University of California Santa Barbara | Brandeis  # Dogic
+Yuliya Zubak  # Jonikas
+0000-0002-0695-6316 - Yuzheng Lin  # Dogic; https://orcid.org/0000-0002-0695-6316
+Zach Tull  # Dogic
+Zoe Friedberg  # Jonikas

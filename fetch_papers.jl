@@ -1,6 +1,8 @@
 using HTTP, JSON3, EzXML
 using Gumbo, Cascadia
 using Dates, TimeZones
+isdefined(@__MODULE__, :GreenAuthors) || include(joinpath(@__DIR__, "green_authors.jl"))
+using .GreenAuthors
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
@@ -268,28 +270,10 @@ function load_list(filename::String)::Vector{String}
     return filter(!isempty, strip.(lines))
 end
 
-const ORCID_PATTERN = r"^(\d{4}-\d{4}-\d{4}-[\dX]{4})\s*-\s*(.+)$"
+const FETCH_GREEN_ENTRIES = read_green_authors(joinpath(@__DIR__, "greenauthors.txt"))
+const GREEN_ORCIDS = [(id, first(a.names)) for a in FETCH_GREEN_ENTRIES for id in a.ids]
+const FETCH_GREEN_INDEX = author_index(FETCH_GREEN_ENTRIES)
 
-function load_green_authors_with_orcids(filename::String)
-    orcid_list = Tuple{String,String}[]
-    name_list = String[]
-    isfile(filename) || (println("Warning: $filename not found."); return orcid_list, name_list)
-    for line in readlines(filename)
-        line = strip(line)
-        isempty(line) && continue
-        m = match(ORCID_PATTERN, line)
-        if m !== nothing
-            orcid, name = m.captures[1], strip(m.captures[2])
-            push!(orcid_list, (orcid, name))
-            push!(name_list, name)
-        else
-            push!(name_list, line)
-        end
-    end
-    return orcid_list, name_list
-end
-
-const GREEN_ORCIDS, GREEN_AUTHORS = load_green_authors_with_orcids("greenauthors.txt")
 const GREEN_KEYWORDS = load_list("greenkeywords.txt")
 
 # ─── Filtering ───────────────────────────────────────────────────────────────
@@ -329,10 +313,7 @@ function is_research_article(title::AbstractString, summary::AbstractString="";
 end
 
 function matches_green_filter(authors_str::AbstractString, title::AbstractString, summary::AbstractString)::Bool
-    al = lowercase(authors_str)
-    for ga in GREEN_AUTHORS
-        occursin(lowercase(ga), al) && return true
-    end
+    !isempty(matching_authors(FETCH_GREEN_INDEX, authors_str; allow_initials=true)) && return true
     text_to_search = lowercase(title * " " * summary)
     for kw in GREEN_KEYWORDS
         occursin(lowercase(kw), text_to_search) && return true
@@ -342,7 +323,7 @@ end
 
 # ─── Scrape metadata from article page ──────────────────────────────────────
 
-function scrape_metadata(url::AbstractString)
+function scrape_metadata(url::AbstractString; abstract_only=false)
     try
         # Cookie jar needed for Nature.com's idp.nature.com cookie gate
         jar = HTTP.Cookies.CookieJar()
@@ -394,9 +375,11 @@ function scrape_metadata(url::AbstractString)
             end
         end
 
-        # Abstract
-        abstract_text = ""
+        # Nature's social description can be a short teaser rather than the abstract.
+        abstract_text = join(strip.(text.(eachmatch(Selector("#Abs1-content p"), doc.root))), " ")
         for attr_pair in [("name", "citation_abstract"), ("name", "DC.description"), ("property", "og:description")]
+            !isempty(abstract_text) && break
+            abstract_only && attr_pair == ("property", "og:description") && break
             nodes = eachmatch(Selector("meta[$(attr_pair[1])=\"$(attr_pair[2])\"]"), doc.root)
             for n in nodes
                 c = getattr(n, "content", "")
@@ -409,7 +392,7 @@ function scrape_metadata(url::AbstractString)
         end
 
         # Abstract fallback: JSON-LD description (Nature)
-        if isempty(abstract_text)
+        if isempty(abstract_text) && !abstract_only
             for script_node in eachmatch(Selector("script[type=\"application/ld+json\"]"), doc.root)
                 json_text = text(script_node)
                 isempty(json_text) && continue
@@ -1967,7 +1950,7 @@ end
 # ─── CrossRef ORCID Fetching ────────────────────────────────────────────────
 
 function _query_crossref_orcid(orcid::String, author_name::String, from_date::String;
-                               http_get=HTTP.get, sleep_fn=sleep)
+                               http_get=HTTP.get, sleep_fn=sleep, scrape=scrape_metadata)
     papers = Paper[]
     max_retries = 4
     url = "https://api.crossref.org/works"
@@ -2018,12 +2001,23 @@ function _query_crossref_orcid(orcid::String, author_name::String, from_date::St
                         abstract_text = replace(abstract_text, r"<[^>]+>" => "")
                         abstract_text = strip(abstract_text)
                     end
-                    isempty(abstract_text) && (abstract_text = "Abstract not available via CrossRef API.")
 
                     # Effective date: earliest non-future date (online/posted/created/etc.)
                     pub_date = crossref_effective_date(item)
                     pub_date === nothing && continue
                     publication_is_in_window(pub_date) || continue
+                    if isempty(abstract_text) && !isempty(doi)
+                        # Crossref may deposit only the DOI and byline. Use the publisher's
+                        # article URL and check its DOI before accepting the page abstract.
+                        primary = get(get(item, :resource, (;)), :primary, (;))
+                        article_url = string(get(primary, :URL, link))
+                        if startswith(article_url, "https://")
+                            _, recovered, _, page_doi = scrape(article_url; abstract_only=true)
+                            if page_doi == doi && recovered !== nothing && length(recovered) >= MIN_ABSTRACT_CHARS
+                                abstract_text = recovered
+                            end
+                        end
+                    end
 
                     push!(papers, Paper(
                         source="CrossRef/Featured",
@@ -2347,7 +2341,7 @@ end
 # ─── Checkpoint system ────────────────────────────────────────────────────────
 
 const CHECKPOINT_FILE = "fetch_checkpoint.json"
-const CHECKPOINT_VERSION = 2 # Earlier versions could cache incomplete journal stages.
+const CHECKPOINT_VERSION = 3 # Earlier stages used the old author list and missing-abstract handling.
 const FETCH_CLEAN = get(ENV, "FETCH_CLEAN", "0") == "1"
 
 function _papers_to_dicts(papers::Vector{Paper})
@@ -2437,6 +2431,17 @@ function deduplicate_papers(papers::Vector{Paper})::Vector{Paper}
             push!(no_doi_papers, paper)
         else
             paper.doi = doi
+            # Either source may carry the only abstract. Keep the featured tag
+            # and copy text only between records for the same DOI.
+            if haskey(unique_by_doi, doi)
+                other = unique_by_doi[doi]
+                for (featured, alternate) in ((paper, other), (other, paper))
+                    if is_featured(featured) && length(featured.abstract) < MIN_ABSTRACT_CHARS &&
+                       length(alternate.abstract) >= MIN_ABSTRACT_CHARS
+                        featured.abstract = alternate.abstract
+                    end
+                end
+            end
             if !haskey(unique_by_doi, doi) || should_replace(unique_by_doi[doi], paper)
                 unique_by_doi[doi] = paper
             end
@@ -2516,15 +2521,7 @@ function fetch_and_display_papers()
     else
         issn_papers = fetch_crossref_issn_papers()
         green_issn = filter(issn_papers) do p
-            al = lowercase(p.authors)
-            for ga in GREEN_AUTHORS
-                occursin(lowercase(ga), al) && return true
-            end
-            tl = lowercase(p.title * " " * p.abstract)
-            for kw in GREEN_KEYWORDS
-                occursin(lowercase(kw), tl) && return true
-            end
-            return false
+            matches_green_filter(p.authors, p.title, p.abstract)
         end
         println("  ✓ ISSN journals: $(length(green_issn)) papers (green-filtered from $(length(issn_papers)))")
         checkpoint["issn"] = green_issn
@@ -2543,9 +2540,7 @@ function fetch_and_display_papers()
         # Multiple authors = comma (arXiv) or semicolon (bioRxiv) in authors string
         (occursin(",", p.authors) || occursin(";", p.authors)) && return true
         # Keep if the single author is a green author
-        al = lowercase(p.authors)
-        any(ga -> occursin(ga, al), GREEN_AUTHORS) && return true
-        return false
+        return !isempty(matching_authors(FETCH_GREEN_INDEX, p.authors; allow_initials=true))
     end
     filtered_single = before_single - length(all_papers)
     filtered_single > 0 && println("  Filtered $filtered_single single-author arXiv/bioRxiv papers.")

@@ -104,3 +104,24 @@ end
     @test GEMINI_BUDGET_EXHAUSTED[]
     @test occursin("runaway request ceiling", GEMINI_BUDGET_REASON[])
 end
+
+@testset "author identity in publisher and preprint bylines" begin
+    doi = "10.1038/s41567-026-03505-y"
+    _crossref_author_cache[doi] = [(; given="Alexandra M.", family="Tayar", ORCID="https://orcid.org/0000-0002-1418-2058")]
+    @test check_green_author("Maya Levanon, Alexandra M. Tayar", doi)
+    @test check_green_author("Levanon, M.; Tayar, A. M.", doi)
+    @test check_green_author("Alex Tayar", "")
+    @test !check_green_author("Tayar, A. M.", "")
+    @test !check_green_author("Alexandra Tayard", "")
+    @test check_green_author("Ibrahim Abu-Hijleh", "")
+    @test !check_green_author("Ibrahim Hijleh", "")
+    key = "10.1234/namesake"
+    _crossref_author_cache[key] = [(; given="Kevin", family="Zhang", affiliation=[(; name="Unrelated Institute")]),
+                                   (; given="Other", family="Researcher", affiliation=[(; name="Princeton University")])]
+    @test !check_green_author("Kevin Zhang, Other Researcher", key)
+    _crossref_author_cache[key] = [(; given="Kevin", family="Zhang", affiliation=[(; name="Princeton University")])]
+    @test check_green_author("Kevin Zhang", key)
+    @test !check_green_author("K. Zhang", key)
+    delete!(_crossref_author_cache, key)
+    delete!(_crossref_author_cache, doi)
+end

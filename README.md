@@ -26,6 +26,16 @@ are merged. For bioRxiv, this means the original posting date encoded in the DOI
 not the date of a later revision. Papers selected for an earlier email are also
 removed before the AI stage so they cannot be sent twice.
 
+The author green list is `greenauthors.txt`. Each line names one person. Put
+verified ORCIDs before ` - ` (comma-separated if the same person has used
+multiple IDs), separate published names with `|`, and record the lab and
+source after `#`. The fetcher searches Crossref directly for each ORCID.
+Authors without a verified ID are matched by full name in the monitored feeds.
+For a known namesake, add ` @ ` followed by the person's documented institutions
+separated by `|`; a matching institution must belong to that author on the
+paper. Initials alone require a verified identifier. When a featured-author
+record lacks an abstract, the fetcher checks the publisher page for the same DOI.
+
 Paper-specific featured overrides live in `featured_papers.txt`. Add one stable
 identifier per line in `arxiv:`, `doi:`, or normalized `title:` form.
 

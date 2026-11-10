@@ -4,6 +4,8 @@ include(joinpath(@__DIR__, "edition_integrity.jl"))
 include(joinpath(@__DIR__, "selection_policy.jl"))
 using .EditionIntegrity
 using .SelectionPolicy
+isdefined(@__MODULE__, :GreenAuthors) || include(joinpath(@__DIR__, "green_authors.jl"))
+using .GreenAuthors
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
@@ -140,82 +142,13 @@ end
 
 const CROSSREF_MAILTO = "lemma@princeton.edu"
 
-function load_green_authors(filename::String)
-    entries = Tuple{Union{String,Nothing}, String}[]   # (orcid_or_nothing, name)
-    isfile(filename) || return entries
-    for line in readlines(filename)
-        line = strip(line)
-        isempty(line) && continue
-        m = match(r"^(\d{4}-\d{4}-\d{4}-[\dX]{4})\s*-\s*(.+)$", line)
-        if m !== nothing
-            push!(entries, (m.captures[1], lowercase(strip(m.captures[2]))))
-        else
-            push!(entries, (nothing, lowercase(line)))
-        end
-    end
-    return entries
-end
-
-const GREEN_AUTHOR_ENTRIES = load_green_authors("greenauthors.txt")
-
-"""Normalize a name for fuzzy matching: strip accents, periods, hyphens."""
-function normalize_name(s::AbstractString)::String
-    s = lowercase(s)
-    # Strip common accented chars to ASCII equivalents
-    for (from, to) in [('á','a'),('à','a'),('â','a'),('ä','a'),('ã','a'),
-                        ('é','e'),('è','e'),('ê','e'),('ë','e'),
-                        ('í','i'),('ì','i'),('î','i'),('ï','i'),
-                        ('ó','o'),('ò','o'),('ô','o'),('ö','o'),('õ','o'),
-                        ('ú','u'),('ù','u'),('û','u'),('ü','u'),
-                        ('ñ','n'),('ç','c')]
-        s = replace(s, from => to)
-    end
-    s = replace(s, r"[.\-']" => " ")   # periods, hyphens, apostrophes → spaces
-    s = replace(s, r"\s+" => " ")
-    return strip(s)
-end
-
-"""Split an author list string into individual author names."""
-function split_authors(authors_str::AbstractString)::Vector{String}
-    # Handle both comma-separated (CrossRef/RSS) and semicolon-separated (bioRxiv)
-    delim = occursin(";", authors_str) ? ";" : ","
-    return filter(!isempty, strip.(split(authors_str, delim)))
-end
-
-"""Check if a single author name matches a green author name.
-Handles middle initials, name order swaps, and accent differences."""
-function name_matches(green_name::AbstractString, paper_author::AbstractString)::Bool
-    gn = normalize_name(green_name)
-    pa = normalize_name(paper_author)
-    g_parts = split(gn)
-    p_parts = split(pa)
-    length(g_parts) < 2 && return occursin(gn, pa)
-    length(p_parts) < 2 && return false
-    g_first, g_last = g_parts[1], g_parts[end]
-    p_first, p_last = p_parts[1], p_parts[end]
-    # Forward match: same first and last name
-    if g_first == p_first && g_last == p_last
-        return true
-    end
-    # Swapped: "Last, First" format
-    if g_first == p_last && g_last == p_first
-        return true
-    end
-    # First initial match: "D." or "D" matches "David"
-    if g_last == p_last
-        shorter, longer = length(g_first) <= length(p_first) ? (g_first, p_first) : (p_first, g_first)
-        if length(shorter) == 1 && startswith(longer, shorter)
-            return true
-        end
-    end
-    return false
-end
+const FILTER_GREEN_INDEX = author_index(read_green_authors(joinpath(@__DIR__, "greenauthors.txt")))
 
 # Cache CrossRef author data per DOI to avoid redundant API calls
-const _crossref_author_cache = Dict{String, Union{Nothing, Vector{String}}}()
+const _crossref_author_cache = Dict{String,Any}()
 
-"""Fetch ORCID list for a DOI from CrossRef (cached)."""
-function _get_crossref_orcids(doi::AbstractString)::Union{Nothing, Vector{String}}
+"""Fetch the publisher-deposited authors and their affiliations/ORCIDs once per DOI."""
+function crossref_byline(doi::AbstractString)
     doi = replace(doi, r"^https?://doi\.org/" => "")
     haskey(_crossref_author_cache, doi) && return _crossref_author_cache[doi]
     try
@@ -228,54 +161,44 @@ function _get_crossref_orcids(doi::AbstractString)::Union{Nothing, Vector{String
         end
         data = JSON3.read(String(resp.body))
         authors = get(get(data, :message, Dict()), :author, [])
-        orcids = String[]
-        for a in authors
-            orcid_url = string(get(a, :ORCID, ""))
-            !isempty(orcid_url) && push!(orcids, orcid_url)
-        end
-        _crossref_author_cache[doi] = orcids
-        return orcids
+        _crossref_author_cache[doi] = authors
+        return authors
     catch
         _crossref_author_cache[doi] = nothing
         return nothing
     end
 end
 
-"""Check if a paper's DOI has a matching ORCID in CrossRef metadata.
-Returns :verified, :not_found, or :error."""
-function verify_orcid_via_crossref(doi::AbstractString, expected_orcid::String)::Symbol
-    isempty(doi) && return :error
-    orcids = _get_crossref_orcids(doi)
-    orcids === nothing && return :error
-    for orcid_url in orcids
-        occursin(expected_orcid, orcid_url) && return :verified
+"""Require the affiliation to belong to the matching person, not a coauthor."""
+function affiliation_matches(author, deposited)
+    for person in deposited
+        name = string(get(person, :given, ""), " ", get(person, :family, ""))
+        author in matching_authors(FILTER_GREEN_INDEX, name) || continue
+        for aff in get(person, :affiliation, [])
+            institution = lowercase(replace(string(get(aff, :name, "")), "," => ""))
+            any(s -> occursin(lowercase(s), institution), author.institutions) && return true
+        end
     end
-    return :not_found
+    return false
 end
 
-"""Check if any green author name matches the paper's author string.
-Returns true if a match is found. For names with an ORCID, verifies via CrossRef
-when a DOI is available, to avoid false positives from common names."""
 function check_green_author(authors_str::AbstractString, doi::AbstractString)::Bool
-    paper_authors = split_authors(authors_str)
-    for (i, (orcid, name)) in enumerate(GREEN_AUTHOR_ENTRIES)
-        matched = any(pa -> name_matches(name, pa), paper_authors)
-        matched || continue
-        # If this entry has an ORCID and we have a DOI, verify to avoid false positives
-        if orcid !== nothing && !isempty(doi)
-            result = verify_orcid_via_crossref(doi, orcid)
-            if result == :verified
-                return true
-            elseif result == :not_found
-                # ORCID not on this paper — likely a different person with same name
-                continue
-            else
-                # CrossRef lookup failed — trust the name match as fallback
-                return true
-            end
+    full = matching_authors(FILTER_GREEN_INDEX, authors_str)
+    candidates = isempty(doi) ? full : matching_authors(FILTER_GREEN_INDEX, authors_str; allow_initials=true)
+    for author in candidates
+        if isempty(author.ids) && isempty(author.institutions)
+            author in full && return true
+            continue
         end
-        # No ORCID to verify against, trust the name match
-        return true
+        deposited = isempty(doi) ? nothing : crossref_byline(doi)
+        if deposited === nothing
+            # Initials or a known namesake always need independent evidence.
+            isempty(author.institutions) && author in full && return true
+        elseif !isempty(author.ids)
+            any(p -> last(split(string(get(p, :ORCID, "")), '/')) in author.ids, deposited) && return true
+        elseif affiliation_matches(author, deposited)
+            return true
+        end
     end
     return false
 end
